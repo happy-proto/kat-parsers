@@ -1,0 +1,31 @@
+language = "crystal"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/crystal-lang-tools/tree-sitter-crystal"
+upstream_commit = "50ca9e6fcfb16a2cbcad59203cfd8ad650e25c49"
+license = "MIT"
+
+[copied]
+files = [
+  "grammar.js",
+  "tree-sitter.json",
+  "src/scanner.c",
+  "src/unicode.c",
+  "src/tree_sitter/alloc.h",
+  "src/tree_sitter/array.h",
+  "src/tree_sitter/parser.h",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate crystal"
+outputs = [
+  ".parser-inputs",
+  "parser.c",
+  "scanner.c",
+  "unicode.c",
+  "grammar.json",
+  "node-types.json",
+  "tree_sitter/alloc.h",
+  "tree_sitter/array.h",
+  "tree_sitter/parser.h",
+]

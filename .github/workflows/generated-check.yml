@@ -1,0 +1,13 @@
+name: Generated Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  generated-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo install tree-sitter-cli just --locked
+      - run: just check
