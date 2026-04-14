@@ -6,10 +6,7 @@ default:
 generate:
     cargo run -p xtask -- generate
 
-test:
-    cargo test --workspace
-
 check:
-    cargo run -p xtask -- generate --force
-    git diff --exit-code
+    cargo fmt --check
+    cargo clippy --workspace --all-targets -- -D warnings
     cargo test --workspace

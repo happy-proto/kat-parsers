@@ -1,9 +1,10 @@
-use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use anstyle::{AnsiColor, Style};
 use anyhow::{Context, Result, anyhow, bail};
+use clap::{Parser, Subcommand};
 use tempfile::TempDir;
 
 const PARSER_STAGE_VERSION: &str = "parser-stage-v1";
@@ -15,29 +16,33 @@ struct GrammarSpec {
     vendor_dir: &'static str,
 }
 
+#[derive(Parser)]
+#[command(name = "xtask")]
+/// Project maintenance tasks for kat-parsers.
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Regenerate vendored parser artifacts.
+    Generate {
+        /// Only regenerate the named grammar; defaults to all registered grammars when omitted.
+        #[arg(value_name = "LANGUAGE")]
+        language: Option<String>,
+        /// Regenerate `parser.c` even when the cached parser inputs have not changed.
+        #[arg(long)]
+        force: bool,
+    },
+}
+
 fn main() -> Result<()> {
     let repo_root = repo_root()?;
-    let mut args = env::args().skip(1);
-    let Some(command) = args.next() else {
-        bail!("usage: cargo run -p xtask -- generate [language] [--force]");
-    };
+    let cli = Cli::parse();
 
-    match command.as_str() {
-        "generate" => {
-            let mut force = false;
-            let mut language: Option<String> = None;
-            for arg in args {
-                if arg == "--force" {
-                    force = true;
-                } else if language.is_none() {
-                    language = Some(arg);
-                } else {
-                    bail!("unexpected argument: {arg}");
-                }
-            }
-            generate(&repo_root, language.as_deref(), force)
-        }
-        other => bail!("unknown xtask command: {other}"),
+    match cli.command {
+        Commands::Generate { language, force } => generate(&repo_root, language.as_deref(), force),
     }
 }
 
@@ -53,6 +58,17 @@ fn generate(repo_root: &Path, language: Option<&str>, force: bool) -> Result<()>
     }
 
     let cli_version = tree_sitter_version()?;
+    println!(
+        "{} Generating {} grammar(s) with {}{}",
+        paint("==>", accent_style()),
+        selected.len(),
+        paint(&cli_version, success_style()),
+        if force {
+            " (forced parser refresh)"
+        } else {
+            ""
+        }
+    );
     for spec in selected {
         generate_one(repo_root, spec, &cli_version, force)?;
     }
@@ -69,6 +85,7 @@ fn generate_one(
     let vendor_dir = repo_root.join(spec.vendor_dir);
     let stamp_file = vendor_dir.join(PARSER_STAMP_FILE);
 
+    print_section(spec, "Preparing temporary workspace");
     let temp_dir = TempDir::new().context("failed to create temp dir for tree-sitter generate")?;
     let temp_root = temp_dir.path();
     fs::create_dir_all(temp_root.join("src"))?;
@@ -83,6 +100,10 @@ fn generate_one(
     )?;
 
     // Stage 1: always regenerate the lightweight JSON outputs.
+    print_section(
+        spec,
+        "Stage 1/3: Regenerating grammar.json and node-types.json",
+    );
     run_tree_sitter_generate_no_parser(temp_root)?;
     copy_file(
         &temp_root.join("src/grammar.json"),
@@ -94,6 +115,7 @@ fn generate_one(
     )?;
 
     // Stage 3: always sync vendored support files. This is effectively free.
+    print_section(spec, "Stage 2/3: Syncing vendored support files");
     copy_file(
         &upstream_dir.join("src/scanner.c"),
         &vendor_dir.join("scanner.c"),
@@ -121,13 +143,22 @@ fn generate_one(
         && stamp_matches(&stamp_file, &parser_input_hash)
         && vendor_dir.join("parser.c").is_file()
     {
-        println!(
-            "{} parser.c is up to date; skipping parser generation.",
-            spec.name
+        print_skip(
+            spec,
+            "Stage 3/3: parser.c is already up to date; skipping heavy regeneration",
         );
         return Ok(());
     }
 
+    let parser_reason = if force {
+        "forced refresh requested"
+    } else {
+        "parser inputs changed"
+    };
+    print_section(
+        spec,
+        &format!("Stage 3/3: Regenerating parser.c ({parser_reason})"),
+    );
     run_tree_sitter_generate_parser(temp_root)?;
     copy_file(
         &temp_root.join("src/parser.c"),
@@ -135,6 +166,7 @@ fn generate_one(
     )?;
     write_file(&stamp_file, &format!("{parser_input_hash}\n"))?;
 
+    print_done(spec);
     Ok(())
 }
 
@@ -151,6 +183,50 @@ fn repo_root() -> Result<PathBuf> {
         .parent()
         .map(Path::to_path_buf)
         .context("xtask must live under the repository root")
+}
+
+fn print_section(spec: &GrammarSpec, message: &str) {
+    println!(
+        "  {} {} {message}",
+        paint("==>", accent_style()),
+        paint(&format!("[{}]", spec.name), label_style())
+    );
+}
+
+fn print_skip(spec: &GrammarSpec, message: &str) {
+    println!(
+        "  {} {} {message}",
+        paint("[skip]", warning_style()),
+        paint(&format!("[{}]", spec.name), label_style())
+    );
+}
+
+fn print_done(spec: &GrammarSpec) {
+    println!(
+        "  {} {}",
+        paint("[done]", success_style()),
+        paint(&format!("[{}]", spec.name), label_style())
+    );
+}
+
+fn paint(text: &str, style: Style) -> String {
+    format!("{}{}{}", style.render(), text, style.render_reset())
+}
+
+fn accent_style() -> Style {
+    Style::new().fg_color(Some(AnsiColor::Cyan.into())).bold()
+}
+
+fn warning_style() -> Style {
+    Style::new().fg_color(Some(AnsiColor::Yellow.into())).bold()
+}
+
+fn success_style() -> Style {
+    Style::new().fg_color(Some(AnsiColor::Green.into())).bold()
+}
+
+fn label_style() -> Style {
+    Style::new().bold()
 }
 
 fn tree_sitter_version() -> Result<String> {

@@ -28,12 +28,11 @@
 
 ```bash
 just generate
-just test
 just check
 ```
 
 - `just generate`：总是重生成 `grammar.json` / `node-types.json`，总是同步 `scanner.c` / `unicode.c` / `tree_sitter/*.h`，只在 `grammar.json` 或 `tree-sitter` CLI 版本变化时重生成 `parser.c`
-- `just check`：强制重新生成并校验工作区是否干净，供 CI 使用
+- `just check`：执行 `cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings` 和 `cargo test --workspace`
 
 `kat` 侧可直接按 git dependency 引用统一 crate：
 
