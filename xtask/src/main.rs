@@ -156,7 +156,7 @@ fn grammar_specs() -> Vec<GrammarSpec> {
             name: "coffeescript",
             upstream_dir: "upstreams/coffeescript",
             vendor_dir: "crates/tree-sitter-kat-parsers/vendor/coffeescript",
-            generator_root_files: &["grammar.js"],
+            generator_root_files: &["grammar.js", "tree-sitter.json"],
             vendored_support_files: &[
                 "scanner.c",
                 "tree_sitter/alloc.h",

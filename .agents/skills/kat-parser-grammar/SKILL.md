@@ -75,7 +75,7 @@ sed -n '1,220p' metadata/*.toml
 - `build.rs` 只编译已经提交到仓库里的 C 产物，不在构建期执行 `tree-sitter generate`。
 - `upstreams/` 只保留最小上游快照，不放 query、测试、bindings 等下游不需要的内容。
 - `metadata`、`THIRD_PARTY.md`、`vendor/<lang>/` 必须和上游快照一起更新，避免仓库状态半完成。
-- 如上游缺少 `tree-sitter.json`，允许继续接入；`tree-sitter` CLI 可能降到 ABI 14，并打印 warning。这属于上游现状，不要伪造一个配置文件去“消音”，除非项目明确决定维护该文件。
+- 如上游缺少 `tree-sitter.json`，允许继续接入；`tree-sitter` CLI 可能降到 ABI 14，并打印 warning。默认保持上游原样；如果项目已明确决定在本仓库维护一个本地 overlay 版 `tree-sitter.json`，要把它视为仓库自维护资产，并同步更新 `metadata`、`THIRD_PARTY.md` 与生成 spec。
 - 新语言如没有 `scanner.c` 或 `unicode.c`，不要为了对齐别的语言去制造空文件；直接在 spec 里声明 absence。
 
 ## 常用命令

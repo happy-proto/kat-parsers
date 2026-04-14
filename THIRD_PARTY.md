@@ -7,6 +7,7 @@
 - License: `MIT`
 - Imported source assets:
   - `grammar.js`
+  - `tree-sitter.json`
   - `src/scanner.c`
   - `src/tree_sitter/alloc.h`
   - `src/tree_sitter/array.h`
