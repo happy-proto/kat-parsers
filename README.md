@@ -31,7 +31,7 @@ just generate
 just check
 ```
 
-- `just generate`：总是重生成 `grammar.json` / `node-types.json`，总是同步 `scanner.c` / `unicode.c` / `tree_sitter/*.h`，只在 `grammar.json` 或 `tree-sitter` CLI 版本变化时重生成 `parser.c`
+- `just generate`：总是重生成 `grammar.json` / `node-types.json`，总是同步各语言声明的 vendored support files，只在 `grammar.json`、可选的 `tree-sitter.json` 或 `tree-sitter` CLI 版本变化时重生成 `parser.c`
 - `just check`：执行 `cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings` 和 `cargo test --workspace`
 
 `kat` 侧可直接按 git dependency 引用统一 crate：
@@ -45,3 +45,8 @@ tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", 
 - 上游 grammar 的来源与 revision 见 `metadata/` 和 `THIRD_PARTY.md`
 - parser 生成发生在 `just`/CI 中，而不是 `build.rs`
 - `build.rs` 只负责编译已经提交到仓库里的 C 产物
+
+## TODO
+
+- CoffeeScript 当前在本仓库额外维护了一份 `tree-sitter.json`，用于生成 ABI 15 parser；上游已存在跟踪 issue [`svkozak/tree-sitter-coffeescript#1`](https://github.com/svkozak/tree-sitter-coffeescript/issues/1)，等这套 fork 内约定稳定后，再基于该 issue 回馈到上游
+- CoffeeScript 在生成时仍会出现 `unnecessary conflicts` warning；当前不影响生成和使用，先记录为已知情况，后续如开始深度维护该 grammar，再评估是否清理上游 `grammar.js` 中的陈旧 `conflicts` 声明

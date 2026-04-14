@@ -14,6 +14,8 @@ struct GrammarSpec {
     name: &'static str,
     upstream_dir: &'static str,
     vendor_dir: &'static str,
+    generator_root_files: &'static [&'static str],
+    vendored_support_files: &'static [&'static str],
 }
 
 #[derive(Parser)]
@@ -90,14 +92,9 @@ fn generate_one(
     let temp_root = temp_dir.path();
     fs::create_dir_all(temp_root.join("src"))?;
 
-    copy_file(
-        &upstream_dir.join("grammar.js"),
-        &temp_root.join("grammar.js"),
-    )?;
-    copy_file(
-        &upstream_dir.join("tree-sitter.json"),
-        &temp_root.join("tree-sitter.json"),
-    )?;
+    for file in spec.generator_root_files {
+        copy_file(&upstream_dir.join(file), &temp_root.join(file))?;
+    }
 
     // Stage 1: always regenerate the lightweight JSON outputs.
     print_section(
@@ -116,26 +113,9 @@ fn generate_one(
 
     // Stage 3: always sync vendored support files. This is effectively free.
     print_section(spec, "Stage 2/3: Syncing vendored support files");
-    copy_file(
-        &upstream_dir.join("src/scanner.c"),
-        &vendor_dir.join("scanner.c"),
-    )?;
-    copy_file(
-        &upstream_dir.join("src/unicode.c"),
-        &vendor_dir.join("unicode.c"),
-    )?;
-    copy_file(
-        &upstream_dir.join("src/tree_sitter/alloc.h"),
-        &vendor_dir.join("tree_sitter/alloc.h"),
-    )?;
-    copy_file(
-        &upstream_dir.join("src/tree_sitter/array.h"),
-        &vendor_dir.join("tree_sitter/array.h"),
-    )?;
-    copy_file(
-        &upstream_dir.join("src/tree_sitter/parser.h"),
-        &vendor_dir.join("tree_sitter/parser.h"),
-    )?;
+    for file in spec.vendored_support_files {
+        copy_file(&upstream_dir.join("src").join(file), &vendor_dir.join(file))?;
+    }
 
     // Stage 2: only regenerate parser.c when grammar.json actually changed.
     let parser_input_hash = compute_parser_input_hash(temp_root, cli_version)?;
@@ -171,11 +151,33 @@ fn generate_one(
 }
 
 fn grammar_specs() -> Vec<GrammarSpec> {
-    vec![GrammarSpec {
-        name: "crystal",
-        upstream_dir: "upstreams/crystal",
-        vendor_dir: "crates/tree-sitter-kat-parsers/vendor/crystal",
-    }]
+    vec![
+        GrammarSpec {
+            name: "coffeescript",
+            upstream_dir: "upstreams/coffeescript",
+            vendor_dir: "crates/tree-sitter-kat-parsers/vendor/coffeescript",
+            generator_root_files: &["grammar.js", "tree-sitter.json"],
+            vendored_support_files: &[
+                "scanner.c",
+                "tree_sitter/alloc.h",
+                "tree_sitter/array.h",
+                "tree_sitter/parser.h",
+            ],
+        },
+        GrammarSpec {
+            name: "crystal",
+            upstream_dir: "upstreams/crystal",
+            vendor_dir: "crates/tree-sitter-kat-parsers/vendor/crystal",
+            generator_root_files: &["grammar.js", "tree-sitter.json"],
+            vendored_support_files: &[
+                "scanner.c",
+                "unicode.c",
+                "tree_sitter/alloc.h",
+                "tree_sitter/array.h",
+                "tree_sitter/parser.h",
+            ],
+        },
+    ]
 }
 
 fn repo_root() -> Result<PathBuf> {
@@ -256,6 +258,12 @@ fn compute_parser_input_hash(temp_root: &Path, cli_version: &str) -> Result<Stri
     let grammar_json = fs::read(&grammar_json_path)
         .with_context(|| format!("failed to read {}", grammar_json_path.display()))?;
     hash_bytes(&mut hasher, b"grammar.json", &grammar_json);
+    let tree_sitter_json_path = temp_root.join("tree-sitter.json");
+    if tree_sitter_json_path.is_file() {
+        let tree_sitter_json = fs::read(&tree_sitter_json_path)
+            .with_context(|| format!("failed to read {}", tree_sitter_json_path.display()))?;
+        hash_bytes(&mut hasher, b"tree-sitter.json", &tree_sitter_json);
+    }
 
     Ok(hasher.finalize().to_hex().to_string())
 }
