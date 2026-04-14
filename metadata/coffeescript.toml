@@ -1,0 +1,28 @@
+language = "coffeescript"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/svkozak/tree-sitter-coffeescript"
+upstream_commit = "3bb4dbd68ca926c76b3baadb529da4de3726ea37"
+license = "MIT"
+
+[copied]
+files = [
+  "grammar.js",
+  "src/scanner.c",
+  "src/tree_sitter/alloc.h",
+  "src/tree_sitter/array.h",
+  "src/tree_sitter/parser.h",
+  "LICENSE.txt",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate coffeescript"
+outputs = [
+  ".parser-inputs",
+  "parser.c",
+  "scanner.c",
+  "grammar.json",
+  "node-types.json",
+  "tree_sitter/alloc.h",
+  "tree_sitter/array.h",
+  "tree_sitter/parser.h",
+]
