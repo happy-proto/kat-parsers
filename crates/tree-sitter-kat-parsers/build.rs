@@ -17,10 +17,8 @@ fn main() {
     println!("cargo:rerun-if-changed={}", scanner.display());
     build.file(scanner);
 
-    for file in ["unicode.c"] {
-        let path = crystal_dir.join(file);
-        println!("cargo:rerun-if-changed={}", path.display());
-    }
+    let unicode = crystal_dir.join("unicode.c");
+    println!("cargo:rerun-if-changed={}", unicode.display());
 
     for file in [
         "tree_sitter/alloc.h",
