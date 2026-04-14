@@ -8,6 +8,10 @@ jobs:
   generated-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: cargo install tree-sitter-cli just --locked
-      - run: just check
+      - uses: actions/checkout@v6
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: tree-sitter-cli
+      - run: cargo run -p xtask -- generate --force
+      - run: git diff --exit-code
+      - run: cargo test --workspace
