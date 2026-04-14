@@ -1,0 +1,8 @@
+[workspace]
+members = ["crates/tree-sitter-kat-parsers", "xtask"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/happy-proto/kat-parsers"

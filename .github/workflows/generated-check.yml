@@ -1,0 +1,19 @@
+name: Generated Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  generated-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: tree-sitter-cli@0.26.8
+      - run: cargo run -p xtask -- generate --force
+      - run: git diff --exit-code
+      - run: cargo test --workspace
