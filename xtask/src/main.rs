@@ -439,7 +439,6 @@ fn format_generated_rust_files(repo_root: &Path, specs: &[GrammarSpec]) -> Resul
     let mut paths = vec![
         common_dir.join("src/lib.rs"),
         aggregate_dir.join("src/lib.rs"),
-        repo_root.join("xtask/src/main.rs"),
     ];
     for spec in specs {
         paths.push(spec.crate_dir.join("build.rs"));
