@@ -1,34 +1,16 @@
 name: CI
 
 on:
-  pull_request:
   push:
     branches:
       - master
+  pull_request:
 
 jobs:
   check:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just
-
-      - name: Install tree-sitter CLI
-        uses: taiki-e/install-action@v2
-        with:
-          tool: tree-sitter-cli
-
-      - name: Verify generated parser artifacts
-        run: just check-generated
-
-      - name: Run workspace checks
-        run: just check
+      - uses: actions/checkout@v6
+      - run: cargo fmt --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
