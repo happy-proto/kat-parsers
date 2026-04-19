@@ -1,0 +1,18 @@
+language = "command_help"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """当前直接在仓库内维护了一个针对命令帮助文本的小 grammar，用来识别标题、directive 和常见命令行片段。"""
+
+[copied]
+files = [
+  "grammar.js",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate command_help"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+]

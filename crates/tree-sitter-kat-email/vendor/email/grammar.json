@@ -1,0 +1,300 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "mail",
+  "rules": {
+    "source_file": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_headers"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "body_separator"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "body"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_headers": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_header"
+          },
+          {
+            "type": "STRING",
+            "value": "\n"
+          }
+        ]
+      }
+    },
+    "_header": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "header_email"
+          }
+        },
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "header_subject"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "header_other"
+        }
+      ]
+    },
+    "header_email": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "STRING",
+                "value": "From"
+              },
+              "named": true,
+              "value": "header_field_email"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "header_separator"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_mailbox"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "To"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "Cc"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "Bcc"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "Reply-To"
+                  }
+                ]
+              },
+              "named": true,
+              "value": "header_field_email"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "header_separator"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_mailbox"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  }
+                ]
+              }
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_mailbox"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "header_other": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "header_field"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "header_separator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "header_unstructured"
+        }
+      ]
+    },
+    "header_subject": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "Subject"
+          },
+          "named": true,
+          "value": "header_field_subject"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "header_separator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "header_unstructured"
+        }
+      ]
+    },
+    "_name": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "atom"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "quoted_string"
+          }
+        ]
+      }
+    },
+    "_mailbox": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_name"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "email"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_name"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "email"
+            }
+          ]
+        }
+      ]
+    },
+    "header_separator": {
+      "type": "STRING",
+      "value": ":"
+    },
+    "header_field": {
+      "type": "PATTERN",
+      "value": "[^\\x00-\\x1f\\x7f\\s:]+"
+    },
+    "header_unstructured": {
+      "type": "PATTERN",
+      "value": ".*"
+    },
+    "atom": {
+      "type": "PATTERN",
+      "value": "[^()<>@,;:\\\\\".\\[\\]\\s\\x00-\\x1f\\x7f]+"
+    },
+    "quoted_string": {
+      "type": "PATTERN",
+      "value": "\"[^\"\\\\\\n]+\""
+    },
+    "email": {
+      "type": "PATTERN",
+      "value": "<[^<>]+>"
+    },
+    "body_separator": {
+      "type": "PATTERN",
+      "value": "\\n"
+    },
+    "body": {
+      "type": "PATTERN",
+      "value": "(.|\\n)*"
+    }
+  },
+  "extras": [
+    {
+      "type": "STRING",
+      "value": " "
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}

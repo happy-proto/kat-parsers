@@ -1,0 +1,22 @@
+[package]
+name = "tree-sitter-kat-dotenv"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Pre-generated tree-sitter parser crate for dotenv used by kat"
+authors = ["DCjanus <DCjanus@dcjanus.com>"]
+build = "build.rs"
+include = ["build.rs", "src/lib.rs", "vendor/**"]
+
+[lib]
+path = "src/lib.rs"
+
+[dev-dependencies]
+tree-sitter = "0.26.8"
+
+[dependencies]
+tree-sitter-language = "0.1.7"
+
+[build-dependencies]
+kat-parser-common = { path = "../kat-parser-common" }

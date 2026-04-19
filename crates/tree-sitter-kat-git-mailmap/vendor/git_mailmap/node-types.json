@@ -1,0 +1,105 @@
+[
+  {
+    "type": "comment_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "entry_line",
+    "named": true,
+    "fields": {
+      "alias": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "mapping",
+            "named": true
+          }
+        ]
+      },
+      "canonical": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "mapping",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "mapping",
+    "named": true,
+    "fields": {
+      "email": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "email",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "person_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "source",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "entry_line",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "\u0000",
+    "named": false
+  },
+  {
+    "type": "comment",
+    "named": true
+  },
+  {
+    "type": "email",
+    "named": true
+  },
+  {
+    "type": "person_name",
+    "named": true
+  }
+]

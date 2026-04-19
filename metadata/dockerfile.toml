@@ -1,0 +1,20 @@
+language = "dockerfile"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """本地维护了适配 `kat` 宿主模型的 injections query，且当前可用 crate 仍停留在旧版 `tree-sitter` 依赖链上。"""
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate dockerfile"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]

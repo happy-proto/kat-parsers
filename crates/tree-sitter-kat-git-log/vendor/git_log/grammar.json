@@ -1,0 +1,661 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "git_log",
+  "rules": {
+    "source": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "commit_entry"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_blank_line"
+          }
+        ]
+      }
+    },
+    "commit_entry": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "commit_header"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "merge_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identity_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "date_line"
+              }
+            ]
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_blank_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "message_line"
+              }
+            ]
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "diff_block"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_blank_line"
+          }
+        }
+      ]
+    },
+    "commit_header": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "SYMBOL",
+            "name": "commit_keyword"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_space"
+        },
+        {
+          "type": "FIELD",
+          "name": "commit",
+          "content": {
+            "type": "SYMBOL",
+            "name": "commit_hash"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_space"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "refs",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "ref_list"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
+    "merge_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "key",
+          "content": {
+            "type": "SYMBOL",
+            "name": "merge_key"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_space"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "commit_hash"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_space"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
+    "identity_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "key",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identity_key"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_space"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "name",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "person_name"
+                  }
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_space"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "email",
+          "content": {
+            "type": "SYMBOL",
+            "name": "email"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
+    "date_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "key",
+          "content": {
+            "type": "SYMBOL",
+            "name": "date_key"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_space"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "metadata_value"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
+    "message_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "    "
+        },
+        {
+          "type": "FIELD",
+          "name": "message",
+          "content": {
+            "type": "SYMBOL",
+            "name": "message_text"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
+    "diff_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "diff_header_line"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "diff_metadata_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "diff_hunk"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_blank_line"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "diff_metadata_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "diff_index_line"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "diff_from_line"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "diff_to_line"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "diff_mode_line"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "diff_similarity_line"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "diff_rename_line"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "diff_binary_line"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
+    "diff_hunk": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "diff_hunk_header_line"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "diff_added_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "diff_removed_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "diff_context_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "diff_no_newline_line"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_blank_line"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "commit_keyword": {
+      "type": "STRING",
+      "value": "commit"
+    },
+    "merge_key": {
+      "type": "STRING",
+      "value": "Merge:"
+    },
+    "identity_key": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "Author:"
+        },
+        {
+          "type": "STRING",
+          "value": "Commit:"
+        }
+      ]
+    },
+    "date_key": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "Date:"
+        },
+        {
+          "type": "STRING",
+          "value": "AuthorDate:"
+        },
+        {
+          "type": "STRING",
+          "value": "CommitDate:"
+        }
+      ]
+    },
+    "commit_hash": {
+      "type": "PATTERN",
+      "value": "[0-9a-fA-F]{7,40}"
+    },
+    "ref_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "reference"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_space"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_space"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "reference"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "reference": {
+      "type": "PATTERN",
+      "value": "[^(),\\r\\n]+"
+    },
+    "person_name": {
+      "type": "PATTERN",
+      "value": "(?:[^\\s<#][^<\\n]*[^\\s<]|[^\\s<#])"
+    },
+    "email": {
+      "type": "PATTERN",
+      "value": "<[^>\\n]+>"
+    },
+    "metadata_value": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n]+"
+    },
+    "message_text": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n]*"
+    },
+    "diff_header_line": {
+      "type": "PATTERN",
+      "value": "diff --git [^\\r\\n]+"
+    },
+    "diff_index_line": {
+      "type": "PATTERN",
+      "value": "index [^\\r\\n]+"
+    },
+    "diff_from_line": {
+      "type": "PATTERN",
+      "value": "--- [^\\r\\n]+"
+    },
+    "diff_to_line": {
+      "type": "PATTERN",
+      "value": "\\+\\+\\+ [^\\r\\n]+"
+    },
+    "diff_mode_line": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "old mode [^\\r\\n]+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "new mode [^\\r\\n]+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "deleted file mode [^\\r\\n]+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "new file mode [^\\r\\n]+"
+        }
+      ]
+    },
+    "diff_similarity_line": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "similarity index [^\\r\\n]+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "dissimilarity index [^\\r\\n]+"
+        }
+      ]
+    },
+    "diff_rename_line": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "rename from [^\\r\\n]+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "rename to [^\\r\\n]+"
+        }
+      ]
+    },
+    "diff_binary_line": {
+      "type": "PATTERN",
+      "value": "Binary files [^\\r\\n]+"
+    },
+    "diff_hunk_header_line": {
+      "type": "PATTERN",
+      "value": "@@[^\\r\\n]*@@(?: [^\\r\\n]+)?"
+    },
+    "diff_added_line": {
+      "type": "PATTERN",
+      "value": "\\+[^\\r\\n]*"
+    },
+    "diff_removed_line": {
+      "type": "PATTERN",
+      "value": "-[^\\r\\n]*"
+    },
+    "diff_context_line": {
+      "type": "PATTERN",
+      "value": " [^\\r\\n]*"
+    },
+    "diff_no_newline_line": {
+      "type": "PATTERN",
+      "value": "\\\\ No newline at end of file"
+    },
+    "_space": {
+      "type": "PATTERN",
+      "value": "[ \\t]+"
+    },
+    "_blank_line": {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    },
+    "_eof": {
+      "type": "STRING",
+      "value": "\u0000"
+    },
+    "_line_ending": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_blank_line"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_eof"
+        }
+      ]
+    }
+  },
+  "extras": [],
+  "conflicts": [
+    [
+      "commit_entry"
+    ],
+    [
+      "diff_block"
+    ],
+    [
+      "diff_hunk"
+    ]
+  ],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}

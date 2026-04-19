@@ -1,0 +1,105 @@
+[
+  {
+    "type": "comment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "entry",
+    "named": true,
+    "fields": {
+      "file": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      },
+      "freq": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number_field",
+            "named": true
+          }
+        ]
+      },
+      "mntops": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      },
+      "passno": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number_field",
+            "named": true
+          }
+        ]
+      },
+      "spec": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      },
+      "vfstype": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "entry",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
+    "type": "field",
+    "named": true
+  },
+  {
+    "type": "number_field",
+    "named": true
+  }
+]

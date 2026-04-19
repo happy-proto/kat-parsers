@@ -1,0 +1,18 @@
+language = "proto"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """当前 runtime 依赖 vendored grammar 的节点结构和现有 query 约定。"""
+
+[copied]
+files = [
+  "grammar.js",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate proto"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+]

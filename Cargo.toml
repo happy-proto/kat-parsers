@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/tree-sitter-kat-parsers", "xtask"]
+members = ["crates/*", "xtask"]
 resolver = "2"
 
 [workspace.package]

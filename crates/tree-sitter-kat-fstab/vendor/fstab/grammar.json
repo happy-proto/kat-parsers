@@ -1,0 +1,160 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "fstab",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "entry"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "comment"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_blank_line"
+          }
+        ]
+      }
+    },
+    "entry": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "spec",
+          "content": {
+            "type": "SYMBOL",
+            "name": "field"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_gap"
+        },
+        {
+          "type": "FIELD",
+          "name": "file",
+          "content": {
+            "type": "SYMBOL",
+            "name": "field"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_gap"
+        },
+        {
+          "type": "FIELD",
+          "name": "vfstype",
+          "content": {
+            "type": "SYMBOL",
+            "name": "field"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_gap"
+        },
+        {
+          "type": "FIELD",
+          "name": "mntops",
+          "content": {
+            "type": "SYMBOL",
+            "name": "field"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_gap"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "freq",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "number_field"
+                  }
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_gap"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "passno",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "number_field"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "comment": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[^\\n]*"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "field": {
+      "type": "PATTERN",
+      "value": "[^\\s#]+"
+    },
+    "number_field": {
+      "type": "PATTERN",
+      "value": "[0-9]+"
+    },
+    "_gap": {
+      "type": "PATTERN",
+      "value": "[ \\t]+"
+    },
+    "_blank_line": {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    "_newline": {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    }
+  },
+  "extras": [],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}

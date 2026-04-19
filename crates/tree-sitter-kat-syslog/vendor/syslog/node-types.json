@@ -1,0 +1,209 @@
+[
+  {
+    "type": "comment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "entry",
+    "named": true,
+    "fields": {
+      "day": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "host": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "hostname",
+            "named": true
+          }
+        ]
+      },
+      "message": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "message",
+            "named": true
+          }
+        ]
+      },
+      "month": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "month",
+            "named": true
+          }
+        ]
+      },
+      "process": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "process",
+            "named": true
+          }
+        ]
+      },
+      "time": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "time",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "message",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "month",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "process",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "process_name",
+            "named": true
+          }
+        ]
+      },
+      "pid": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "entry",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
+    "type": ":",
+    "named": false
+  },
+  {
+    "type": "Apr",
+    "named": false
+  },
+  {
+    "type": "Aug",
+    "named": false
+  },
+  {
+    "type": "Dec",
+    "named": false
+  },
+  {
+    "type": "Feb",
+    "named": false
+  },
+  {
+    "type": "Jan",
+    "named": false
+  },
+  {
+    "type": "Jul",
+    "named": false
+  },
+  {
+    "type": "Jun",
+    "named": false
+  },
+  {
+    "type": "Mar",
+    "named": false
+  },
+  {
+    "type": "May",
+    "named": false
+  },
+  {
+    "type": "Nov",
+    "named": false
+  },
+  {
+    "type": "Oct",
+    "named": false
+  },
+  {
+    "type": "Sep",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
+    "type": "hostname",
+    "named": true
+  },
+  {
+    "type": "number",
+    "named": true
+  },
+  {
+    "type": "process_name",
+    "named": true
+  },
+  {
+    "type": "time",
+    "named": true
+  }
+]

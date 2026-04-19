@@ -1,0 +1,271 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "syslog",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "entry"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "comment"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_blank_line"
+          }
+        ]
+      }
+    },
+    "entry": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "month",
+          "content": {
+            "type": "SYMBOL",
+            "name": "month"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_gap"
+        },
+        {
+          "type": "FIELD",
+          "name": "day",
+          "content": {
+            "type": "SYMBOL",
+            "name": "number"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_gap"
+        },
+        {
+          "type": "FIELD",
+          "name": "time",
+          "content": {
+            "type": "SYMBOL",
+            "name": "time"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_gap"
+        },
+        {
+          "type": "FIELD",
+          "name": "host",
+          "content": {
+            "type": "SYMBOL",
+            "name": "hostname"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_gap"
+        },
+        {
+          "type": "FIELD",
+          "name": "process",
+          "content": {
+            "type": "SYMBOL",
+            "name": "process"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_gap"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "message",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "message"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "process": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "process_name"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "FIELD",
+                  "name": "pid",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "number"
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "comment": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[^\\n]*"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "month": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "Jan"
+        },
+        {
+          "type": "STRING",
+          "value": "Feb"
+        },
+        {
+          "type": "STRING",
+          "value": "Mar"
+        },
+        {
+          "type": "STRING",
+          "value": "Apr"
+        },
+        {
+          "type": "STRING",
+          "value": "May"
+        },
+        {
+          "type": "STRING",
+          "value": "Jun"
+        },
+        {
+          "type": "STRING",
+          "value": "Jul"
+        },
+        {
+          "type": "STRING",
+          "value": "Aug"
+        },
+        {
+          "type": "STRING",
+          "value": "Sep"
+        },
+        {
+          "type": "STRING",
+          "value": "Oct"
+        },
+        {
+          "type": "STRING",
+          "value": "Nov"
+        },
+        {
+          "type": "STRING",
+          "value": "Dec"
+        }
+      ]
+    },
+    "number": {
+      "type": "PATTERN",
+      "value": "[0-9]+"
+    },
+    "time": {
+      "type": "PATTERN",
+      "value": "[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    },
+    "hostname": {
+      "type": "PATTERN",
+      "value": "[A-Za-z0-9._-]+"
+    },
+    "process_name": {
+      "type": "PATTERN",
+      "value": "[A-Za-z0-9_.@/-]+"
+    },
+    "message": {
+      "type": "PATTERN",
+      "value": "[^\\n]*"
+    },
+    "_gap": {
+      "type": "PATTERN",
+      "value": "[ \\t]+"
+    },
+    "_blank_line": {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    "_newline": {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    }
+  },
+  "extras": [],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}

@@ -1,0 +1,299 @@
+[
+  {
+    "type": "comment_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "direct_reference",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "url",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "extras",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "extra",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "marker",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "marker_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "marker_expression",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "option",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "option_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "option",
+          "named": true
+        },
+        {
+          "type": "value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "requirement_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "direct_reference",
+          "named": true
+        },
+        {
+          "type": "editable_flag",
+          "named": true
+        },
+        {
+          "type": "extras",
+          "named": true
+        },
+        {
+          "type": "marker",
+          "named": true
+        },
+        {
+          "type": "package",
+          "named": true
+        },
+        {
+          "type": "version_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_line",
+          "named": true
+        },
+        {
+          "type": "option_line",
+          "named": true
+        },
+        {
+          "type": "requirement_line",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "version_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "version",
+          "named": true
+        },
+        {
+          "type": "version_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "version_operator",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "!=",
+    "named": false
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
+    "type": "--constraint",
+    "named": false
+  },
+  {
+    "type": "--extra-index-url",
+    "named": false
+  },
+  {
+    "type": "--find-links",
+    "named": false
+  },
+  {
+    "type": "--index-url",
+    "named": false
+  },
+  {
+    "type": "--pre",
+    "named": false
+  },
+  {
+    "type": "--requirement",
+    "named": false
+  },
+  {
+    "type": "--trusted-host",
+    "named": false
+  },
+  {
+    "type": "-c",
+    "named": false
+  },
+  {
+    "type": "-r",
+    "named": false
+  },
+  {
+    "type": ";",
+    "named": false
+  },
+  {
+    "type": "<",
+    "named": false
+  },
+  {
+    "type": "<=",
+    "named": false
+  },
+  {
+    "type": "==",
+    "named": false
+  },
+  {
+    "type": "===",
+    "named": false
+  },
+  {
+    "type": ">",
+    "named": false
+  },
+  {
+    "type": ">=",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
+    "type": "comment",
+    "named": true
+  },
+  {
+    "type": "editable_flag",
+    "named": true
+  },
+  {
+    "type": "extra",
+    "named": true
+  },
+  {
+    "type": "package",
+    "named": true
+  },
+  {
+    "type": "url",
+    "named": true
+  },
+  {
+    "type": "version",
+    "named": true
+  },
+  {
+    "type": "~=",
+    "named": false
+  }
+]

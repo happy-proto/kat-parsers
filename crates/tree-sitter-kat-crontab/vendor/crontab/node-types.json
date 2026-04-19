@@ -1,0 +1,282 @@
+[
+  {
+    "type": "command",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "comment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "cron_job",
+    "named": true,
+    "fields": {
+      "command": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "command",
+            "named": true
+          }
+        ]
+      },
+      "day_of_month": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      },
+      "day_of_week": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      },
+      "hour": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      },
+      "minute": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      },
+      "month": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "environment_variable",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "field",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "asterisk",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "range",
+          "named": true
+        },
+        {
+          "type": "step",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "range",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "cron_job",
+          "named": true
+        },
+        {
+          "type": "environment_variable",
+          "named": true
+        },
+        {
+          "type": "special_job",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "special_job",
+    "named": true,
+    "fields": {
+      "command": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "command",
+            "named": true
+          }
+        ]
+      },
+      "special": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "special_time",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "special_time",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "step",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "asterisk",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "range",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
+    "type": "-",
+    "named": false
+  },
+  {
+    "type": "/",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
+    "type": "@annually",
+    "named": false
+  },
+  {
+    "type": "@daily",
+    "named": false
+  },
+  {
+    "type": "@hourly",
+    "named": false
+  },
+  {
+    "type": "@midnight",
+    "named": false
+  },
+  {
+    "type": "@monthly",
+    "named": false
+  },
+  {
+    "type": "@reboot",
+    "named": false
+  },
+  {
+    "type": "@weekly",
+    "named": false
+  },
+  {
+    "type": "@yearly",
+    "named": false
+  },
+  {
+    "type": "asterisk",
+    "named": true
+  },
+  {
+    "type": "identifier",
+    "named": true
+  },
+  {
+    "type": "number",
+    "named": true
+  }
+]

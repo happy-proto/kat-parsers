@@ -1,0 +1,34 @@
+language = "asciidoc"
+crate = "tree-sitter-kat-parsers"
+reason_category = "当前继续 vendored，主要是为了沿用上游 grammar 源和仓库内 query 集成资产"
+
+[copied]
+files = [
+  "common/grammar.js",
+  "grammar.js",
+  "scanner.c",
+  "tree_sitter_asciidoc/chars.c",
+  "tree_sitter_asciidoc/chars.h",
+  "tree_sitter_asciidoc/marker_types.h",
+  "tree_sitter_asciidoc/markers.h",
+  "tree_sitter_asciidoc/scanner.c",
+  "tree_sitter_asciidoc/scanner.h",
+  "tree_sitter_asciidoc/tokens.h",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate asciidoc"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+  "tree_sitter_asciidoc/chars.c",
+  "tree_sitter_asciidoc/chars.h",
+  "tree_sitter_asciidoc/marker_types.h",
+  "tree_sitter_asciidoc/markers.h",
+  "tree_sitter_asciidoc/scanner.c",
+  "tree_sitter_asciidoc/scanner.h",
+  "tree_sitter_asciidoc/tokens.h",
+]

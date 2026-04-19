@@ -1,0 +1,24 @@
+language = "vue"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """本地 scanner 改了 HTML scanner 符号名，确保 Vue runtime 和独立 HTML runtime 可同时链接。"""
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.cc",
+  "tree_sitter_html/scanner.cc",
+  "tree_sitter_html/tag.h",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate vue"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.cc",
+  "tree_sitter_html/scanner.cc",
+  "tree_sitter_html/tag.h",
+]

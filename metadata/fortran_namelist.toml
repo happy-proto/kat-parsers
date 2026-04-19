@@ -1,0 +1,18 @@
+language = "fortran_namelist"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """当前直接在仓库内维护了一份面向 namelist 结构的轻量 grammar，和主 `fortran` runtime 分开演进更简单。"""
+
+[copied]
+files = [
+  "grammar.js",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate fortran_namelist"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+]
