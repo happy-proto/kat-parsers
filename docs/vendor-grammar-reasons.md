@@ -2,7 +2,7 @@
 
 本文档记录这次从 `kat` 外置到 `kat-parsers` 的 grammar 来源，以及它们此前为什么长期留在 `kat` 主仓库里作为 vendored grammar。
 
-现在这些 parser 源已经迁到 `kat-parsers`，由这个仓库统一生成并提交 `parser.c` 等产物；但对应的保留原因仍然值得保留，方便后续继续判断哪些 grammar 可以回切上游 crate、哪些仍需要本地包装层或特殊 support file。
+现在这些 parser 源已经迁到 `kat-parsers` 的独立语言 crate，由这个仓库统一生成并提交 `parser.c` 等产物；共享 `build.rs` 逻辑和通用 Tree-sitter 头文件则收口在 `kat-parser-common`。对应的保留原因仍然值得保留，方便后续继续判断哪些 grammar 可以回切上游 crate、哪些仍需要本地包装层或特殊 support file。
 
 ## 没有可用的 crates.io grammar crate
 

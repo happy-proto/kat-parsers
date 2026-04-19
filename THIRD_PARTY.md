@@ -1,6 +1,18 @@
 # Third-Party Sources
 
-This repository contains source-only grammar snapshots externalized from `kat`, plus the generated parser artifacts committed for direct git consumption by `kat`.
+This repository contains source-only grammar snapshots externalized from `kat`, plus the generated parser artifacts committed inside per-language crates for direct git consumption by `kat`. `crates/tree-sitter-kat-parsers/` is now only an aggregate re-export crate, while shared build support lives under `crates/kat-parser-common/`.
+
+## Shared Tree-sitter C headers
+
+- Shared support crate: `crates/kat-parser-common`
+- Shared headers:
+  - `crates/kat-parser-common/include/tree_sitter/parser.h`
+  - `crates/kat-parser-common/include/tree_sitter/alloc.h`
+  - `crates/kat-parser-common/include/tree_sitter/array.h`
+- Provenance:
+  - `parser.h` matches `tree-sitter 0.26.8`'s `src/parser.h`
+  - `alloc.h` and `array.h` match the vendored copies from `svkozak/tree-sitter-coffeescript` at `3bb4dbd68ca926c76b3baadb529da4de3726ea37`
+- Notes: these headers are shared build-time support assets extracted out of the old monolithic bundle so each language crate can compile independently without implicit cross-language include paths.
 
 ## CoffeeScript
 
@@ -15,14 +27,11 @@ This repository contains source-only grammar snapshots externalized from `kat`, 
   - `src/tree_sitter/parser.h`
   - `LICENSE.txt`
 - Local generated artifacts:
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/.parser-inputs`
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/parser.c`
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/scanner.c`
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/grammar.json`
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/node-types.json`
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/tree_sitter/alloc.h`
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/tree_sitter/array.h`
-  - `crates/tree-sitter-kat-parsers/vendor/coffeescript/tree_sitter/parser.h`
+  - `crates/tree-sitter-kat-coffeescript/vendor/coffeescript/.parser-inputs`
+  - `crates/tree-sitter-kat-coffeescript/vendor/coffeescript/parser.c`
+  - `crates/tree-sitter-kat-coffeescript/vendor/coffeescript/scanner.c`
+  - `crates/tree-sitter-kat-coffeescript/vendor/coffeescript/grammar.json`
+  - `crates/tree-sitter-kat-coffeescript/vendor/coffeescript/node-types.json`
 
 ## Crystal
 
@@ -38,15 +47,12 @@ This repository contains source-only grammar snapshots externalized from `kat`, 
   - `src/tree_sitter/parser.h`
   - `LICENSE`
 - Local generated artifacts:
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/.parser-inputs`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/parser.c`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/scanner.c`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/unicode.c`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/grammar.json`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/node-types.json`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/tree_sitter/alloc.h`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/tree_sitter/array.h`
-  - `crates/tree-sitter-kat-parsers/vendor/crystal/tree_sitter/parser.h`
+  - `crates/tree-sitter-kat-crystal/vendor/crystal/.parser-inputs`
+  - `crates/tree-sitter-kat-crystal/vendor/crystal/parser.c`
+  - `crates/tree-sitter-kat-crystal/vendor/crystal/scanner.c`
+  - `crates/tree-sitter-kat-crystal/vendor/crystal/unicode.c`
+  - `crates/tree-sitter-kat-crystal/vendor/crystal/grammar.json`
+  - `crates/tree-sitter-kat-crystal/vendor/crystal/node-types.json`
 
 ## actionscript
 
@@ -60,10 +66,10 @@ Source: [jcs090218/tree-sitter-actionscript](https://github.com/jcs090218/tree-s
   Notes: repository-local copy of the upstream ActionScript grammar and highlights query, kept as a dedicated runtime for `.as` source files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/actionscript/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/actionscript/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/actionscript/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/actionscript/parser.c`
+- `crates/tree-sitter-kat-actionscript/vendor/actionscript/.parser-inputs`
+- `crates/tree-sitter-kat-actionscript/vendor/actionscript/grammar.json`
+- `crates/tree-sitter-kat-actionscript/vendor/actionscript/node-types.json`
+- `crates/tree-sitter-kat-actionscript/vendor/actionscript/parser.c`
 
 ## apache
 
@@ -77,10 +83,10 @@ Source: kat local integration
   Notes: repository-local minimal grammar and highlights query for Apache-style configuration files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/apache/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/apache/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/apache/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/apache/parser.c`
+- `crates/tree-sitter-kat-apache/vendor/apache/.parser-inputs`
+- `crates/tree-sitter-kat-apache/vendor/apache/grammar.json`
+- `crates/tree-sitter-kat-apache/vendor/apache/node-types.json`
+- `crates/tree-sitter-kat-apache/vendor/apache/parser.c`
 
 ## applescript
 
@@ -95,11 +101,11 @@ Source: [waddie/tree-sitter-applescript](https://github.com/waddie/tree-sitter-a
   Notes: repository-local copy of the upstream AppleScript grammar, scanner and highlights query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/applescript/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/applescript/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/applescript/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/applescript/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/applescript/scanner.c`
+- `crates/tree-sitter-kat-applescript/vendor/applescript/.parser-inputs`
+- `crates/tree-sitter-kat-applescript/vendor/applescript/grammar.json`
+- `crates/tree-sitter-kat-applescript/vendor/applescript/node-types.json`
+- `crates/tree-sitter-kat-applescript/vendor/applescript/parser.c`
+- `crates/tree-sitter-kat-applescript/vendor/applescript/scanner.c`
 
 ## asciidoc
 
@@ -122,18 +128,18 @@ Source: [cpkio/tree-sitter-asciidoc](https://github.com/cpkio/tree-sitter-asciid
   Notes: repository-local copy of the upstream AsciiDoc grammar, scanner, required support files and highlights query. The vendored `tree_sitter_asciidoc/*` support sources are kept because the scanner depends on them at build time.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/scanner.c`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/tree_sitter_asciidoc/chars.c`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/tree_sitter_asciidoc/chars.h`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/tree_sitter_asciidoc/marker_types.h`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/tree_sitter_asciidoc/markers.h`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/tree_sitter_asciidoc/scanner.c`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/tree_sitter_asciidoc/scanner.h`
-- `crates/tree-sitter-kat-parsers/vendor/asciidoc/tree_sitter_asciidoc/tokens.h`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/.parser-inputs`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/grammar.json`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/node-types.json`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/parser.c`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/scanner.c`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/tree_sitter_asciidoc/chars.c`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/tree_sitter_asciidoc/chars.h`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/tree_sitter_asciidoc/marker_types.h`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/tree_sitter_asciidoc/markers.h`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/tree_sitter_asciidoc/scanner.c`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/tree_sitter_asciidoc/scanner.h`
+- `crates/tree-sitter-kat-asciidoc/vendor/asciidoc/tree_sitter_asciidoc/tokens.h`
 
 ## asm
 
@@ -147,10 +153,10 @@ Source: [RubixDev/tree-sitter-asm](https://github.com/RubixDev/tree-sitter-asm)
   Notes: repository-local copy of the upstream assembly grammar and highlights query, currently used for `.s` / `.S` source files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/asm/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/asm/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/asm/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/asm/parser.c`
+- `crates/tree-sitter-kat-asm/vendor/asm/.parser-inputs`
+- `crates/tree-sitter-kat-asm/vendor/asm/grammar.json`
+- `crates/tree-sitter-kat-asm/vendor/asm/node-types.json`
+- `crates/tree-sitter-kat-asm/vendor/asm/parser.c`
 
 ## authorized_keys
 
@@ -164,10 +170,10 @@ Source: kat local integration
   Notes: repository-local minimal grammar and highlights query for `authorized_keys` / `.pub` style SSH public key files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/authorized_keys/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/authorized_keys/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/authorized_keys/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/authorized_keys/parser.c`
+- `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/.parser-inputs`
+- `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/grammar.json`
+- `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/node-types.json`
+- `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/parser.c`
 
 ## awk
 
@@ -182,11 +188,11 @@ Source: [Beaglefoot/tree-sitter-awk](https://github.com/Beaglefoot/tree-sitter-a
   Notes: repository-local copy of the upstream AWK grammar, scanner and highlights query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/awk/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/awk/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/awk/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/awk/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/awk/scanner.c`
+- `crates/tree-sitter-kat-awk/vendor/awk/.parser-inputs`
+- `crates/tree-sitter-kat-awk/vendor/awk/grammar.json`
+- `crates/tree-sitter-kat-awk/vendor/awk/node-types.json`
+- `crates/tree-sitter-kat-awk/vendor/awk/parser.c`
+- `crates/tree-sitter-kat-awk/vendor/awk/scanner.c`
 
 ## bibtex
 
@@ -200,10 +206,10 @@ Source: [latex-lsp/tree-sitter-bibtex](https://github.com/latex-lsp/tree-sitter-
   Notes: repository-local copy of the upstream BibTeX grammar, highlights query and locals query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/bibtex/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/bibtex/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/bibtex/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/bibtex/parser.c`
+- `crates/tree-sitter-kat-bibtex/vendor/bibtex/.parser-inputs`
+- `crates/tree-sitter-kat-bibtex/vendor/bibtex/grammar.json`
+- `crates/tree-sitter-kat-bibtex/vendor/bibtex/node-types.json`
+- `crates/tree-sitter-kat-bibtex/vendor/bibtex/parser.c`
 
 ## cabal
 
@@ -218,11 +224,11 @@ Source: [thomasvergne/tree-sitter-cabal](https://github.com/thomasvergne/tree-si
   Notes: repository-local copy of the upstream Cabal grammar and scanner, plus a kat-local highlights query maintained against that AST.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/cabal/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/cabal/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/cabal/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/cabal/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/cabal/scanner.c`
+- `crates/tree-sitter-kat-cabal/vendor/cabal/.parser-inputs`
+- `crates/tree-sitter-kat-cabal/vendor/cabal/grammar.json`
+- `crates/tree-sitter-kat-cabal/vendor/cabal/node-types.json`
+- `crates/tree-sitter-kat-cabal/vendor/cabal/parser.c`
+- `crates/tree-sitter-kat-cabal/vendor/cabal/scanner.c`
 
 ## cmakecache
 
@@ -236,10 +242,10 @@ Source: repository-local
   Notes: repository-local minimal grammar and highlights query for `CMakeCache.txt`.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/cmakecache/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/cmakecache/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/cmakecache/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/cmakecache/parser.c`
+- `crates/tree-sitter-kat-cmakecache/vendor/cmakecache/.parser-inputs`
+- `crates/tree-sitter-kat-cmakecache/vendor/cmakecache/grammar.json`
+- `crates/tree-sitter-kat-cmakecache/vendor/cmakecache/node-types.json`
+- `crates/tree-sitter-kat-cmakecache/vendor/cmakecache/parser.c`
 
 ## command_help
 
@@ -253,10 +259,10 @@ Source: repository-local
   Notes: repository-local minimal grammar and highlights query for command help text files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/command_help/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/command_help/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/command_help/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/command_help/parser.c`
+- `crates/tree-sitter-kat-command-help/vendor/command_help/.parser-inputs`
+- `crates/tree-sitter-kat-command-help/vendor/command_help/grammar.json`
+- `crates/tree-sitter-kat-command-help/vendor/command_help/node-types.json`
+- `crates/tree-sitter-kat-command-help/vendor/command_help/parser.c`
 
 ## cpuinfo
 
@@ -270,10 +276,10 @@ Source: repository-local
   Notes: repository-local minimal grammar and highlights query for `cpuinfo`-style key/value files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/cpuinfo/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/cpuinfo/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/cpuinfo/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/cpuinfo/parser.c`
+- `crates/tree-sitter-kat-cpuinfo/vendor/cpuinfo/.parser-inputs`
+- `crates/tree-sitter-kat-cpuinfo/vendor/cpuinfo/grammar.json`
+- `crates/tree-sitter-kat-cpuinfo/vendor/cpuinfo/node-types.json`
+- `crates/tree-sitter-kat-cpuinfo/vendor/cpuinfo/parser.c`
 
 ## crontab
 
@@ -287,10 +293,10 @@ Source: [slqy123/tree-sitter-crontab](https://github.com/slqy123/tree-sitter-cro
   Notes: repository-local copy of the upstream crontab grammar and highlights query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/crontab/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/crontab/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/crontab/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/crontab/parser.c`
+- `crates/tree-sitter-kat-crontab/vendor/crontab/.parser-inputs`
+- `crates/tree-sitter-kat-crontab/vendor/crontab/grammar.json`
+- `crates/tree-sitter-kat-crontab/vendor/crontab/node-types.json`
+- `crates/tree-sitter-kat-crontab/vendor/crontab/parser.c`
 
 ## css
 
@@ -312,11 +318,11 @@ Source: [zed-industries/zed](https://github.com/zed-industries/zed)
   Notes: repository-local adapted copy of Zed's CSS highlights query. CSS parser sources are no longer vendored in this repository; the runtime parser now comes from the Rust crate [tree-sitter-css](https://crates.io/crates/tree-sitter-css).
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/css/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/css/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/css/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/css/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/css/scanner.c`
+- `crates/tree-sitter-kat-css/vendor/css/.parser-inputs`
+- `crates/tree-sitter-kat-css/vendor/css/grammar.json`
+- `crates/tree-sitter-kat-css/vendor/css/node-types.json`
+- `crates/tree-sitter-kat-css/vendor/css/parser.c`
+- `crates/tree-sitter-kat-css/vendor/css/scanner.c`
 
 ## csv
 
@@ -331,10 +337,10 @@ Source: [tree-sitter-grammars/tree-sitter-csv](https://github.com/tree-sitter-gr
   Notes: repository-local extracted CSV subset built from the upstream separated-values grammar support file, with a kat-local wrapper kept as a dedicated runtime for comma-separated data files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/csv/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/csv/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/csv/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/csv/parser.c`
+- `crates/tree-sitter-kat-csv/vendor/csv/.parser-inputs`
+- `crates/tree-sitter-kat-csv/vendor/csv/grammar.json`
+- `crates/tree-sitter-kat-csv/vendor/csv/node-types.json`
+- `crates/tree-sitter-kat-csv/vendor/csv/parser.c`
 
 ## debsources
 
@@ -348,10 +354,10 @@ Source: repository-local
   Notes: repository-local minimal grammar and highlights query for Debian `sources.list` files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/debsources/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/debsources/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/debsources/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/debsources/parser.c`
+- `crates/tree-sitter-kat-debsources/vendor/debsources/.parser-inputs`
+- `crates/tree-sitter-kat-debsources/vendor/debsources/grammar.json`
+- `crates/tree-sitter-kat-debsources/vendor/debsources/node-types.json`
+- `crates/tree-sitter-kat-debsources/vendor/debsources/parser.c`
 
 ## dockerfile
 
@@ -375,11 +381,11 @@ Sources:
   Notes: repository-local injection query that routes Dockerfile shell-form instruction bodies into kat's shared Bash runtime. The exact upstream commits used as the starting point still need a later audit.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/dockerfile/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/dockerfile/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/dockerfile/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/dockerfile/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/dockerfile/scanner.c`
+- `crates/tree-sitter-kat-dockerfile/vendor/dockerfile/.parser-inputs`
+- `crates/tree-sitter-kat-dockerfile/vendor/dockerfile/grammar.json`
+- `crates/tree-sitter-kat-dockerfile/vendor/dockerfile/node-types.json`
+- `crates/tree-sitter-kat-dockerfile/vendor/dockerfile/parser.c`
+- `crates/tree-sitter-kat-dockerfile/vendor/dockerfile/scanner.c`
 
 ## dot
 
@@ -393,10 +399,10 @@ Source: [rydesun/tree-sitter-dot](https://github.com/rydesun/tree-sitter-dot)
   Notes: repository-local copy of the upstream Graphviz DOT grammar plus highlights / injections queries.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/dot/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/dot/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/dot/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/dot/parser.c`
+- `crates/tree-sitter-kat-dot/vendor/dot/.parser-inputs`
+- `crates/tree-sitter-kat-dot/vendor/dot/grammar.json`
+- `crates/tree-sitter-kat-dot/vendor/dot/node-types.json`
+- `crates/tree-sitter-kat-dot/vendor/dot/parser.c`
 
 ## dotenv
 
@@ -411,11 +417,11 @@ Source: [pnx/tree-sitter-dotenv](https://github.com/pnx/tree-sitter-dotenv)
   Notes: repository-local copy of the upstream DotENV grammar, highlights query and scanner.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/dotenv/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/dotenv/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/dotenv/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/dotenv/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/dotenv/scanner.c`
+- `crates/tree-sitter-kat-dotenv/vendor/dotenv/.parser-inputs`
+- `crates/tree-sitter-kat-dotenv/vendor/dotenv/grammar.json`
+- `crates/tree-sitter-kat-dotenv/vendor/dotenv/node-types.json`
+- `crates/tree-sitter-kat-dotenv/vendor/dotenv/parser.c`
+- `crates/tree-sitter-kat-dotenv/vendor/dotenv/scanner.c`
 
 ## email
 
@@ -429,10 +435,10 @@ Source: [stevenxxiu/tree-sitter-mail](https://github.com/stevenxxiu/tree-sitter-
   Notes: repository-local copy of the upstream mail grammar and highlights query, adapted to the repository build pipeline.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/email/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/email/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/email/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/email/parser.c`
+- `crates/tree-sitter-kat-email/vendor/email/.parser-inputs`
+- `crates/tree-sitter-kat-email/vendor/email/grammar.json`
+- `crates/tree-sitter-kat-email/vendor/email/node-types.json`
+- `crates/tree-sitter-kat-email/vendor/email/parser.c`
 
 ## fish
 
@@ -447,11 +453,11 @@ Source: [ram02z/tree-sitter-fish](https://github.com/ram02z/tree-sitter-fish)
   Notes: repository-local copy of selected grammar sources only; generated parser artifacts are not stored.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/fish/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/fish/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/fish/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/fish/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/fish/scanner.c`
+- `crates/tree-sitter-kat-fish/vendor/fish/.parser-inputs`
+- `crates/tree-sitter-kat-fish/vendor/fish/grammar.json`
+- `crates/tree-sitter-kat-fish/vendor/fish/node-types.json`
+- `crates/tree-sitter-kat-fish/vendor/fish/parser.c`
+- `crates/tree-sitter-kat-fish/vendor/fish/scanner.c`
 
 ## fortran_namelist
 
@@ -465,10 +471,10 @@ Source: repository-local
   Notes: repository-local minimal grammar and highlights query for Fortran namelist files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/fortran_namelist/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/fortran_namelist/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/fortran_namelist/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/fortran_namelist/parser.c`
+- `crates/tree-sitter-kat-fortran-namelist/vendor/fortran_namelist/.parser-inputs`
+- `crates/tree-sitter-kat-fortran-namelist/vendor/fortran_namelist/grammar.json`
+- `crates/tree-sitter-kat-fortran-namelist/vendor/fortran_namelist/node-types.json`
+- `crates/tree-sitter-kat-fortran-namelist/vendor/fortran_namelist/parser.c`
 
 ## fstab
 
@@ -482,10 +488,10 @@ Source: repository-local
   Notes: repository-local minimal grammar and highlights query for `fstab` / `crypttab` / `mtab` style files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/fstab/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/fstab/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/fstab/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/fstab/parser.c`
+- `crates/tree-sitter-kat-fstab/vendor/fstab/.parser-inputs`
+- `crates/tree-sitter-kat-fstab/vendor/fstab/grammar.json`
+- `crates/tree-sitter-kat-fstab/vendor/fstab/node-types.json`
+- `crates/tree-sitter-kat-fstab/vendor/fstab/parser.c`
 
 ## git_commit
 
@@ -499,10 +505,10 @@ Source: [the-mikedavis/tree-sitter-git-commit](https://github.com/the-mikedavis/
   Notes: repository-local copy of the upstream git commit grammar, with highlights query adapted to kat's capture model.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/git_commit/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/git_commit/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_commit/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_commit/parser.c`
+- `crates/tree-sitter-kat-git-commit/vendor/git_commit/.parser-inputs`
+- `crates/tree-sitter-kat-git-commit/vendor/git_commit/grammar.json`
+- `crates/tree-sitter-kat-git-commit/vendor/git_commit/node-types.json`
+- `crates/tree-sitter-kat-git-commit/vendor/git_commit/parser.c`
 
 ## git_config
 
@@ -516,10 +522,10 @@ Source: [the-mikedavis/tree-sitter-git-config](https://github.com/the-mikedavis/
   Notes: repository-local copy of the upstream Git config grammar and highlights query, kept as a dedicated runtime so `.gitconfig`, `.gitmodules`, `.git/config` and related paths can share one parser while preserving room for future Git-specific profile overlays.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/git_config/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/git_config/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_config/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_config/parser.c`
+- `crates/tree-sitter-kat-git-config/vendor/git_config/.parser-inputs`
+- `crates/tree-sitter-kat-git-config/vendor/git_config/grammar.json`
+- `crates/tree-sitter-kat-git-config/vendor/git_config/node-types.json`
+- `crates/tree-sitter-kat-git-config/vendor/git_config/parser.c`
 
 ## git_link
 
@@ -530,10 +536,10 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/git_link/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/git_link/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_link/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_link/parser.c`
+- `crates/tree-sitter-kat-git-link/vendor/git_link/.parser-inputs`
+- `crates/tree-sitter-kat-git-link/vendor/git_link/grammar.json`
+- `crates/tree-sitter-kat-git-link/vendor/git_link/node-types.json`
+- `crates/tree-sitter-kat-git-link/vendor/git_link/parser.c`
 
 ## git_log
 
@@ -544,10 +550,10 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/git_log/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/git_log/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_log/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_log/parser.c`
+- `crates/tree-sitter-kat-git-log/vendor/git_log/.parser-inputs`
+- `crates/tree-sitter-kat-git-log/vendor/git_log/grammar.json`
+- `crates/tree-sitter-kat-git-log/vendor/git_log/node-types.json`
+- `crates/tree-sitter-kat-git-log/vendor/git_log/parser.c`
 
 ## git_mailmap
 
@@ -558,10 +564,10 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/git_mailmap/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/git_mailmap/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_mailmap/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_mailmap/parser.c`
+- `crates/tree-sitter-kat-git-mailmap/vendor/git_mailmap/.parser-inputs`
+- `crates/tree-sitter-kat-git-mailmap/vendor/git_mailmap/grammar.json`
+- `crates/tree-sitter-kat-git-mailmap/vendor/git_mailmap/node-types.json`
+- `crates/tree-sitter-kat-git-mailmap/vendor/git_mailmap/parser.c`
 
 ## git_rebase
 
@@ -575,10 +581,10 @@ Source: kat local integration
   Notes: repository-local minimal grammar and highlights query for `git-rebase-todo`.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/git_rebase/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/git_rebase/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_rebase/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/git_rebase/parser.c`
+- `crates/tree-sitter-kat-git-rebase/vendor/git_rebase/.parser-inputs`
+- `crates/tree-sitter-kat-git-rebase/vendor/git_rebase/grammar.json`
+- `crates/tree-sitter-kat-git-rebase/vendor/git_rebase/node-types.json`
+- `crates/tree-sitter-kat-git-rebase/vendor/git_rebase/parser.c`
 
 ## gitattributes
 
@@ -592,10 +598,10 @@ Source: [tree-sitter-grammars/tree-sitter-gitattributes](https://github.com/tree
   Notes: repository-local copy of the upstream gitattributes grammar and highlights query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/gitattributes/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/gitattributes/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/gitattributes/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/gitattributes/parser.c`
+- `crates/tree-sitter-kat-gitattributes/vendor/gitattributes/.parser-inputs`
+- `crates/tree-sitter-kat-gitattributes/vendor/gitattributes/grammar.json`
+- `crates/tree-sitter-kat-gitattributes/vendor/gitattributes/node-types.json`
+- `crates/tree-sitter-kat-gitattributes/vendor/gitattributes/parser.c`
 
 ## gomod
 
@@ -616,10 +622,10 @@ Source: [camdencheek/tree-sitter-go-mod](https://github.com/camdencheek/tree-sit
   Notes: repository-local adapted highlights query for `go.mod`, further refined for kat's terminal rendering.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/gomod/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/gomod/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/gomod/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/gomod/parser.c`
+- `crates/tree-sitter-kat-gomod/vendor/gomod/.parser-inputs`
+- `crates/tree-sitter-kat-gomod/vendor/gomod/grammar.json`
+- `crates/tree-sitter-kat-gomod/vendor/gomod/node-types.json`
+- `crates/tree-sitter-kat-gomod/vendor/gomod/parser.c`
 
 ## gosum
 
@@ -640,10 +646,10 @@ Source: [amaanq/tree-sitter-go-sum](https://github.com/amaanq/tree-sitter-go-sum
   Notes: repository-local adapted highlights query for `go.sum`, further refined for kat's terminal rendering.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/gosum/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/gosum/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/gosum/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/gosum/parser.c`
+- `crates/tree-sitter-kat-gosum/vendor/gosum/.parser-inputs`
+- `crates/tree-sitter-kat-gosum/vendor/gosum/grammar.json`
+- `crates/tree-sitter-kat-gosum/vendor/gosum/node-types.json`
+- `crates/tree-sitter-kat-gosum/vendor/gosum/parser.c`
 
 ## gowork
 
@@ -659,10 +665,10 @@ Sources:
   Notes: repository-local adapted copy of the upstream grammar/query, kept as a dedicated runtime for `go.work` instead of mixing workspace files into the Go source runtime. The exact upstream commit for the grammar/query starting point still needs a later audit.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/gowork/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/gowork/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/gowork/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/gowork/parser.c`
+- `crates/tree-sitter-kat-gowork/vendor/gowork/.parser-inputs`
+- `crates/tree-sitter-kat-gowork/vendor/gowork/grammar.json`
+- `crates/tree-sitter-kat-gowork/vendor/gowork/node-types.json`
+- `crates/tree-sitter-kat-gowork/vendor/gowork/parser.c`
 
 ## graphql
 
@@ -683,10 +689,10 @@ Source: repository-local query maintained against the node structure of [joowani
   Notes: highlights query maintained in-repo and tuned for kat's renderer/runtime model.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/graphql/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/graphql/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/graphql/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/graphql/parser.c`
+- `crates/tree-sitter-kat-graphql/vendor/graphql/.parser-inputs`
+- `crates/tree-sitter-kat-graphql/vendor/graphql/grammar.json`
+- `crates/tree-sitter-kat-graphql/vendor/graphql/node-types.json`
+- `crates/tree-sitter-kat-graphql/vendor/graphql/parser.c`
 
 ## hcl
 
@@ -709,11 +715,11 @@ Sources:
   Notes: repository-local adapted HCL highlights query, starting from Helix's query and tuned for kat's capture/theme model.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/hcl/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/hcl/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/hcl/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/hcl/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/hcl/scanner.c`
+- `crates/tree-sitter-kat-hcl/vendor/hcl/.parser-inputs`
+- `crates/tree-sitter-kat-hcl/vendor/hcl/grammar.json`
+- `crates/tree-sitter-kat-hcl/vendor/hcl/node-types.json`
+- `crates/tree-sitter-kat-hcl/vendor/hcl/parser.c`
+- `crates/tree-sitter-kat-hcl/vendor/hcl/scanner.c`
 
 ## ignore
 
@@ -727,10 +733,10 @@ Source: [shunsambongi/tree-sitter-gitignore](https://github.com/shunsambongi/tre
   Notes: repository-local adapted copy of the upstream ignore-pattern grammar, renamed to `ignore` so `.gitignore`, `.dockerignore`, `.npmignore` and similar files can share one runtime.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/ignore/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/ignore/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/ignore/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/ignore/parser.c`
+- `crates/tree-sitter-kat-ignore/vendor/ignore/.parser-inputs`
+- `crates/tree-sitter-kat-ignore/vendor/ignore/grammar.json`
+- `crates/tree-sitter-kat-ignore/vendor/ignore/node-types.json`
+- `crates/tree-sitter-kat-ignore/vendor/ignore/parser.c`
 
 ## jinja
 
@@ -749,11 +755,11 @@ Source: [cathaysia/tree-sitter-jinja](https://github.com/cathaysia/tree-sitter-j
   Notes: repository-local adapted copy of the upstream Jinja grammar and support files. `grammars/jinja/grammar.js` is a kat-local wrapper that points at the vendored base grammar file layout. Template host dispatch is now handled by kat's document-profile + host-resolver layer instead of a dedicated Jinja injections query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/jinja/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/jinja/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/jinja/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/jinja/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/jinja/scanner.c`
+- `crates/tree-sitter-kat-jinja/vendor/jinja/.parser-inputs`
+- `crates/tree-sitter-kat-jinja/vendor/jinja/grammar.json`
+- `crates/tree-sitter-kat-jinja/vendor/jinja/node-types.json`
+- `crates/tree-sitter-kat-jinja/vendor/jinja/parser.c`
+- `crates/tree-sitter-kat-jinja/vendor/jinja/scanner.c`
 
 ## jq
 
@@ -774,10 +780,10 @@ Source: kat local integration
   Notes: repository-local jq highlights query written for kat against the vendored BSD jq grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/jq/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/jq/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/jq/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/jq/parser.c`
+- `crates/tree-sitter-kat-jq/vendor/jq/.parser-inputs`
+- `crates/tree-sitter-kat-jq/vendor/jq/grammar.json`
+- `crates/tree-sitter-kat-jq/vendor/jq/node-types.json`
+- `crates/tree-sitter-kat-jq/vendor/jq/parser.c`
 
 ## just
 
@@ -811,11 +817,11 @@ Source: [IndianBoy42/tree-sitter-just](https://github.com/IndianBoy42/tree-sitte
   Notes: repository-local adapted injections query. The vendored file is not currently pinned to a verified upstream commit.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/just/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/just/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/just/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/just/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/just/scanner.c`
+- `crates/tree-sitter-kat-just/vendor/just/.parser-inputs`
+- `crates/tree-sitter-kat-just/vendor/just/grammar.json`
+- `crates/tree-sitter-kat-just/vendor/just/node-types.json`
+- `crates/tree-sitter-kat-just/vendor/just/parser.c`
+- `crates/tree-sitter-kat-just/vendor/just/scanner.c`
 
 ## latex
 
@@ -837,11 +843,11 @@ Source: [nvim-treesitter/nvim-treesitter](https://github.com/nvim-treesitter/nvi
   Notes: repository-local adapted LaTeX query assets based on nvim-treesitter, retuned for kat's capture model and nested-runtime integration. The injections query keeps high-value `minted` / `pycode` / `luacode` style environments routed into kat's shared runtimes.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/latex/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/latex/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/latex/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/latex/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/latex/scanner.c`
+- `crates/tree-sitter-kat-latex/vendor/latex/.parser-inputs`
+- `crates/tree-sitter-kat-latex/vendor/latex/grammar.json`
+- `crates/tree-sitter-kat-latex/vendor/latex/node-types.json`
+- `crates/tree-sitter-kat-latex/vendor/latex/parser.c`
+- `crates/tree-sitter-kat-latex/vendor/latex/scanner.c`
 
 ## less
 
@@ -856,11 +862,11 @@ Source: [amaanq/tree-sitter-less](https://github.com/amaanq/tree-sitter-less)
   Notes: repository-local copy of the upstream Less grammar, scanner and highlights query. `grammars/less/grammar.js` is locally adjusted to reuse kat's vendored CSS grammar instead of depending on a second external CSS package.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/less/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/less/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/less/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/less/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/less/scanner.c`
+- `crates/tree-sitter-kat-less/vendor/less/.parser-inputs`
+- `crates/tree-sitter-kat-less/vendor/less/grammar.json`
+- `crates/tree-sitter-kat-less/vendor/less/node-types.json`
+- `crates/tree-sitter-kat-less/vendor/less/parser.c`
+- `crates/tree-sitter-kat-less/vendor/less/scanner.c`
 
 ## markdown
 
@@ -877,11 +883,11 @@ Source: [tree-sitter-grammars/tree-sitter-markdown](https://github.com/tree-sitt
   Notes: repository-local copy of selected grammar sources only; generated parser artifacts are not stored. The exact upstream commit for the initial import still needs a later audit. `grammars/markdown/common.js` and `grammars/markdown/html_entities.json` are copied from the upstream shared support files because the block and inline Markdown grammars depend on them at build time.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/markdown/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/markdown/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/markdown/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/markdown/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/markdown/scanner.c`
+- `crates/tree-sitter-kat-markdown/vendor/markdown/.parser-inputs`
+- `crates/tree-sitter-kat-markdown/vendor/markdown/grammar.json`
+- `crates/tree-sitter-kat-markdown/vendor/markdown/node-types.json`
+- `crates/tree-sitter-kat-markdown/vendor/markdown/parser.c`
+- `crates/tree-sitter-kat-markdown/vendor/markdown/scanner.c`
 
 ## markdown_inline
 
@@ -893,11 +899,11 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/markdown_inline/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/markdown_inline/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/markdown_inline/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/markdown_inline/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/markdown_inline/scanner.c`
+- `crates/tree-sitter-kat-markdown-inline/vendor/markdown_inline/.parser-inputs`
+- `crates/tree-sitter-kat-markdown-inline/vendor/markdown_inline/grammar.json`
+- `crates/tree-sitter-kat-markdown-inline/vendor/markdown_inline/node-types.json`
+- `crates/tree-sitter-kat-markdown-inline/vendor/markdown_inline/parser.c`
+- `crates/tree-sitter-kat-markdown-inline/vendor/markdown_inline/scanner.c`
 
 ## nasm
 
@@ -911,10 +917,10 @@ Source: [naclsn/tree-sitter-nasm](https://github.com/naclsn/tree-sitter-nasm)
   Notes: repository-local copy of the upstream NASM grammar and highlights query, kept as a dedicated runtime for x86 / x86_64-flavored `.asm` / `.nasm` / `.yasm` / `.inc` / `.mac` sources.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/nasm/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/nasm/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/nasm/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/nasm/parser.c`
+- `crates/tree-sitter-kat-nasm/vendor/nasm/.parser-inputs`
+- `crates/tree-sitter-kat-nasm/vendor/nasm/grammar.json`
+- `crates/tree-sitter-kat-nasm/vendor/nasm/node-types.json`
+- `crates/tree-sitter-kat-nasm/vendor/nasm/parser.c`
 
 ## ninja
 
@@ -928,10 +934,10 @@ Source: [alemuller/tree-sitter-ninja](https://github.com/alemuller/tree-sitter-n
   Notes: repository-local copy of the upstream Ninja grammar and highlights query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/ninja/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/ninja/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/ninja/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/ninja/parser.c`
+- `crates/tree-sitter-kat-ninja/vendor/ninja/.parser-inputs`
+- `crates/tree-sitter-kat-ninja/vendor/ninja/grammar.json`
+- `crates/tree-sitter-kat-ninja/vendor/ninja/node-types.json`
+- `crates/tree-sitter-kat-ninja/vendor/ninja/parser.c`
 
 ## proto
 
@@ -952,10 +958,10 @@ Source: [mitchellh/tree-sitter-proto](https://github.com/mitchellh/tree-sitter-p
   Notes: repository-local adapted highlights query for kat's terminal renderer and capture model.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/proto/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/proto/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/proto/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/proto/parser.c`
+- `crates/tree-sitter-kat-proto/vendor/proto/.parser-inputs`
+- `crates/tree-sitter-kat-proto/vendor/proto/grammar.json`
+- `crates/tree-sitter-kat-proto/vendor/proto/node-types.json`
+- `crates/tree-sitter-kat-proto/vendor/proto/parser.c`
 
 ## query
 
@@ -976,10 +982,10 @@ Source: local integration query built around [nvim-treesitter/tree-sitter-query]
   Notes: repository-local highlights query for Tree-sitter query files, maintained in-repo alongside the vendored grammar source.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/query/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/query/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/query/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/query/parser.c`
+- `crates/tree-sitter-kat-query/vendor/query/.parser-inputs`
+- `crates/tree-sitter-kat-query/vendor/query/grammar.json`
+- `crates/tree-sitter-kat-query/vendor/query/node-types.json`
+- `crates/tree-sitter-kat-query/vendor/query/parser.c`
 
 ## requirements
 
@@ -993,10 +999,10 @@ Source: kat local integration
   Notes: repository-local minimal grammar and highlights query for `requirements.txt` / `requirements.in` style files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/requirements/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/requirements/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/requirements/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/requirements/parser.c`
+- `crates/tree-sitter-kat-requirements/vendor/requirements/.parser-inputs`
+- `crates/tree-sitter-kat-requirements/vendor/requirements/grammar.json`
+- `crates/tree-sitter-kat-requirements/vendor/requirements/node-types.json`
+- `crates/tree-sitter-kat-requirements/vendor/requirements/parser.c`
 
 ## sass
 
@@ -1011,11 +1017,11 @@ Source: [bajrangCoder/tree-sitter-sass](https://github.com/bajrangCoder/tree-sit
   Notes: repository-local copy of the upstream Sass grammar, scanner and highlights query.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/sass/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/sass/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/sass/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/sass/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/sass/scanner.c`
+- `crates/tree-sitter-kat-sass/vendor/sass/.parser-inputs`
+- `crates/tree-sitter-kat-sass/vendor/sass/grammar.json`
+- `crates/tree-sitter-kat-sass/vendor/sass/node-types.json`
+- `crates/tree-sitter-kat-sass/vendor/sass/parser.c`
+- `crates/tree-sitter-kat-sass/vendor/sass/scanner.c`
 
 ## scss
 
@@ -1030,11 +1036,11 @@ Source: [tree-sitter-grammars/tree-sitter-scss](https://github.com/tree-sitter-g
   Notes: repository-local copy of the upstream SCSS grammar, scanner and highlights query. `grammars/scss/grammar.js` is locally adjusted to reuse kat's vendored CSS grammar instead of depending on a second external CSS package.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/scss/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/scss/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/scss/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/scss/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/scss/scanner.c`
+- `crates/tree-sitter-kat-scss/vendor/scss/.parser-inputs`
+- `crates/tree-sitter-kat-scss/vendor/scss/grammar.json`
+- `crates/tree-sitter-kat-scss/vendor/scss/node-types.json`
+- `crates/tree-sitter-kat-scss/vendor/scss/parser.c`
+- `crates/tree-sitter-kat-scss/vendor/scss/scanner.c`
 
 ## sml
 
@@ -1049,11 +1055,11 @@ Source: [matthew-fluet/tree-sitter-sml](https://github.com/matthew-fluet/tree-si
   Notes: repository-local copy of the upstream SML grammar, scanner and highlights query, kept as a dedicated runtime for `.sml` / `.cm` / `.sig`.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/sml/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/sml/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/sml/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/sml/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/sml/scanner.c`
+- `crates/tree-sitter-kat-sml/vendor/sml/.parser-inputs`
+- `crates/tree-sitter-kat-sml/vendor/sml/grammar.json`
+- `crates/tree-sitter-kat-sml/vendor/sml/node-types.json`
+- `crates/tree-sitter-kat-sml/vendor/sml/parser.c`
+- `crates/tree-sitter-kat-sml/vendor/sml/scanner.c`
 
 ## ssh_config
 
@@ -1067,10 +1073,10 @@ Source: [tree-sitter-grammars/tree-sitter-ssh-config](https://github.com/tree-si
   Notes: repository-local copy of the upstream OpenSSH config grammar and query assets.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/ssh_config/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/ssh_config/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/ssh_config/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/ssh_config/parser.c`
+- `crates/tree-sitter-kat-ssh-config/vendor/ssh_config/.parser-inputs`
+- `crates/tree-sitter-kat-ssh-config/vendor/ssh_config/grammar.json`
+- `crates/tree-sitter-kat-ssh-config/vendor/ssh_config/node-types.json`
+- `crates/tree-sitter-kat-ssh-config/vendor/ssh_config/parser.c`
 
 ## strace
 
@@ -1084,10 +1090,10 @@ Source: [sigmaSd/tree-sitter-strace](https://github.com/sigmaSd/tree-sitter-stra
   Notes: repository-local copy of the upstream Strace grammar and highlights query, kept as a dedicated runtime for `strace` output files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/strace/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/strace/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/strace/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/strace/parser.c`
+- `crates/tree-sitter-kat-strace/vendor/strace/.parser-inputs`
+- `crates/tree-sitter-kat-strace/vendor/strace/grammar.json`
+- `crates/tree-sitter-kat-strace/vendor/strace/node-types.json`
+- `crates/tree-sitter-kat-strace/vendor/strace/parser.c`
 
 ## stylus
 
@@ -1098,10 +1104,10 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/stylus/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/stylus/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/stylus/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/stylus/parser.c`
+- `crates/tree-sitter-kat-stylus/vendor/stylus/.parser-inputs`
+- `crates/tree-sitter-kat-stylus/vendor/stylus/grammar.json`
+- `crates/tree-sitter-kat-stylus/vendor/stylus/node-types.json`
+- `crates/tree-sitter-kat-stylus/vendor/stylus/parser.c`
 
 ## svelte
 
@@ -1121,16 +1127,16 @@ Source: [Himujjal/tree-sitter-svelte](https://github.com/Himujjal/tree-sitter-sv
   Notes: repository-local copy of the upstream Svelte grammar, scanner and required support headers, plus kat-local highlights / injections queries.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/svelte/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/allocator.h`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/ekstring.h`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/scanner.c`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/tag.h`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/uthash.h`
-- `crates/tree-sitter-kat-parsers/vendor/svelte/vc_vector.h`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/.parser-inputs`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/allocator.h`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/ekstring.h`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/grammar.json`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/node-types.json`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/parser.c`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/scanner.c`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/tag.h`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/uthash.h`
+- `crates/tree-sitter-kat-svelte/vendor/svelte/vc_vector.h`
 
 ## syslog
 
@@ -1141,10 +1147,10 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/syslog/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/syslog/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/syslog/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/syslog/parser.c`
+- `crates/tree-sitter-kat-syslog/vendor/syslog/.parser-inputs`
+- `crates/tree-sitter-kat-syslog/vendor/syslog/grammar.json`
+- `crates/tree-sitter-kat-syslog/vendor/syslog/node-types.json`
+- `crates/tree-sitter-kat-syslog/vendor/syslog/parser.c`
 
 ## tcl
 
@@ -1159,11 +1165,11 @@ Source: [tree-sitter-grammars/tree-sitter-tcl](https://github.com/tree-sitter-gr
   Notes: repository-local copy of the upstream Tcl grammar, scanner and highlights query, kept as a dedicated runtime for `.tcl` / `.tk` / `.tm` files and Tcl shebang scripts.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/tcl/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/tcl/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/tcl/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/tcl/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/tcl/scanner.c`
+- `crates/tree-sitter-kat-tcl/vendor/tcl/.parser-inputs`
+- `crates/tree-sitter-kat-tcl/vendor/tcl/grammar.json`
+- `crates/tree-sitter-kat-tcl/vendor/tcl/node-types.json`
+- `crates/tree-sitter-kat-tcl/vendor/tcl/parser.c`
+- `crates/tree-sitter-kat-tcl/vendor/tcl/scanner.c`
 
 ## textile
 
@@ -1177,10 +1183,10 @@ Source: kat local integration
   Notes: repository-local minimal grammar and highlights query for Textile markup. An upstream Tree-sitter repository was evaluated, but it is not vendored here because its licensing metadata is currently unclear.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/textile/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/textile/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/textile/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/textile/parser.c`
+- `crates/tree-sitter-kat-textile/vendor/textile/.parser-inputs`
+- `crates/tree-sitter-kat-textile/vendor/textile/grammar.json`
+- `crates/tree-sitter-kat-textile/vendor/textile/node-types.json`
+- `crates/tree-sitter-kat-textile/vendor/textile/parser.c`
 
 ## textproto
 
@@ -1201,10 +1207,10 @@ Source: [PorterAtGoogle/tree-sitter-textproto](https://github.com/PorterAtGoogle
   Notes: repository-local adapted highlights query for kat's capture model, including local semantic adjustments for field names and scalar literals.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/textproto/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/textproto/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/textproto/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/textproto/parser.c`
+- `crates/tree-sitter-kat-textproto/vendor/textproto/.parser-inputs`
+- `crates/tree-sitter-kat-textproto/vendor/textproto/grammar.json`
+- `crates/tree-sitter-kat-textproto/vendor/textproto/node-types.json`
+- `crates/tree-sitter-kat-textproto/vendor/textproto/parser.c`
 
 ## todotxt
 
@@ -1218,10 +1224,10 @@ Source: [arnarg/tree-sitter-todotxt](https://github.com/arnarg/tree-sitter-todot
   Notes: repository-local copy of the upstream todo.txt grammar and highlights query, kept as a dedicated runtime for `todo.txt` / `done.txt` style task lists.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/todotxt/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/todotxt/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/todotxt/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/todotxt/parser.c`
+- `crates/tree-sitter-kat-todotxt/vendor/todotxt/.parser-inputs`
+- `crates/tree-sitter-kat-todotxt/vendor/todotxt/grammar.json`
+- `crates/tree-sitter-kat-todotxt/vendor/todotxt/node-types.json`
+- `crates/tree-sitter-kat-todotxt/vendor/todotxt/parser.c`
 
 ## tsv
 
@@ -1236,10 +1242,10 @@ Source: [tree-sitter-grammars/tree-sitter-csv](https://github.com/tree-sitter-gr
   Notes: repository-local extracted TSV subset built from the upstream separated-values grammar support file, with a kat-local TSV wrapper and highlights query kept as a dedicated runtime for tab-separated data files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/tsv/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/tsv/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/tsv/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/tsv/parser.c`
+- `crates/tree-sitter-kat-tsv/vendor/tsv/.parser-inputs`
+- `crates/tree-sitter-kat-tsv/vendor/tsv/grammar.json`
+- `crates/tree-sitter-kat-tsv/vendor/tsv/node-types.json`
+- `crates/tree-sitter-kat-tsv/vendor/tsv/parser.c`
 
 ## twig
 
@@ -1254,11 +1260,11 @@ Source: [kaermorchen/tree-sitter-twig](https://github.com/kaermorchen/tree-sitte
   Notes: repository-local copy of the upstream Twig grammar and scanner, with a kat-local highlights query layered on top. Template host dispatch is handled by kat's document-profile + host-resolver layer.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/twig/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/twig/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/twig/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/twig/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/twig/scanner.c`
+- `crates/tree-sitter-kat-twig/vendor/twig/.parser-inputs`
+- `crates/tree-sitter-kat-twig/vendor/twig/grammar.json`
+- `crates/tree-sitter-kat-twig/vendor/twig/node-types.json`
+- `crates/tree-sitter-kat-twig/vendor/twig/parser.c`
+- `crates/tree-sitter-kat-twig/vendor/twig/scanner.c`
 
 ## typst
 
@@ -1274,12 +1280,12 @@ Source: [uben0/tree-sitter-typst](https://github.com/uben0/tree-sitter-typst)
   Notes: repository-local copy of the upstream Typst grammar, scanner and required unicode support header, plus kat-local adapted highlights / injections queries for Typst markup and raw block nested runtimes.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/typst/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/typst/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/typst/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/typst/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/typst/scanner.c`
-- `crates/tree-sitter-kat-parsers/vendor/typst/unicode.h`
+- `crates/tree-sitter-kat-typst/vendor/typst/.parser-inputs`
+- `crates/tree-sitter-kat-typst/vendor/typst/grammar.json`
+- `crates/tree-sitter-kat-typst/vendor/typst/node-types.json`
+- `crates/tree-sitter-kat-typst/vendor/typst/parser.c`
+- `crates/tree-sitter-kat-typst/vendor/typst/scanner.c`
+- `crates/tree-sitter-kat-typst/vendor/typst/unicode.h`
 
 ## userscript_metadata
 
@@ -1290,10 +1296,10 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/userscript_metadata/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/userscript_metadata/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/userscript_metadata/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/userscript_metadata/parser.c`
+- `crates/tree-sitter-kat-userscript-metadata/vendor/userscript_metadata/.parser-inputs`
+- `crates/tree-sitter-kat-userscript-metadata/vendor/userscript_metadata/grammar.json`
+- `crates/tree-sitter-kat-userscript-metadata/vendor/userscript_metadata/node-types.json`
+- `crates/tree-sitter-kat-userscript-metadata/vendor/userscript_metadata/parser.c`
 
 ## vimhelp
 
@@ -1307,10 +1313,10 @@ Source: [neovim/tree-sitter-vimdoc](https://github.com/neovim/tree-sitter-vimdoc
   Notes: repository-local copy of the upstream Vim help grammar and query assets, kept as a dedicated runtime for `.vimhelp` files.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/vimhelp/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/vimhelp/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/vimhelp/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/vimhelp/parser.c`
+- `crates/tree-sitter-kat-vimhelp/vendor/vimhelp/.parser-inputs`
+- `crates/tree-sitter-kat-vimhelp/vendor/vimhelp/grammar.json`
+- `crates/tree-sitter-kat-vimhelp/vendor/vimhelp/node-types.json`
+- `crates/tree-sitter-kat-vimhelp/vendor/vimhelp/parser.c`
 
 ## vue
 
@@ -1327,13 +1333,13 @@ Source: [ikatyang/tree-sitter-vue](https://github.com/ikatyang/tree-sitter-vue)
   Notes: repository-local copy of the upstream Vue grammar and scanner support files, plus kat-local highlights / injections queries. `grammars/vue/scanner.cc` keeps the upstream logic but renames the embedded HTML scanner symbols so the dedicated Vue runtime can coexist with kat's standalone HTML runtime.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/vue/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/vue/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/vue/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/vue/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/vue/scanner.cc`
-- `crates/tree-sitter-kat-parsers/vendor/vue/tree_sitter_html/scanner.cc`
-- `crates/tree-sitter-kat-parsers/vendor/vue/tree_sitter_html/tag.h`
+- `crates/tree-sitter-kat-vue/vendor/vue/.parser-inputs`
+- `crates/tree-sitter-kat-vue/vendor/vue/grammar.json`
+- `crates/tree-sitter-kat-vue/vendor/vue/node-types.json`
+- `crates/tree-sitter-kat-vue/vendor/vue/parser.c`
+- `crates/tree-sitter-kat-vue/vendor/vue/scanner.cc`
+- `crates/tree-sitter-kat-vue/vendor/vue/tree_sitter_html/scanner.cc`
+- `crates/tree-sitter-kat-vue/vendor/vue/tree_sitter_html/tag.h`
 
 ## vyper
 
@@ -1344,10 +1350,10 @@ Original provenance carried over from `kat`:
 No dedicated provenance block was found in `kat/THIRD_PARTY.md`; see the repository history for this grammar.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/vyper/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/vyper/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/vyper/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/vyper/parser.c`
+- `crates/tree-sitter-kat-vyper/vendor/vyper/.parser-inputs`
+- `crates/tree-sitter-kat-vyper/vendor/vyper/grammar.json`
+- `crates/tree-sitter-kat-vyper/vendor/vyper/node-types.json`
+- `crates/tree-sitter-kat-vyper/vendor/vyper/parser.c`
 
 ## wgsl
 
@@ -1362,8 +1368,8 @@ Source: [szebniok/tree-sitter-wgsl](https://github.com/szebniok/tree-sitter-wgsl
   Notes: repository-local copy of the upstream WGSL grammar and scanner, kept vendored because the published crate still depends on an older `tree-sitter` ABI. The highlights query is maintained locally for kat's capture model.
 
 Local generated artifacts:
-- `crates/tree-sitter-kat-parsers/vendor/wgsl/.parser-inputs`
-- `crates/tree-sitter-kat-parsers/vendor/wgsl/grammar.json`
-- `crates/tree-sitter-kat-parsers/vendor/wgsl/node-types.json`
-- `crates/tree-sitter-kat-parsers/vendor/wgsl/parser.c`
-- `crates/tree-sitter-kat-parsers/vendor/wgsl/scanner.c`
+- `crates/tree-sitter-kat-wgsl/vendor/wgsl/.parser-inputs`
+- `crates/tree-sitter-kat-wgsl/vendor/wgsl/grammar.json`
+- `crates/tree-sitter-kat-wgsl/vendor/wgsl/node-types.json`
+- `crates/tree-sitter-kat-wgsl/vendor/wgsl/parser.c`
+- `crates/tree-sitter-kat-wgsl/vendor/wgsl/scanner.c`

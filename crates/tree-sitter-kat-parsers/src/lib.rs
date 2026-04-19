@@ -1,1 +1,298 @@
-include!(concat!(env!("OUT_DIR"), "/generated_languages.rs"));
+pub use tree_sitter_kat_actionscript::{
+    GRAMMAR as ACTIONSCRIPT_GRAMMAR, LANGUAGE as ACTIONSCRIPT_LANGUAGE,
+    NODE_TYPES as ACTIONSCRIPT_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_apache::{
+    GRAMMAR as APACHE_GRAMMAR, LANGUAGE as APACHE_LANGUAGE, NODE_TYPES as APACHE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_applescript::{
+    GRAMMAR as APPLESCRIPT_GRAMMAR, LANGUAGE as APPLESCRIPT_LANGUAGE,
+    NODE_TYPES as APPLESCRIPT_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_asciidoc::{
+    GRAMMAR as ASCIIDOC_GRAMMAR, LANGUAGE as ASCIIDOC_LANGUAGE, NODE_TYPES as ASCIIDOC_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_asm::{
+    GRAMMAR as ASM_GRAMMAR, LANGUAGE as ASM_LANGUAGE, NODE_TYPES as ASM_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_authorized_keys::{
+    GRAMMAR as AUTHORIZED_KEYS_GRAMMAR, LANGUAGE as AUTHORIZED_KEYS_LANGUAGE,
+    NODE_TYPES as AUTHORIZED_KEYS_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_awk::{
+    GRAMMAR as AWK_GRAMMAR, LANGUAGE as AWK_LANGUAGE, NODE_TYPES as AWK_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_bibtex::{
+    GRAMMAR as BIBTEX_GRAMMAR, LANGUAGE as BIBTEX_LANGUAGE, NODE_TYPES as BIBTEX_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_cabal::{
+    GRAMMAR as CABAL_GRAMMAR, LANGUAGE as CABAL_LANGUAGE, NODE_TYPES as CABAL_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_cmakecache::{
+    GRAMMAR as CMAKECACHE_GRAMMAR, LANGUAGE as CMAKECACHE_LANGUAGE,
+    NODE_TYPES as CMAKECACHE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_coffeescript::{
+    GRAMMAR as COFFEESCRIPT_GRAMMAR, LANGUAGE as COFFEESCRIPT_LANGUAGE,
+    NODE_TYPES as COFFEESCRIPT_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_command_help::{
+    GRAMMAR as COMMAND_HELP_GRAMMAR, LANGUAGE as COMMAND_HELP_LANGUAGE,
+    NODE_TYPES as COMMAND_HELP_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_cpuinfo::{
+    GRAMMAR as CPUINFO_GRAMMAR, LANGUAGE as CPUINFO_LANGUAGE, NODE_TYPES as CPUINFO_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_crontab::{
+    GRAMMAR as CRONTAB_GRAMMAR, LANGUAGE as CRONTAB_LANGUAGE, NODE_TYPES as CRONTAB_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_crystal::{
+    GRAMMAR as CRYSTAL_GRAMMAR, LANGUAGE as CRYSTAL_LANGUAGE, NODE_TYPES as CRYSTAL_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_css::{
+    GRAMMAR as CSS_GRAMMAR, LANGUAGE as CSS_LANGUAGE, NODE_TYPES as CSS_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_csv::{
+    GRAMMAR as CSV_GRAMMAR, LANGUAGE as CSV_LANGUAGE, NODE_TYPES as CSV_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_debsources::{
+    GRAMMAR as DEBSOURCES_GRAMMAR, LANGUAGE as DEBSOURCES_LANGUAGE,
+    NODE_TYPES as DEBSOURCES_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_dockerfile::{
+    GRAMMAR as DOCKERFILE_GRAMMAR, LANGUAGE as DOCKERFILE_LANGUAGE,
+    NODE_TYPES as DOCKERFILE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_dot::{
+    GRAMMAR as DOT_GRAMMAR, LANGUAGE as DOT_LANGUAGE, NODE_TYPES as DOT_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_dotenv::{
+    GRAMMAR as DOTENV_GRAMMAR, LANGUAGE as DOTENV_LANGUAGE, NODE_TYPES as DOTENV_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_email::{
+    GRAMMAR as EMAIL_GRAMMAR, LANGUAGE as EMAIL_LANGUAGE, NODE_TYPES as EMAIL_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_fish::{
+    GRAMMAR as FISH_GRAMMAR, LANGUAGE as FISH_LANGUAGE, NODE_TYPES as FISH_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_fortran_namelist::{
+    GRAMMAR as FORTRAN_NAMELIST_GRAMMAR, LANGUAGE as FORTRAN_NAMELIST_LANGUAGE,
+    NODE_TYPES as FORTRAN_NAMELIST_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_fstab::{
+    GRAMMAR as FSTAB_GRAMMAR, LANGUAGE as FSTAB_LANGUAGE, NODE_TYPES as FSTAB_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_git_commit::{
+    GRAMMAR as GIT_COMMIT_GRAMMAR, LANGUAGE as GIT_COMMIT_LANGUAGE,
+    NODE_TYPES as GIT_COMMIT_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_git_config::{
+    GRAMMAR as GIT_CONFIG_GRAMMAR, LANGUAGE as GIT_CONFIG_LANGUAGE,
+    NODE_TYPES as GIT_CONFIG_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_git_link::{
+    GRAMMAR as GIT_LINK_GRAMMAR, LANGUAGE as GIT_LINK_LANGUAGE, NODE_TYPES as GIT_LINK_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_git_log::{
+    GRAMMAR as GIT_LOG_GRAMMAR, LANGUAGE as GIT_LOG_LANGUAGE, NODE_TYPES as GIT_LOG_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_git_mailmap::{
+    GRAMMAR as GIT_MAILMAP_GRAMMAR, LANGUAGE as GIT_MAILMAP_LANGUAGE,
+    NODE_TYPES as GIT_MAILMAP_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_git_rebase::{
+    GRAMMAR as GIT_REBASE_GRAMMAR, LANGUAGE as GIT_REBASE_LANGUAGE,
+    NODE_TYPES as GIT_REBASE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_gitattributes::{
+    GRAMMAR as GITATTRIBUTES_GRAMMAR, LANGUAGE as GITATTRIBUTES_LANGUAGE,
+    NODE_TYPES as GITATTRIBUTES_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_gomod::{
+    GRAMMAR as GOMOD_GRAMMAR, LANGUAGE as GOMOD_LANGUAGE, NODE_TYPES as GOMOD_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_gosum::{
+    GRAMMAR as GOSUM_GRAMMAR, LANGUAGE as GOSUM_LANGUAGE, NODE_TYPES as GOSUM_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_gowork::{
+    GRAMMAR as GOWORK_GRAMMAR, LANGUAGE as GOWORK_LANGUAGE, NODE_TYPES as GOWORK_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_graphql::{
+    GRAMMAR as GRAPHQL_GRAMMAR, LANGUAGE as GRAPHQL_LANGUAGE, NODE_TYPES as GRAPHQL_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_hcl::{
+    GRAMMAR as HCL_GRAMMAR, LANGUAGE as HCL_LANGUAGE, NODE_TYPES as HCL_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_ignore::{
+    GRAMMAR as IGNORE_GRAMMAR, LANGUAGE as IGNORE_LANGUAGE, NODE_TYPES as IGNORE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_jinja::{
+    GRAMMAR as JINJA_GRAMMAR, LANGUAGE as JINJA_LANGUAGE, NODE_TYPES as JINJA_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_jq::{
+    GRAMMAR as JQ_GRAMMAR, LANGUAGE as JQ_LANGUAGE, NODE_TYPES as JQ_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_just::{
+    GRAMMAR as JUST_GRAMMAR, LANGUAGE as JUST_LANGUAGE, NODE_TYPES as JUST_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_latex::{
+    GRAMMAR as LATEX_GRAMMAR, LANGUAGE as LATEX_LANGUAGE, NODE_TYPES as LATEX_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_less::{
+    GRAMMAR as LESS_GRAMMAR, LANGUAGE as LESS_LANGUAGE, NODE_TYPES as LESS_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_markdown::{
+    GRAMMAR as MARKDOWN_GRAMMAR, LANGUAGE as MARKDOWN_LANGUAGE, NODE_TYPES as MARKDOWN_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_markdown_inline::{
+    GRAMMAR as MARKDOWN_INLINE_GRAMMAR, LANGUAGE as MARKDOWN_INLINE_LANGUAGE,
+    NODE_TYPES as MARKDOWN_INLINE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_nasm::{
+    GRAMMAR as NASM_GRAMMAR, LANGUAGE as NASM_LANGUAGE, NODE_TYPES as NASM_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_ninja::{
+    GRAMMAR as NINJA_GRAMMAR, LANGUAGE as NINJA_LANGUAGE, NODE_TYPES as NINJA_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_proto::{
+    GRAMMAR as PROTO_GRAMMAR, LANGUAGE as PROTO_LANGUAGE, NODE_TYPES as PROTO_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_query::{
+    GRAMMAR as QUERY_GRAMMAR, LANGUAGE as QUERY_LANGUAGE, NODE_TYPES as QUERY_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_requirements::{
+    GRAMMAR as REQUIREMENTS_GRAMMAR, LANGUAGE as REQUIREMENTS_LANGUAGE,
+    NODE_TYPES as REQUIREMENTS_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_sass::{
+    GRAMMAR as SASS_GRAMMAR, LANGUAGE as SASS_LANGUAGE, NODE_TYPES as SASS_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_scss::{
+    GRAMMAR as SCSS_GRAMMAR, LANGUAGE as SCSS_LANGUAGE, NODE_TYPES as SCSS_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_sml::{
+    GRAMMAR as SML_GRAMMAR, LANGUAGE as SML_LANGUAGE, NODE_TYPES as SML_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_ssh_config::{
+    GRAMMAR as SSH_CONFIG_GRAMMAR, LANGUAGE as SSH_CONFIG_LANGUAGE,
+    NODE_TYPES as SSH_CONFIG_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_strace::{
+    GRAMMAR as STRACE_GRAMMAR, LANGUAGE as STRACE_LANGUAGE, NODE_TYPES as STRACE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_stylus::{
+    GRAMMAR as STYLUS_GRAMMAR, LANGUAGE as STYLUS_LANGUAGE, NODE_TYPES as STYLUS_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_svelte::{
+    GRAMMAR as SVELTE_GRAMMAR, LANGUAGE as SVELTE_LANGUAGE, NODE_TYPES as SVELTE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_syslog::{
+    GRAMMAR as SYSLOG_GRAMMAR, LANGUAGE as SYSLOG_LANGUAGE, NODE_TYPES as SYSLOG_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_tcl::{
+    GRAMMAR as TCL_GRAMMAR, LANGUAGE as TCL_LANGUAGE, NODE_TYPES as TCL_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_textile::{
+    GRAMMAR as TEXTILE_GRAMMAR, LANGUAGE as TEXTILE_LANGUAGE, NODE_TYPES as TEXTILE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_textproto::{
+    GRAMMAR as TEXTPROTO_GRAMMAR, LANGUAGE as TEXTPROTO_LANGUAGE,
+    NODE_TYPES as TEXTPROTO_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_todotxt::{
+    GRAMMAR as TODOTXT_GRAMMAR, LANGUAGE as TODOTXT_LANGUAGE, NODE_TYPES as TODOTXT_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_tsv::{
+    GRAMMAR as TSV_GRAMMAR, LANGUAGE as TSV_LANGUAGE, NODE_TYPES as TSV_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_twig::{
+    GRAMMAR as TWIG_GRAMMAR, LANGUAGE as TWIG_LANGUAGE, NODE_TYPES as TWIG_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_typst::{
+    GRAMMAR as TYPST_GRAMMAR, LANGUAGE as TYPST_LANGUAGE, NODE_TYPES as TYPST_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_userscript_metadata::{
+    GRAMMAR as USERSCRIPT_METADATA_GRAMMAR, LANGUAGE as USERSCRIPT_METADATA_LANGUAGE,
+    NODE_TYPES as USERSCRIPT_METADATA_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_vimhelp::{
+    GRAMMAR as VIMHELP_GRAMMAR, LANGUAGE as VIMHELP_LANGUAGE, NODE_TYPES as VIMHELP_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_vue::{
+    GRAMMAR as VUE_GRAMMAR, LANGUAGE as VUE_LANGUAGE, NODE_TYPES as VUE_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_vyper::{
+    GRAMMAR as VYPER_GRAMMAR, LANGUAGE as VYPER_LANGUAGE, NODE_TYPES as VYPER_NODE_TYPES,
+};
+
+pub use tree_sitter_kat_wgsl::{
+    GRAMMAR as WGSL_GRAMMAR, LANGUAGE as WGSL_LANGUAGE, NODE_TYPES as WGSL_NODE_TYPES,
+};
