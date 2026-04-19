@@ -1,3 +1,4 @@
+use std::ffi::OsStr;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -5,17 +6,30 @@ use std::process::Command;
 use anstyle::{AnsiColor, Style};
 use anyhow::{Context, Result, anyhow, bail};
 use clap::{Parser, Subcommand};
+use serde::Deserialize;
 use tempfile::TempDir;
 
-const PARSER_STAGE_VERSION: &str = "parser-stage-v1";
+const PARSER_STAGE_VERSION: &str = "parser-stage-v3";
 const PARSER_STAMP_FILE: &str = ".parser-inputs";
+const TREE_SITTER_ABI_VERSION: &str = "15";
+
+#[derive(Debug, Deserialize)]
+struct GrammarMetadata {
+    language: String,
+    #[serde(default)]
+    generator_support_files: Vec<String>,
+    copied: CopiedFiles,
+}
+
+#[derive(Debug, Deserialize)]
+struct CopiedFiles {
+    files: Vec<String>,
+}
 
 struct GrammarSpec {
-    name: &'static str,
-    upstream_dir: &'static str,
-    vendor_dir: &'static str,
-    generator_root_files: &'static [&'static str],
-    vendored_support_files: &'static [&'static str],
+    metadata: GrammarMetadata,
+    upstream_dir: PathBuf,
+    vendor_dir: PathBuf,
 }
 
 #[derive(Parser)]
@@ -49,9 +63,12 @@ fn main() -> Result<()> {
 }
 
 fn generate(repo_root: &Path, language: Option<&str>, force: bool) -> Result<()> {
-    let specs = grammar_specs();
+    let specs = grammar_specs(repo_root)?;
     let selected: Vec<&GrammarSpec> = match language {
-        Some(name) => specs.iter().filter(|spec| spec.name == name).collect(),
+        Some(name) => specs
+            .iter()
+            .filter(|spec| spec.metadata.language == name)
+            .collect(),
         None => specs.iter().collect(),
     };
 
@@ -78,47 +95,59 @@ fn generate(repo_root: &Path, language: Option<&str>, force: bool) -> Result<()>
 }
 
 fn generate_one(
-    repo_root: &Path,
+    _repo_root: &Path,
     spec: &GrammarSpec,
     cli_version: &str,
     force: bool,
 ) -> Result<()> {
-    let upstream_dir = repo_root.join(spec.upstream_dir);
-    let vendor_dir = repo_root.join(spec.vendor_dir);
+    let upstream_dir = &spec.upstream_dir;
+    let vendor_dir = &spec.vendor_dir;
     let stamp_file = vendor_dir.join(PARSER_STAMP_FILE);
 
     print_section(spec, "Preparing temporary workspace");
     let temp_dir = TempDir::new().context("failed to create temp dir for tree-sitter generate")?;
     let temp_root = temp_dir.path();
-    fs::create_dir_all(temp_root.join("src"))?;
+    let workspace_dir = temp_root.join(&spec.metadata.language);
+    fs::create_dir_all(workspace_dir.join("src"))?;
 
-    for file in spec.generator_root_files {
-        copy_file(&upstream_dir.join(file), &temp_root.join(file))?;
+    for file in generator_input_files(spec) {
+        copy_file(&upstream_dir.join(file), &workspace_dir.join(file))?;
     }
+
+    for file in &spec.metadata.generator_support_files {
+        copy_file(&upstream_dir.join(file), &workspace_dir.join(file))?;
+    }
+    write_file(
+        &workspace_dir.join("tree-sitter.json"),
+        &synthesized_tree_sitter_json(&spec.metadata.language),
+    )?;
 
     // Stage 1: always regenerate the lightweight JSON outputs.
     print_section(
         spec,
         "Stage 1/3: Regenerating grammar.json and node-types.json",
     );
-    run_tree_sitter_generate_no_parser(temp_root)?;
+    run_tree_sitter_generate_no_parser(&workspace_dir)?;
     copy_file(
-        &temp_root.join("src/grammar.json"),
+        &workspace_dir.join("src/grammar.json"),
         &vendor_dir.join("grammar.json"),
     )?;
     copy_file(
-        &temp_root.join("src/node-types.json"),
+        &workspace_dir.join("src/node-types.json"),
         &vendor_dir.join("node-types.json"),
     )?;
 
-    // Stage 3: always sync vendored support files. This is effectively free.
+    // Stage 2: always sync vendored support files. This is effectively free.
     print_section(spec, "Stage 2/3: Syncing vendored support files");
-    for file in spec.vendored_support_files {
-        copy_file(&upstream_dir.join("src").join(file), &vendor_dir.join(file))?;
+    for file in vendored_support_files(spec) {
+        copy_file(
+            &upstream_dir.join(file),
+            &vendor_dir.join(vendored_support_destination(file)),
+        )?;
     }
 
-    // Stage 2: only regenerate parser.c when grammar.json actually changed.
-    let parser_input_hash = compute_parser_input_hash(temp_root, cli_version)?;
+    // Stage 3: only regenerate parser.c when grammar.json actually changed.
+    let parser_input_hash = compute_parser_input_hash(&workspace_dir, cli_version)?;
     if !force
         && stamp_matches(&stamp_file, &parser_input_hash)
         && vendor_dir.join("parser.c").is_file()
@@ -139,9 +168,9 @@ fn generate_one(
         spec,
         &format!("Stage 3/3: Regenerating parser.c ({parser_reason})"),
     );
-    run_tree_sitter_generate_parser(temp_root)?;
+    run_tree_sitter_generate_parser(&workspace_dir)?;
     copy_file(
-        &temp_root.join("src/parser.c"),
+        &workspace_dir.join("src/parser.c"),
         &vendor_dir.join("parser.c"),
     )?;
     write_file(&stamp_file, &format!("{parser_input_hash}\n"))?;
@@ -150,34 +179,34 @@ fn generate_one(
     Ok(())
 }
 
-fn grammar_specs() -> Vec<GrammarSpec> {
-    vec![
-        GrammarSpec {
-            name: "coffeescript",
-            upstream_dir: "upstreams/coffeescript",
-            vendor_dir: "crates/tree-sitter-kat-parsers/vendor/coffeescript",
-            generator_root_files: &["grammar.js", "tree-sitter.json"],
-            vendored_support_files: &[
-                "scanner.c",
-                "tree_sitter/alloc.h",
-                "tree_sitter/array.h",
-                "tree_sitter/parser.h",
-            ],
-        },
-        GrammarSpec {
-            name: "crystal",
-            upstream_dir: "upstreams/crystal",
-            vendor_dir: "crates/tree-sitter-kat-parsers/vendor/crystal",
-            generator_root_files: &["grammar.js", "tree-sitter.json"],
-            vendored_support_files: &[
-                "scanner.c",
-                "unicode.c",
-                "tree_sitter/alloc.h",
-                "tree_sitter/array.h",
-                "tree_sitter/parser.h",
-            ],
-        },
-    ]
+fn grammar_specs(repo_root: &Path) -> Result<Vec<GrammarSpec>> {
+    let metadata_dir = repo_root.join("metadata");
+    let mut entries = fs::read_dir(&metadata_dir)
+        .with_context(|| format!("failed to read {}", metadata_dir.display()))?
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .filter(|path| path.extension() == Some(OsStr::new("toml")))
+        .collect::<Vec<_>>();
+    entries.sort();
+
+    let mut specs = Vec::new();
+    for path in entries {
+        let contents = fs::read_to_string(&path)
+            .with_context(|| format!("failed to read {}", path.display()))?;
+        let metadata: GrammarMetadata = toml::from_str(&contents)
+            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let upstream_dir = repo_root.join("upstreams").join(&metadata.language);
+        let vendor_dir = repo_root
+            .join("crates/tree-sitter-kat-parsers/vendor")
+            .join(&metadata.language);
+        specs.push(GrammarSpec {
+            metadata,
+            upstream_dir,
+            vendor_dir,
+        });
+    }
+
+    Ok(specs)
 }
 
 fn repo_root() -> Result<PathBuf> {
@@ -191,7 +220,7 @@ fn print_section(spec: &GrammarSpec, message: &str) {
     println!(
         "  {} {} {message}",
         paint("==>", accent_style()),
-        paint(&format!("[{}]", spec.name), label_style())
+        paint(&format!("[{}]", spec.metadata.language), label_style())
     );
 }
 
@@ -199,7 +228,7 @@ fn print_skip(spec: &GrammarSpec, message: &str) {
     println!(
         "  {} {} {message}",
         paint("[skip]", warning_style()),
-        paint(&format!("[{}]", spec.name), label_style())
+        paint(&format!("[{}]", spec.metadata.language), label_style())
     );
 }
 
@@ -207,8 +236,75 @@ fn print_done(spec: &GrammarSpec) {
     println!(
         "  {} {}",
         paint("[done]", success_style()),
-        paint(&format!("[{}]", spec.name), label_style())
+        paint(&format!("[{}]", spec.metadata.language), label_style())
     );
+}
+
+fn generator_input_files(spec: &GrammarSpec) -> Vec<&str> {
+    let mut files = spec
+        .metadata
+        .copied
+        .files
+        .iter()
+        .filter(|file| file_extension(file).is_some_and(is_generator_extension))
+        .map(String::as_str)
+        .collect::<Vec<_>>();
+    files.sort_unstable();
+    files
+}
+
+fn vendored_support_files(spec: &GrammarSpec) -> Vec<&str> {
+    let mut files = spec
+        .metadata
+        .copied
+        .files
+        .iter()
+        .filter(|file| !is_license_file(file))
+        .filter(|file| !file_extension(file).is_some_and(is_generator_extension))
+        .map(String::as_str)
+        .collect::<Vec<_>>();
+    files.sort_unstable();
+    files
+}
+
+fn vendored_support_destination(path: &str) -> &str {
+    path.strip_prefix("src/").unwrap_or(path)
+}
+
+fn file_extension(path: &str) -> Option<&str> {
+    Path::new(path).extension().and_then(OsStr::to_str)
+}
+
+fn is_generator_extension(extension: &str) -> bool {
+    matches!(extension, "js" | "json")
+}
+
+fn is_license_file(path: &str) -> bool {
+    Path::new(path)
+        .file_name()
+        .and_then(OsStr::to_str)
+        .is_some_and(|name| name.starts_with("LICENSE"))
+}
+
+fn synthesized_tree_sitter_json(language: &str) -> String {
+    let template = r#"{
+  "grammars": [
+    {
+      "name": "__LANGUAGE__",
+      "path": "."
+    }
+  ],
+  "metadata": {
+    "version": "0.0.1"
+  },
+  "bindings": {
+    "c": true,
+    "rust": true
+  }
+}
+"#;
+
+    template.replace("__LANGUAGE__", language)
 }
 
 fn paint(text: &str, style: Style) -> String {
@@ -254,6 +350,11 @@ fn compute_parser_input_hash(temp_root: &Path, cli_version: &str) -> Result<Stri
         PARSER_STAGE_VERSION.as_bytes(),
     );
     hash_bytes(&mut hasher, b"tree-sitter-cli", cli_version.as_bytes());
+    hash_bytes(
+        &mut hasher,
+        b"tree-sitter-abi-version",
+        TREE_SITTER_ABI_VERSION.as_bytes(),
+    );
     let grammar_json_path = temp_root.join("src/grammar.json");
     let grammar_json = fs::read(&grammar_json_path)
         .with_context(|| format!("failed to read {}", grammar_json_path.display()))?;
@@ -284,10 +385,12 @@ fn stamp_matches(path: &Path, expected: &str) -> bool {
 fn run_tree_sitter_generate_no_parser(temp_root: &Path) -> Result<()> {
     let status = Command::new("tree-sitter")
         .arg("generate")
+        .arg("--abi")
+        .arg(TREE_SITTER_ABI_VERSION)
         .arg("--no-parser")
         .current_dir(temp_root)
         .status()
-        .context("failed to execute tree-sitter generate --no-parser")?;
+        .context("failed to execute tree-sitter generate --abi 15 --no-parser")?;
     if !status.success() {
         return Err(anyhow!("tree-sitter generate exited with {status}"));
     }
@@ -297,13 +400,14 @@ fn run_tree_sitter_generate_no_parser(temp_root: &Path) -> Result<()> {
 fn run_tree_sitter_generate_parser(temp_root: &Path) -> Result<()> {
     let status = Command::new("tree-sitter")
         .arg("generate")
-        .arg("src/grammar.json")
+        .arg("--abi")
+        .arg(TREE_SITTER_ABI_VERSION)
         .current_dir(temp_root)
         .status()
-        .context("failed to execute tree-sitter generate src/grammar.json")?;
+        .context("failed to execute tree-sitter generate --abi 15")?;
     if !status.success() {
         return Err(anyhow!(
-            "tree-sitter generate src/grammar.json exited with {status}"
+            "tree-sitter generate --abi 15 exited with {status}"
         ));
     }
     Ok(())

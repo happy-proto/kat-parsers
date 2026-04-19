@@ -1,0 +1,175 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "command_help",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "usage_line"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "section_heading"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "option_line"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "text_line"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_blank_line"
+          }
+        ]
+      }
+    },
+    "usage_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "usage",
+          "content": {
+            "type": "PATTERN",
+            "value": "[Uu]sage:"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\n]*"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "section_heading": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "title",
+          "content": {
+            "type": "PATTERN",
+            "value": "[A-Z][A-Za-z0-9() \\\\/_-]*:"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "option_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_indent"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "flags",
+          "content": {
+            "type": "SYMBOL",
+            "name": "flag_block"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_gap"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "description",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[^\\n]*"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "text_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[^\\n]+"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "flag_block": {
+      "type": "PATTERN",
+      "value": "-{1,2}[^\\n]*"
+    },
+    "_indent": {
+      "type": "PATTERN",
+      "value": "[ \\t]+"
+    },
+    "_gap": {
+      "type": "PATTERN",
+      "value": "[ \\t]{2,}"
+    },
+    "_blank_line": {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    "_newline": {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "[\\t ]+"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}

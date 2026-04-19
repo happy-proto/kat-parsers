@@ -1,0 +1,19 @@
+language = "applescript"
+crate = "tree-sitter-kat-parsers"
+reason_category = "当前继续 vendored，主要是为了沿用上游 grammar 源和仓库内 query 集成资产"
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate applescript"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]

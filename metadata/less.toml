@@ -1,0 +1,23 @@
+language = "less"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """本地 grammar 改成复用仓库里的 `css/grammar.js`，避免引入第二套 CSS 依赖。"""
+generator_support_files = [
+  "../css/grammar.js",
+]
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate less"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]

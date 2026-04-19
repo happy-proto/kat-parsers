@@ -1,0 +1,18 @@
+language = "debsources"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """仓库内维护了 `sources.list` 专用 mini-runtime，用来稳定识别源类型、suite/component 和 URI。"""
+
+[copied]
+files = [
+  "grammar.js",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate debsources"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+]

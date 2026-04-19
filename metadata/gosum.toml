@@ -1,0 +1,18 @@
+language = "gosum"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
+reason = """当前沿用 vendored grammar 资产和本地 query 集成。"""
+
+[copied]
+files = [
+  "grammar.js",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate gosum"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+]

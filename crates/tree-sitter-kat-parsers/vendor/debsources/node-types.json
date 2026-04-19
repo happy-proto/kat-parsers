@@ -1,0 +1,175 @@
+[
+  {
+    "type": "comment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "component",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "entry",
+    "named": true,
+    "fields": {
+      "component": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "component",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "deb",
+            "named": false
+          },
+          {
+            "type": "deb-src",
+            "named": false
+          }
+        ]
+      },
+      "options": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "options_block",
+            "named": true
+          }
+        ]
+      },
+      "suite": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "suite",
+            "named": true
+          }
+        ]
+      },
+      "uri": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "uri",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "option",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "option_name",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "option_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "options_block",
+    "named": true,
+    "fields": {
+      "option": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "option",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "entry",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "suite",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
+    "type": "deb",
+    "named": false
+  },
+  {
+    "type": "deb-src",
+    "named": false
+  },
+  {
+    "type": "option_name",
+    "named": true
+  },
+  {
+    "type": "option_value",
+    "named": true
+  },
+  {
+    "type": "uri",
+    "named": true
+  }
+]

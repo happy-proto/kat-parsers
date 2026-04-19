@@ -1,0 +1,128 @@
+[
+  {
+    "type": "code_block",
+    "named": true,
+    "fields": {
+      "marker": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bc.",
+            "named": false
+          },
+          {
+            "type": "pre.",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "heading",
+    "named": true,
+    "fields": {
+      "marker": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "h1.",
+            "named": false
+          },
+          {
+            "type": "h2.",
+            "named": false
+          },
+          {
+            "type": "h3.",
+            "named": false
+          },
+          {
+            "type": "h4.",
+            "named": false
+          },
+          {
+            "type": "h5.",
+            "named": false
+          },
+          {
+            "type": "h6.",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "list_item",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "paragraph",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "code_block",
+          "named": true
+        },
+        {
+          "type": "heading",
+          "named": true
+        },
+        {
+          "type": "list_item",
+          "named": true
+        },
+        {
+          "type": "paragraph",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "bc.",
+    "named": false
+  },
+  {
+    "type": "h1.",
+    "named": false
+  },
+  {
+    "type": "h2.",
+    "named": false
+  },
+  {
+    "type": "h3.",
+    "named": false
+  },
+  {
+    "type": "h4.",
+    "named": false
+  },
+  {
+    "type": "h5.",
+    "named": false
+  },
+  {
+    "type": "h6.",
+    "named": false
+  },
+  {
+    "type": "pre.",
+    "named": false
+  }
+]

@@ -1,0 +1,17 @@
+language = "dot"
+crate = "tree-sitter-kat-parsers"
+reason_category = "已有 crate，但仍依赖旧版 `tree-sitter`，暂时无法和当前 0.26 系列共存"
+
+[copied]
+files = [
+  "grammar.js",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate dot"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+]

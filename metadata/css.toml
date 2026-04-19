@@ -1,0 +1,20 @@
+language = "css"
+crate = "tree-sitter-kat-parsers"
+reason_category = "例外：parser 已迁移，但仍保留 vendored support asset"
+reason = """虽然 CSS runtime 已迁到 crate-backed，但 `grammars/less/grammar.js` 和 `grammars/scss/grammar.js` 仍会在生成期直接 `require("../css/grammar.js")`，所以仓库里继续保留 `grammars/css/grammar.js` 这份最小 support asset。"""
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate css"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
