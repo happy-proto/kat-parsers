@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-      - run: npm install -g tree-sitter-cli@0.26.8
+      - run: npm install -g tree-sitter-cli@0.27.0
       - run: tree-sitter --version
       - run: cargo run -p xtask -- generate --force
       - run: git diff --exit-code

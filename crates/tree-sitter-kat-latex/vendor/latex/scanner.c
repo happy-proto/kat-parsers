@@ -83,19 +83,28 @@ static bool find_verbatim(TSLexer *lexer, const char *keyword,
 
 void *tree_sitter_latex_external_scanner_create() { return NULL; }
 
-void tree_sitter_latex_external_scanner_destroy(void *payload) {}
+void tree_sitter_latex_external_scanner_destroy(void *payload) {
+  (void)payload;
+}
 
 unsigned tree_sitter_latex_external_scanner_serialize(void *payload,
                                                       char *buffer) {
+  (void)buffer;
+  (void)payload;
   return 0;
 }
 
 void tree_sitter_latex_external_scanner_deserialize(void *payload,
                                                     const char *buffer,
-                                                    unsigned length) {}
+                                                    unsigned length) {
+  (void)buffer;
+  (void)length;
+  (void)payload;
+}
 
 bool tree_sitter_latex_external_scanner_scan(void *payload, TSLexer *lexer,
                                              const bool *valid_symbols) {
+  (void)payload;
   bool found = false;
   TSSymbol type = 0xFFFF;
   for (int i = 0; i <= TRIVIA_RAW_ENV_SAGEBLOCK; i++) {

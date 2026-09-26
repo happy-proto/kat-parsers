@@ -182,8 +182,6 @@ bool tree_sitter_sass_external_scanner_scan(void *payload, TSLexer *lexer,
     lexer->mark_end(lexer);
     lexer->result_symbol = NEWLINE;
 
-    uint16_t current = current_indent(scanner);
-
     if (lexer->eof(lexer)) {
       scanner->dedent_count = scanner->stack_size;
     }

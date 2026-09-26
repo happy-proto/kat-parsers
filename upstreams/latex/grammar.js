@@ -54,7 +54,6 @@ module.exports = grammar({
     $._trivia_raw_env_sagesilent,
     $._trivia_raw_env_sageblock,
   ],
-  word: $ => $.command_name,
   rules: {
     source_file: $ => repeat($._root_content),
 
