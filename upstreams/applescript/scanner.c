@@ -35,26 +35,6 @@ static void skip_whitespace(TSLexer *lexer) {
     }
 }
 
-// Helper: check if we're looking at a specific keyword
-static bool check_keyword(TSLexer *lexer, const char *keyword) {
-    size_t len = strlen(keyword);
-    int32_t start_pos = lexer->get_column(lexer);
-
-    for (size_t i = 0; i < len; i++) {
-        if (lexer->lookahead != keyword[i]) {
-            return false;
-        }
-        lexer->advance(lexer, false);
-    }
-
-    // Make sure it's a complete word (not part of longer identifier)
-    if (iswalnum(lexer->lookahead) || lexer->lookahead == '_') {
-        return false;
-    }
-
-    return true;
-}
-
 // Helper: check if looking at identifier
 static bool is_identifier_start(int32_t c) {
     return iswalpha(c) || c == '_';
@@ -91,6 +71,7 @@ static bool consume_identifier(TSLexer *lexer, const char *expected) {
 
 // Detect "path to" command
 static bool scan_path_to_command(Scanner *scanner, TSLexer *lexer) {
+    (void)scanner;
     // Pattern match: "path" followed by "to"
     // The grammar will enforce this appears in appropriate context
 
@@ -115,6 +96,7 @@ static bool scan_path_to_command(Scanner *scanner, TSLexer *lexer) {
 
 // Detect Objective-C method call label (identifier:)
 static bool scan_method_call_label(Scanner *scanner, TSLexer *lexer) {
+    (void)scanner;
     // Simple pattern matching: identifier followed by ':'
     // The grammar will enforce that this only appears in property access context
 
@@ -145,6 +127,7 @@ static bool scan_method_call_label(Scanner *scanner, TSLexer *lexer) {
 
 // Detect Objective-C handler label (identifier:)
 static bool scan_handler_label(Scanner *scanner, TSLexer *lexer) {
+    (void)scanner;
     // Pattern matching: identifier followed by ':'
     // Used in handler definitions: on doJava:action onType:type
     // The grammar will enforce that this only appears in handler context

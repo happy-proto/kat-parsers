@@ -45,23 +45,27 @@ void *tree_sitter_cabal_external_scanner_create() {
 }
 
 void tree_sitter_cabal_external_scanner_destroy(void *p) {
+  (void)p;
   delete_deque(&indent_lvls);
 }
 
 void tree_sitter_cabal_external_scanner_reset(void *p) {
+  (void)p;
   delete_deque(&indent_lvls);
 }
 
 unsigned tree_sitter_cabal_external_scanner_serialize(void *p, char *buffer) {
+  (void)buffer;
+  (void)p;
   return 0;
 }
 
 void tree_sitter_cabal_external_scanner_deserialize(void *p, const char *b,
-                                                    unsigned n) {}
-
-static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
-
-static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
+                                                    unsigned n) {
+  (void)b;
+  (void)n;
+  (void)p;
+}
 
 static bool scan_indent(TSLexer *lexer, bool const *valid_symbols) {
   if (valid_symbols[DEDENT] && pending_dedents > 0) {
@@ -120,6 +124,7 @@ static bool scan_indent(TSLexer *lexer, bool const *valid_symbols) {
 
 bool tree_sitter_cabal_external_scanner_scan(void *payload, TSLexer *lexer,
                                              const bool *valid_symbols) {
+  (void)payload;
   if (valid_symbols[INDENT] || valid_symbols[DEDENT] ||
       valid_symbols[INDENTED]) {
     return scan_indent(lexer, valid_symbols);

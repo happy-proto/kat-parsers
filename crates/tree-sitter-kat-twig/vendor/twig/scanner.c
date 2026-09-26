@@ -7,15 +7,28 @@ enum TokenType {
 };
 
 void *tree_sitter_twig_external_scanner_create() { return NULL; }
-void tree_sitter_twig_external_scanner_destroy(void *p) {}
-void tree_sitter_twig_external_scanner_reset(void *p) {}
-unsigned tree_sitter_twig_external_scanner_serialize(void *p, char *buffer) { return 0; }
-void tree_sitter_twig_external_scanner_deserialize(void *p, const char *b, unsigned n) {}
+void tree_sitter_twig_external_scanner_destroy(void *p) {
+  (void)p;
+}
+void tree_sitter_twig_external_scanner_reset(void *p) {
+  (void)p;
+}
+unsigned tree_sitter_twig_external_scanner_serialize(void *p, char *buffer) {
+  (void)buffer;
+  (void)p;
+  return 0;
+}
+void tree_sitter_twig_external_scanner_deserialize(void *p, const char *b, unsigned n) {
+  (void)b;
+  (void)n;
+  (void)p;
+}
 
 static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
 bool tree_sitter_twig_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
+  (void)payload;
   // 1. Handle COMMENT (higher priority)
   if (valid_symbols[COMMENT]) {
     while (iswspace(lexer->lookahead)) skip(lexer);

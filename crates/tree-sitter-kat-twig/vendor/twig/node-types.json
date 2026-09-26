@@ -1122,7 +1122,33 @@
   {
     "type": "property",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "primary_expression",
+          "named": true
+        },
+        {
+          "type": "ternary_expression",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "sandbox",
@@ -1915,10 +1941,6 @@
     "type": "inline_comment",
     "named": true,
     "extra": true
-  },
-  {
-    "type": "keyword",
-    "named": false
   },
   {
     "type": "none",

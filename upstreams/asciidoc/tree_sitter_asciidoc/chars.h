@@ -73,21 +73,12 @@
 static bool is_newline(int32_t c);
 static bool is_space(int32_t c);
 static bool is_space_extended(int32_t c);
-static bool is_space_consume(ADOCScanner* scanner);
 static bool is_newline_or_space(int32_t c);
 static bool is_newline_or_space_extended(int32_t c);
-static bool is_anything(int32_t c);
 
 static bool is_number(int32_t c);
-static bool is_abc_lower(int32_t c);
-static bool is_abc_upper(int32_t c);
-static bool is_abc(int32_t c);
-static bool is_alphanumeric(int32_t c);
-static bool is_alphanumeric_dash_underscore(int32_t c);
-static bool is_word(int32_t c);
 
 static bool is_inline_markup_start_char(int32_t c);
-static bool is_inline_markup_end_char(int32_t c);
 static bool is_punctuation(int32_t c);
 
 #endif // TREE_SITTER_ASCIIDOC_CHARS_H

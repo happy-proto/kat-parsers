@@ -1,6 +1,4 @@
 #include "tree_sitter/parser.h"
-#include <inttypes.h>
-#include <stdio.h>
 #include <string.h>
 
 enum TokenType
@@ -11,36 +9,9 @@ enum TokenType
   FUNC_CALL
 };
 
-static void tsawk_debug(TSLexer *lexer)
-{
-  if (lexer->lookahead == '\r')
-  {
-    printf("column: %3" PRIu32 " | sym: '%c' | lookahead: '\\r' | skipped: %s\n",
-           lexer->get_column(lexer),
-           lexer->result_symbol,
-           lexer->is_at_included_range_start(lexer) ? "true" : "false");
-    return;
-  }
-
-  if (lexer->lookahead == '\n')
-  {
-    printf("column: %3" PRIu32 " | sym: '%c' | lookahead: '\\n' | skipped: %s\n",
-           lexer->get_column(lexer),
-           lexer->result_symbol,
-           lexer->is_at_included_range_start(lexer) ? "true" : "false");
-    return;
-  }
-
-  printf("column: %3" PRIu32 " | sym: '%c' | lookahead:  '%c' | skipped: %s\n",
-         lexer->get_column(lexer),
-         lexer->result_symbol,
-         lexer->lookahead,
-         lexer->is_at_included_range_start(lexer) ? "true" : "false");
-}
-
 static bool tsawk_next_chars_eq(TSLexer *lexer, char *word)
 {
-  for (int i = 0; i < strlen(word); i++)
+  for (size_t i = 0; i < strlen(word); i++)
   {
     if (lexer->lookahead != word[i])
     {
@@ -78,17 +49,12 @@ static bool tsawk_is_statement_terminator(int32_t chr)
   return chr == '\n' || chr == ';';
 }
 
-static bool tsawk_skip_whitespace(TSLexer *lexer, bool skip_newlines, bool capture)
+static void tsawk_skip_whitespace(TSLexer *lexer, bool skip_newlines, bool capture)
 {
-  bool skipped = false;
-
   while (tsawk_is_whitespace(lexer->lookahead) || tsawk_is_line_continuation(lexer) || lexer->lookahead == '\r' || (skip_newlines && lexer->lookahead == '\n'))
   {
     lexer->advance(lexer, !capture);
-    skipped = true;
   }
-
-  return skipped;
 }
 
 static void tsawk_skip_comment(TSLexer *lexer)
@@ -133,7 +99,7 @@ static bool tsawk_is_if_else_separator(TSLexer *lexer)
 
 static bool tsawk_is_concatenating_space(TSLexer *lexer)
 {
-  bool had_whitespace = tsawk_skip_whitespace(lexer, false, true);
+  tsawk_skip_whitespace(lexer, false, true);
 
   lexer->mark_end(lexer);
 
@@ -184,20 +150,27 @@ void *tree_sitter_awk_external_scanner_create()
 
 void tree_sitter_awk_external_scanner_destroy(void *payload)
 {
+  (void)payload;
 }
 
 unsigned tree_sitter_awk_external_scanner_serialize(void *payload, char *buffer)
 {
+  (void)buffer;
+  (void)payload;
   return 0;
 }
 
 void tree_sitter_awk_external_scanner_deserialize(void *payload, const char *state, unsigned length)
 {
+  (void)length;
+  (void)payload;
+  (void)state;
 }
 
 bool tree_sitter_awk_external_scanner_scan(void *payload, TSLexer *lexer,
                                            const bool *valid_symbols)
 {
+  (void)payload;
   bool statement_terminator_was_found = false;
 
   if (valid_symbols[NO_SPACE])

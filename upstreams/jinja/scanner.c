@@ -213,7 +213,8 @@ unsigned tree_sitter_jinja_external_scanner_serialize(void *payload, char *buffe
 }
 
 void tree_sitter_jinja_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
-    if(buffer == NULL) {
+    if(buffer == NULL || length != sizeof(Scanner)) {
+        memset(payload, 0, sizeof(Scanner));
         return;
     }
     memcpy(payload, buffer, sizeof(Scanner));

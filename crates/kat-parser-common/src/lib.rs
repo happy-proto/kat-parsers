@@ -90,6 +90,19 @@ pub mod build_support {
     fn root_c_support_files(vendor_dir: &Path) -> Vec<PathBuf> {
         let mut files = root_support_files(vendor_dir, &["c"]);
         files.retain(|path| path.file_name().and_then(|value| value.to_str()) != Some("parser.c"));
+        let included_sources = files
+            .iter()
+            .flat_map(|path| {
+                fs::read_to_string(path)
+                    .unwrap_or_else(|error| panic!("failed to read {}: {error}", path.display()))
+                    .lines()
+                    .filter_map(|line| line.trim().strip_prefix("#include \"")?.strip_suffix('"'))
+                    .filter(|include| include.ends_with(".c"))
+                    .map(|include| vendor_dir.join(include))
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+        files.retain(|path| !included_sources.contains(path));
         files
     }
 

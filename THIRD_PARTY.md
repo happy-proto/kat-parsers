@@ -2,6 +2,8 @@
 
 This repository contains source-only grammar snapshots externalized from `kat`, plus the generated parser artifacts committed inside per-language crates for direct git consumption by `kat`. `crates/tree-sitter-kat-parsers/` is now only an aggregate re-export crate, while shared build support lives under `crates/kat-parser-common/`.
 
+The recorded upstream revisions identify the source of each snapshot. Local scanner fixes may differ from those revisions; the corresponding `upstreams/` and crate `vendor/` copies are kept in sync.
+
 ## Shared Tree-sitter C headers
 
 - Shared support crate: `crates/kat-parser-common`
@@ -835,6 +837,7 @@ Source: [latex-lsp/tree-sitter-latex](https://github.com/latex-lsp/tree-sitter-l
   Revision: `7e0ecdc02926c7b9b2e0c76003d4fe7b0944f957`
   License: MIT
   Notes: repository-local copy of the upstream LaTeX grammar and scanner, kept as a dedicated runtime for `.tex` / `.ltx` / `.sty` / `.cls`.
+  Local change: removed the ineffective `word` setting that generated an unused keyword lexer; the grammar rules and node types are unchanged.
 
 Block 2:
 Source: [nvim-treesitter/nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)

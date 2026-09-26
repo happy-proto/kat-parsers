@@ -290,6 +290,25 @@
   },
   {
     "type": "expression",
+    "named": false,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "if_expression",
+          "named": true
+        },
+        {
+          "type": "value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "expression",
     "named": true,
     "fields": {},
     "children": {
