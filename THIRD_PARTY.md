@@ -171,6 +171,8 @@ Source: kat local integration
   License: project-local
   Notes: repository-local minimal grammar and highlights query for `authorized_keys` / `.pub` style SSH public key files.
 
+Local grammar changes: key algorithms take lexical precedence over authorization option names; fields require horizontal whitespace and entries remain line-bounded. Base64 payloads (including `/` and padding) and arbitrary trailing comments are separate fields, with CRLF and EOF-without-newline support.
+
 Local generated artifacts:
 - `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/.parser-inputs`
 - `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/grammar.json`

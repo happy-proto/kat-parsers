@@ -1,25 +1,5 @@
 [
   {
-    "type": "comment_line",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "comment_text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "comment_text",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "entry",
     "named": true,
     "fields": {
@@ -64,11 +44,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "entry_comment",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "option",
@@ -151,14 +126,6 @@
     }
   },
   {
-    "type": "\n",
-    "named": false
-  },
-  {
-    "type": "#",
-    "named": false
-  },
-  {
     "type": ",",
     "named": false
   },
@@ -168,6 +135,14 @@
   },
   {
     "type": "bare_value",
+    "named": true
+  },
+  {
+    "type": "comment_line",
+    "named": true
+  },
+  {
+    "type": "entry_comment",
     "named": true
   },
   {
