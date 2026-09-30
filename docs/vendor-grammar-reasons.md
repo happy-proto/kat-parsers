@@ -62,6 +62,8 @@
   原因：本地重命名并调整成统一的 ignore-pattern runtime，供 `.gitignore`、`.dockerignore`、`.npmignore` 等文件共享。
 - `authorized_keys`
   原因：当前直接在仓库内维护了一个面向 SSH 公钥/授权文件的小 grammar，并配合 `.pub` 内容检测做路径识别。
+- `known_hosts`
+  原因：仓库内维护的 OpenSSH 主机公钥记录 grammar，独立表达主机列表、哈希主机、CA/撤销 marker 和公钥字段；语法结构与 `authorized_keys` 不同。
 - `cmakecache`
   原因：仓库内维护了一个专门面向 `CMakeCache.txt` 的小 grammar，用来稳定承接 key/type/value 结构和 path-like value 高亮。
 - `command_help`

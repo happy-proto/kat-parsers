@@ -1,6 +1,6 @@
 {
   "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
-  "name": "authorized_keys",
+  "name": "known_hosts",
   "rules": {
     "source_file": {
       "type": "SEQ",
@@ -82,10 +82,6 @@
         }
       ]
     },
-    "comment_line": {
-      "type": "PATTERN",
-      "value": "#[^\\r\\n]*"
-    },
     "entry": {
       "type": "SEQ",
       "members": [
@@ -97,10 +93,10 @@
               "members": [
                 {
                   "type": "FIELD",
-                  "name": "options",
+                  "name": "marker",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "option_list"
+                    "name": "marker"
                   }
                 },
                 {
@@ -113,6 +109,27 @@
               "type": "BLANK"
             }
           ]
+        },
+        {
+          "type": "FIELD",
+          "name": "hosts",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "host_list"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "hashed_host"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_space"
         },
         {
           "type": "FIELD",
@@ -169,12 +186,33 @@
         }
       ]
     },
-    "option_list": {
+    "marker": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cert_authority"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "revoked"
+        }
+      ]
+    },
+    "cert_authority": {
+      "type": "STRING",
+      "value": "@cert-authority"
+    },
+    "revoked": {
+      "type": "STRING",
+      "value": "@revoked"
+    },
+    "host_list": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "option"
+          "name": "host_pattern"
         },
         {
           "type": "REPEAT",
@@ -187,86 +225,78 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "option"
+                "name": "host_pattern"
               }
             ]
           }
         }
       ]
     },
-    "option": {
-      "type": "CHOICE",
+    "host_pattern": {
+      "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
+          "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
-              "name": "name",
-              "content": {
-                "type": "SYMBOL",
-                "name": "option_name"
-              }
-            },
-            {
               "type": "STRING",
-              "value": "="
+              "value": "!"
             },
             {
-              "type": "FIELD",
-              "name": "value",
-              "content": {
-                "type": "SYMBOL",
-                "name": "option_value"
-              }
+              "type": "BLANK"
             }
           ]
         },
         {
+          "type": "SYMBOL",
+          "name": "hostname"
+        }
+      ]
+    },
+    "hostname": {
+      "type": "PATTERN",
+      "value": "[^ \\t\\r\\n,!|#@]+"
+    },
+    "hashed_host": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "|1|"
+        },
+        {
           "type": "FIELD",
-          "name": "name",
+          "name": "salt",
           "content": {
             "type": "SYMBOL",
-            "name": "option_name"
+            "name": "hash_salt"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "|"
+        },
+        {
+          "type": "FIELD",
+          "name": "hash",
+          "content": {
+            "type": "SYMBOL",
+            "name": "host_hash"
           }
         }
       ]
     },
-    "option_name": {
+    "hash_salt": {
       "type": "PATTERN",
-      "value": "[A-Za-z][A-Za-z0-9-]*"
+      "value": "[A-Za-z0-9+/]+={0,2}"
     },
-    "option_value": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "quoted_value"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "bare_value"
-        }
-      ]
-    },
-    "quoted_value": {
+    "host_hash": {
       "type": "PATTERN",
-      "value": "\"([^\"\\\\\\r\\n]|\\\\[^\\r\\n])*\""
-    },
-    "bare_value": {
-      "type": "PATTERN",
-      "value": "[^,\\s#\"]+"
+      "value": "[A-Za-z0-9+/]+={0,2}"
     },
     "key_type": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 1,
-        "content": {
-          "type": "PATTERN",
-          "value": "(?:ssh-|ecdsa-sha2-|sk-)[A-Za-z0-9@._+-]+"
-        }
-      }
+      "type": "PATTERN",
+      "value": "[A-Za-z0-9][A-Za-z0-9@._+-]*"
     },
     "key_blob": {
       "type": "PATTERN",
@@ -275,6 +305,10 @@
     "entry_comment": {
       "type": "PATTERN",
       "value": "[^ \\t\\r\\n][^\\r\\n]*"
+    },
+    "comment_line": {
+      "type": "PATTERN",
+      "value": "#[^\\r\\n]*"
     },
     "_space": {
       "type": "PATTERN",

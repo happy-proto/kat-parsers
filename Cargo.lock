@@ -923,6 +923,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-known-hosts"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-latex"
 version = "0.1.0"
 dependencies = [
@@ -1021,6 +1030,7 @@ dependencies = [
  "tree-sitter-kat-jinja",
  "tree-sitter-kat-jq",
  "tree-sitter-kat-just",
+ "tree-sitter-kat-known-hosts",
  "tree-sitter-kat-latex",
  "tree-sitter-kat-less",
  "tree-sitter-kat-markdown",

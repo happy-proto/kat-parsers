@@ -53,6 +53,7 @@ tree-sitter-kat-ignore = { path = "../tree-sitter-kat-ignore" }
 tree-sitter-kat-jinja = { path = "../tree-sitter-kat-jinja" }
 tree-sitter-kat-jq = { path = "../tree-sitter-kat-jq" }
 tree-sitter-kat-just = { path = "../tree-sitter-kat-just" }
+tree-sitter-kat-known-hosts = { path = "../tree-sitter-kat-known-hosts" }
 tree-sitter-kat-latex = { path = "../tree-sitter-kat-latex" }
 tree-sitter-kat-less = { path = "../tree-sitter-kat-less" }
 tree-sitter-kat-markdown = { path = "../tree-sitter-kat-markdown" }

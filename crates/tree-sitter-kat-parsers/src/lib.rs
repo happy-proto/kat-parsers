@@ -176,6 +176,11 @@ pub use tree_sitter_kat_just::{
     GRAMMAR as JUST_GRAMMAR, LANGUAGE as JUST_LANGUAGE, NODE_TYPES as JUST_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_known_hosts::{
+    GRAMMAR as KNOWN_HOSTS_GRAMMAR, LANGUAGE as KNOWN_HOSTS_LANGUAGE,
+    NODE_TYPES as KNOWN_HOSTS_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_latex::{
     GRAMMAR as LATEX_GRAMMAR, LANGUAGE as LATEX_LANGUAGE, NODE_TYPES as LATEX_NODE_TYPES,
 };

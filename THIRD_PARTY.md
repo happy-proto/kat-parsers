@@ -171,11 +171,20 @@ Source: kat local integration
   License: project-local
   Notes: repository-local minimal grammar and highlights query for `authorized_keys` / `.pub` style SSH public key files.
 
+Local grammar changes: key algorithms take lexical precedence over authorization option names; fields require horizontal whitespace and entries remain line-bounded. Base64 payloads (including `/` and padding) and arbitrary trailing comments are separate fields, with CRLF and EOF-without-newline support.
+
 Local generated artifacts:
 - `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/.parser-inputs`
 - `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/grammar.json`
 - `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/node-types.json`
 - `crates/tree-sitter-kat-authorized-keys/vendor/authorized_keys/parser.c`
+
+## known_hosts
+
+- Source: repository-local grammar (`MIT`), based on the format documented by [OpenSSH](https://man.openbsd.org/sshd#SSH_KNOWN_HOSTS_FILE_FORMAT); no third-party grammar code is imported.
+- Source asset: `upstreams/known_hosts/grammar.js`
+- Generated artifacts: `crates/tree-sitter-kat-known-hosts/vendor/known_hosts/{.parser-inputs,grammar.json,node-types.json,parser.c}`
+- Scope: host patterns, hashed hosts, optional CA/revocation markers, key type, opaque public-key payload and comments. Parsing does not validate keys or trust decisions.
 
 ## awk
 
