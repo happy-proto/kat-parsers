@@ -1,6 +1,8 @@
 # kat-parsers
 
+[![build](https://github.com/happy-proto/kat-parsers/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/happy-proto/kat-parsers/actions/workflows/ci.yml)
 [![dependency status](https://deps.rs/repo/github/happy-proto/kat-parsers/status.svg)](https://deps.rs/repo/github/happy-proto/kat-parsers)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/happy-proto/kat-parsers/blob/master/LICENSE)
 
 `kat-parsers` 是 [`kat`](https://github.com/happy-proto/kat) 专用的外部 Tree-sitter parser crate 仓库。
 
