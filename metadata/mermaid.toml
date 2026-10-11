@@ -1,0 +1,16 @@
+language = "mermaid"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 crate 的依赖约束与当前 runtime 不兼容"
+reason = "tree-sitter-mermaid 0.3.0 固定 tree-sitter-language =0.1.8，与 kat 使用的 Tree-sitter 0.27.1 / tree-sitter-language 0.1.9 冲突；复用上游 grammar 和 scanner，通过统一 bundle 导出 LanguageFn。"
+upstream_repo = "https://github.com/Latias94/merman"
+upstream_revision = "2029bd547077b1a6800878e125663633d81e6d87"
+upstream_path = "distribution/tree-sitter-mermaid"
+upstream_version = "0.3.0"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "grammar/families/agentflow.js", "grammar/families/architecture.js", "grammar/families/block.js", "grammar/families/c4.js", "grammar/families/class.js", "grammar/families/cynefin.js", "grammar/families/entity-relationship.js", "grammar/families/event-modeling.js", "grammar/families/flowchart.js", "grammar/families/gantt.js", "grammar/families/git-graph.js", "grammar/families/info.js", "grammar/families/ishikawa.js", "grammar/families/journey.js", "grammar/families/kanban.js", "grammar/families/mindmap.js", "grammar/families/packet.js", "grammar/families/pie.js", "grammar/families/quadrant-chart.js", "grammar/families/radar.js", "grammar/families/railroad-abnf.js", "grammar/families/railroad-ebnf.js", "grammar/families/railroad-peg.js", "grammar/families/railroad-shared.js", "grammar/families/railroad.js", "grammar/families/requirement.js", "grammar/families/sankey.js", "grammar/families/sequence.js", "grammar/families/state.js", "grammar/families/swimlane.js", "grammar/families/timeline.js", "grammar/families/tree-view.js", "grammar/families/treemap.js", "grammar/families/usecase.js", "grammar/families/venn.js", "grammar/families/wardley.js", "grammar/families/xy-chart.js", "grammar/families/zenuml.js", "grammar/shared/common.js", "grammar/shared/header.js", "grammar/shared/indentation.js", "grammar/shared/langium.js", "grammar/shared/preamble.js", "src/scanner.c", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate mermaid"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]

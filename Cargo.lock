@@ -986,6 +986,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-mermaid"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-nasm"
 version = "0.1.0"
 dependencies = [
@@ -1054,6 +1063,7 @@ dependencies = [
  "tree-sitter-kat-less",
  "tree-sitter-kat-markdown",
  "tree-sitter-kat-markdown-inline",
+ "tree-sitter-kat-mermaid",
  "tree-sitter-kat-nasm",
  "tree-sitter-kat-ninja",
  "tree-sitter-kat-proto",

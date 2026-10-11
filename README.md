@@ -1,5 +1,7 @@
 # kat-parsers
 
+[![dependency status](https://deps.rs/repo/github/happy-proto/kat-parsers/status.svg)](https://deps.rs/repo/github/happy-proto/kat-parsers)
+
 `kat-parsers` 是 [`kat`](https://github.com/happy-proto/kat) 专用的外部 Tree-sitter parser crate 仓库。
 
 这个仓库只负责两件事：
@@ -54,6 +56,8 @@ tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", 
 - 仓库不提交 `tree-sitter.json`；如某些 grammar 为了稳定生成 ABI 15 需要它，`xtask` 会只在临时工作目录里合成一份最小配置
 - parser 生成发生在 `just` / GitHub Actions 中，而不是 `build.rs`
 - 每个语言 crate 的 `build.rs` 只负责编译已经提交到仓库里的 C / C++ 产物；共享逻辑统一收口到 `kat-parser-common`
+- Mermaid 使用 Merman 0.3.0 的模块化 grammar 与 scanner，按固定上游 revision 同步；接入原因与生成边界见 [`docs/vendor-grammar-reasons.md`](docs/vendor-grammar-reasons.md)。
+- 依赖状态由 deps.rs 展示，Cargo 与 GitHub Actions 的自动更新策略统一维护在 [`.github/dependabot.yml`](.github/dependabot.yml)。
 
 ## TODO
 
