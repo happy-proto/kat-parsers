@@ -59,6 +59,7 @@ tree-sitter-kat-latex = { path = "../tree-sitter-kat-latex" }
 tree-sitter-kat-less = { path = "../tree-sitter-kat-less" }
 tree-sitter-kat-markdown = { path = "../tree-sitter-kat-markdown" }
 tree-sitter-kat-markdown-inline = { path = "../tree-sitter-kat-markdown-inline" }
+tree-sitter-kat-mermaid = { path = "../tree-sitter-kat-mermaid" }
 tree-sitter-kat-nasm = { path = "../tree-sitter-kat-nasm" }
 tree-sitter-kat-ninja = { path = "../tree-sitter-kat-ninja" }
 tree-sitter-kat-proto = { path = "../tree-sitter-kat-proto" }

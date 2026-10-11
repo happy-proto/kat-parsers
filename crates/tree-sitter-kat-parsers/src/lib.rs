@@ -202,6 +202,10 @@ pub use tree_sitter_kat_markdown_inline::{
     NODE_TYPES as MARKDOWN_INLINE_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_mermaid::{
+    GRAMMAR as MERMAID_GRAMMAR, LANGUAGE as MERMAID_LANGUAGE, NODE_TYPES as MERMAID_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_nasm::{
     GRAMMAR as NASM_GRAMMAR, LANGUAGE as NASM_LANGUAGE, NODE_TYPES as NASM_NODE_TYPES,
 };

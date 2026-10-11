@@ -26,6 +26,10 @@
 - `sass`
 - `todotxt`
 
+## 上游 crate 的依赖约束与当前 runtime 不兼容
+
+- `mermaid`：Merman 发布的 `tree-sitter-mermaid` 0.3.0 固定依赖 `tree-sitter-language =0.1.8`，与 `kat` 的 Tree-sitter 0.27.1 / `tree-sitter-language` 0.1.9 冲突。这里保留其模块化 grammar 与 scanner 的原始快照，通过现有生成流程导出兼容的 `LanguageFn`，不降级 Kat 的 runtime，也不在应用构建时生成 parser。上游 revision、许可证与生成约定见 [`../metadata/mermaid.toml`](../metadata/mermaid.toml)。上游 crate 解除版本约束后可重新评估直接使用公开 crate。
+
 ## 已有 crate，但仍依赖旧版 `tree-sitter`，暂时无法和当前 0.26 系列共存
 
 - `query`

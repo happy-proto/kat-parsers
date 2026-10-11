@@ -1,5 +1,15 @@
 # Third-Party Sources
 
+## Mermaid
+
+- Upstream: [Latias94/merman](https://github.com/Latias94/merman), `distribution/tree-sitter-mermaid`, package version `0.3.0`
+- Revision: `2029bd547077b1a6800878e125663633d81e6d87`
+- License: MIT; upstream copyright, derivation metadata and third-party notices/licenses are retained under `upstreams/mermaid/`.
+- Imported inputs: `grammar.js`, `grammar/families/*.js`, `grammar/shared/*.js` and `src/scanner.c`, without local syntax changes.
+- Generated assets: `crates/tree-sitter-kat-mermaid/vendor/mermaid/{.parser-inputs,grammar.json,node-types.json,parser.c,scanner.c}`, generated with Tree-sitter CLI 0.27.0 / ABI 15 through the repository's `xtask`.
+- Rust bindings and build scaffolding use the existing repository generator and shared headers; upstream Cargo bindings are not imported.
+
+
 ## ghostty（自维护）
 
 `upstreams/ghostty/grammar.js` 与 `scanner.c` 为本仓库依据 Ghostty 官方配置解析行为独立实现的 MIT 代码，不是第三方 grammar 的导入或改编。
