@@ -107,6 +107,10 @@ pub use tree_sitter_kat_fstab::{
     GRAMMAR as FSTAB_GRAMMAR, LANGUAGE as FSTAB_LANGUAGE, NODE_TYPES as FSTAB_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_ghostty::{
+    GRAMMAR as GHOSTTY_GRAMMAR, LANGUAGE as GHOSTTY_LANGUAGE, NODE_TYPES as GHOSTTY_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_git_commit::{
     GRAMMAR as GIT_COMMIT_GRAMMAR, LANGUAGE as GIT_COMMIT_LANGUAGE,
     NODE_TYPES as GIT_COMMIT_NODE_TYPES,

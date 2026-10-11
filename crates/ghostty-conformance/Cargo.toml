@@ -1,0 +1,11 @@
+[package]
+name = "ghostty-conformance"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+tempfile = "3.27.0"
+tree-sitter = "0.26.8"
+tree-sitter-kat-ghostty = { version = "0.1.0", path = "../tree-sitter-kat-ghostty" }

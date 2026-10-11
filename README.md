@@ -4,14 +4,14 @@
 
 这个仓库只负责两件事：
 
-- 保存从上游 grammar 快照而来的最小源码资产
+- 保存上游 grammar 的最小源码快照，以及依据正式语法独立实现的自维护 grammar
 - 通过 `tree-sitter` CLI 预先生成并提交 `kat` 可直接通过 `git` 依赖使用的 Rust parser crate
 
 它不负责 `kat` 主仓库里的 query、runtime、detector 或语言级集成逻辑。
 
 ## 当前布局
 
-- `upstreams/<lang>/`：从上游复制过来的最小源码资产
+- `upstreams/<lang>/`：grammar 源码资产；自维护语言会在 metadata 中明确标记
 - `metadata/<lang>.toml`：来源、保留原因与生成约定
 - `crates/tree-sitter-kat-<lang>/vendor/<lang>/`：每种语言独立的预生成 parser crate 和已提交产物
 - `crates/tree-sitter-kat-parsers/`：聚合 re-export crate，供 `kat` 继续通过单一依赖面接入全部 parser
@@ -38,6 +38,8 @@ just check
 - `just generate`：总是重生成 `grammar.json` / `node-types.json`，总是同步各语言声明的 vendored support files，只在 grammar 输入、临时合成的最小 `tree-sitter.json` 模板或 `tree-sitter` CLI 版本变化时重生成 `parser.c`；生成阶段统一产出 ABI 15 parser
 - `just check-generated`：重跑一次生成，然后用 `git diff --exit-code` 确认各语言 crate 里提交的 `parser.c` / `grammar.json` 等产物是最新的
 - `just check`：执行 `cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings` 和 `cargo test --workspace`
+- `just test`：普通测试入口，不需要安装 Ghostty，也不下载或运行 Ghostty
+- `GHOSTTY_BIN=/path/to/ghostty just ghostty-check`：手动运行官方 Ghostty 配置解析对照测试；默认由独立 macOS CI 执行，详见 [Ghostty grammar 与验证](docs/ghostty.md)
 
 `kat` 侧可直接按 git dependency 引用统一 crate：
 

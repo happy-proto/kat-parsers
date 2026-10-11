@@ -224,6 +224,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ghostty-conformance"
+version = "0.1.0"
+dependencies = [
+ "tempfile",
+ "tree-sitter",
+ "tree-sitter-kat-ghostty",
+]
+
+[[package]]
 name = "hashbrown"
 version = "0.15.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -779,6 +788,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-ghostty"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-git-commit"
 version = "0.1.0"
 dependencies = [
@@ -1014,6 +1032,7 @@ dependencies = [
  "tree-sitter-kat-fish",
  "tree-sitter-kat-fortran-namelist",
  "tree-sitter-kat-fstab",
+ "tree-sitter-kat-ghostty",
  "tree-sitter-kat-git-commit",
  "tree-sitter-kat-git-config",
  "tree-sitter-kat-git-link",
