@@ -1,0 +1,19 @@
+# Blank values reset; repeated keys are valid.
+font-family =
+font-family = JetBrains Mono
+font-size = 14
+background = #282a36
+palette = 0=#282a36
+window-padding-x = 4,8
+quick-terminal-size = 50%,400px
+mouse-hide-while-typing
+cursor-style-blink = false
+env = EXAMPLE=a=b #literal
+keybind = ctrl+a>n=new_window
+keybind = global:ctrl+shift+==new_split:right
+keybind = ctrl+b=text:a=b #literal
+keybind = clear
+config-file = ?missing.ghostty
+theme =
+command = shell:printf '%s' hello
+initial-command = direct:echo hello

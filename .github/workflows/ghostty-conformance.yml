@@ -1,0 +1,36 @@
+name: Ghostty Conformance
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '23 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ghostty:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      # Stable protects PRs; the moving tip is checked daily and on demand.
+      matrix:
+        channel: ${{ fromJSON((github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '["stable","tip"]' || '["stable"]') }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download current official Ghostty
+        env:
+          GHOSTTY_CHANNEL: ${{ matrix.channel }}
+        run: |
+          binary=$(bash .github/scripts/download-ghostty.sh "$GHOSTTY_CHANNEL" "$RUNNER_TEMP/ghostty-$GHOSTTY_CHANNEL")
+          printf 'GHOSTTY_BIN=%s\n' "$binary" >> "$GITHUB_ENV"
+      - name: Check fixtures and current upstream defaults
+        run: cargo test --locked -p ghostty-conformance --test oracle -- --ignored --nocapture --test-threads=1

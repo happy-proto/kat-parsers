@@ -37,6 +37,7 @@ tree-sitter-kat-email = { path = "../tree-sitter-kat-email" }
 tree-sitter-kat-fish = { path = "../tree-sitter-kat-fish" }
 tree-sitter-kat-fortran-namelist = { path = "../tree-sitter-kat-fortran-namelist" }
 tree-sitter-kat-fstab = { path = "../tree-sitter-kat-fstab" }
+tree-sitter-kat-ghostty = { path = "../tree-sitter-kat-ghostty" }
 tree-sitter-kat-git-commit = { path = "../tree-sitter-kat-git-commit" }
 tree-sitter-kat-git-config = { path = "../tree-sitter-kat-git-config" }
 tree-sitter-kat-git-link = { path = "../tree-sitter-kat-git-link" }

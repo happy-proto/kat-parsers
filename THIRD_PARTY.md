@@ -1,5 +1,14 @@
 # Third-Party Sources
 
+## ghostty（自维护）
+
+`upstreams/ghostty/grammar.js` 与 `scanner.c` 为本仓库依据 Ghostty 官方配置解析行为独立实现的 MIT 代码，不是第三方 grammar 的导入或改编。
+
+- 行为参考：[ghostty-org/ghostty](https://github.com/ghostty-org/ghostty)，revision `b1d9492cfa5d0d22c534a00e81bea623957113e7` 的 `src/cli/args.zig` 与 `src/config/Config.zig`。
+- 未复制 Ghostty 官方 Zig 源码，也未使用社区 `tree-sitter-ghostty` 源码或 query。
+- 生成产物位于 `crates/tree-sitter-kat-ghostty/vendor/ghostty/`：`.parser-inputs`、`grammar.json`、`node-types.json`、`parser.c`；其中 `scanner.c` 同步自本仓库维护的源码。
+- 正确性边界与官方 CLI 对照流程见 [docs/ghostty.md](docs/ghostty.md)。
+
 This repository contains source-only grammar snapshots externalized from `kat`, plus the generated parser artifacts committed inside per-language crates for direct git consumption by `kat`. `crates/tree-sitter-kat-parsers/` is now only an aggregate re-export crate, while shared build support lives under `crates/kat-parser-common/`.
 
 The recorded upstream revisions identify the source of each snapshot. Local scanner fixes may differ from those revisions; the corresponding `upstreams/` and crate `vendor/` copies are kept in sync.
