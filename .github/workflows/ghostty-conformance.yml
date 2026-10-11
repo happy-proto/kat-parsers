@@ -25,7 +25,7 @@ jobs:
       matrix:
         channel: ${{ fromJSON((github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '["stable","tip"]' || '["stable"]') }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Download current official Ghostty
         env:
           GHOSTTY_CHANNEL: ${{ matrix.channel }}
