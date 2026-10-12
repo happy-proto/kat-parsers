@@ -11,6 +11,7 @@ pub mod build_support {
         let shared_include_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("include");
 
         emit_watch_directives(&vendor_dir);
+        emit_watch_directives(&shared_include_dir);
 
         let mut c_build = cc::Build::new();
         c_build.std("c11");
@@ -80,7 +81,11 @@ pub mod build_support {
             for path in entries {
                 if path.is_dir() {
                     stack.push(path);
-                } else {
+                } else if path
+                    .extension()
+                    .and_then(|value| value.to_str())
+                    .is_some_and(|extension| matches!(extension, "c" | "cc" | "cpp" | "h" | "hpp"))
+                {
                     println!("cargo:rerun-if-changed={}", path.display());
                 }
             }

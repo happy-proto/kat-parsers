@@ -7,12 +7,8 @@ license = "<license>"
 [copied]
 files = [
   "grammar.js",
-  # "tree-sitter.json",
   # "src/scanner.c",
   # "src/unicode.c",
-  # "src/tree_sitter/alloc.h",
-  # "src/tree_sitter/array.h",
-  # "src/tree_sitter/parser.h",
   # "LICENSE",
 ]
 
@@ -25,7 +21,4 @@ outputs = [
   "node-types.json",
   # "scanner.c",
   # "unicode.c",
-  # "tree_sitter/alloc.h",
-  # "tree_sitter/array.h",
-  # "tree_sitter/parser.h",
 ]

@@ -30,10 +30,8 @@ The recorded upstream revisions identify the source of each snapshot. Local scan
   - `crates/kat-parser-common/include/tree_sitter/parser.h`
   - `crates/kat-parser-common/include/tree_sitter/alloc.h`
   - `crates/kat-parser-common/include/tree_sitter/array.h`
-- Provenance:
-  - `parser.h` matches `tree-sitter 0.26.8`'s `src/parser.h`
-  - `alloc.h` and `array.h` match the vendored copies from `svkozak/tree-sitter-coffeescript` at `3bb4dbd68ca926c76b3baadb529da4de3726ea37`
-- Notes: these headers are shared build-time support assets extracted out of the old monolithic bundle so each language crate can compile independently without implicit cross-language include paths.
+- Provenance: Tree-sitter CLI 0.27.1's generated public scanner headers, from `tree-sitter/tree-sitter` at tag `v0.27.1` (MIT).
+- Notes: the generator synchronizes these headers from CLI output. All language crates use the shared copies; no grammar-specific copies or runtime-private headers are imported.
 
 ## CoffeeScript
 
@@ -43,9 +41,6 @@ The recorded upstream revisions identify the source of each snapshot. Local scan
 - Imported source assets:
   - `grammar.js`
   - `src/scanner.c`
-  - `src/tree_sitter/alloc.h`
-  - `src/tree_sitter/array.h`
-  - `src/tree_sitter/parser.h`
   - `LICENSE.txt`
 - Local generated artifacts:
   - `crates/tree-sitter-kat-coffeescript/vendor/coffeescript/.parser-inputs`
@@ -63,9 +58,6 @@ The recorded upstream revisions identify the source of each snapshot. Local scan
   - `grammar.js`
   - `src/scanner.c`
   - `src/unicode.c`
-  - `src/tree_sitter/alloc.h`
-  - `src/tree_sitter/array.h`
-  - `src/tree_sitter/parser.h`
   - `LICENSE`
 - Local generated artifacts:
   - `crates/tree-sitter-kat-crystal/vendor/crystal/.parser-inputs`
