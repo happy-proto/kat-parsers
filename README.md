@@ -28,7 +28,7 @@
 本地要求：
 
 - Rust toolchain
-- `tree-sitter` CLI 0.27.0 在 `PATH` 中（与 Generated Check 使用同一版本）
+- `tree-sitter` CLI 0.27.1 在 `PATH` 中（与 Generated Check 使用同一版本）
 - `just`
 
 常用命令：
