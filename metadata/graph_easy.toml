@@ -1,0 +1,15 @@
+language = "graph_easy"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内自维护 grammar"
+reason = "没有可直接接入的 Graph::Easy parser；独立实现常见图描述语法，用于源码高亮，不执行布局或属性语义校验。"
+reference_repo = "https://github.com/y9c/graph-easy-py"
+reference_commit = "bff228700eb946d7e64ca5da2cfaceb81f11e666"
+reference_files = ["README.md", "src/graph_easy/parser.py", "tests/test_graph_easy.py"]
+license = "MIT"
+
+[copied]
+files = ["grammar.js"]
+
+[generated]
+command = "cargo run -p xtask -- generate graph_easy"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]

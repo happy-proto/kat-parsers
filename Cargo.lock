@@ -891,6 +891,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-graph-easy"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-graphql"
 version = "0.1.0"
 dependencies = [
@@ -1056,6 +1065,7 @@ dependencies = [
  "tree-sitter-kat-gomod",
  "tree-sitter-kat-gosum",
  "tree-sitter-kat-gowork",
+ "tree-sitter-kat-graph-easy",
  "tree-sitter-kat-graphql",
  "tree-sitter-kat-hcl",
  "tree-sitter-kat-ignore",

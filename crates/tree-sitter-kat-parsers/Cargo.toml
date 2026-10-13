@@ -48,6 +48,7 @@ tree-sitter-kat-gitattributes = { path = "../tree-sitter-kat-gitattributes" }
 tree-sitter-kat-gomod = { path = "../tree-sitter-kat-gomod" }
 tree-sitter-kat-gosum = { path = "../tree-sitter-kat-gosum" }
 tree-sitter-kat-gowork = { path = "../tree-sitter-kat-gowork" }
+tree-sitter-kat-graph-easy = { path = "../tree-sitter-kat-graph-easy" }
 tree-sitter-kat-graphql = { path = "../tree-sitter-kat-graphql" }
 tree-sitter-kat-hcl = { path = "../tree-sitter-kat-hcl" }
 tree-sitter-kat-ignore = { path = "../tree-sitter-kat-ignore" }

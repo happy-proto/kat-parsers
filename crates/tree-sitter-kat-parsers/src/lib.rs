@@ -156,6 +156,11 @@ pub use tree_sitter_kat_gowork::{
     GRAMMAR as GOWORK_GRAMMAR, LANGUAGE as GOWORK_LANGUAGE, NODE_TYPES as GOWORK_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_graph_easy::{
+    GRAMMAR as GRAPH_EASY_GRAMMAR, LANGUAGE as GRAPH_EASY_LANGUAGE,
+    NODE_TYPES as GRAPH_EASY_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_graphql::{
     GRAMMAR as GRAPHQL_GRAMMAR, LANGUAGE as GRAPHQL_LANGUAGE, NODE_TYPES as GRAPHQL_NODE_TYPES,
 };
