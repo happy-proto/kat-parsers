@@ -1,5 +1,12 @@
 # Third-Party Sources
 
+## Graph::Easy（自维护）
+
+- `upstreams/graph_easy/grammar.js` 为本仓库独立编写的 MIT 高亮 grammar。
+- 语法行为参考：[y9c/graph-easy-py](https://github.com/y9c/graph-easy-py)，revision `bff228700eb946d7e64ca5da2cfaceb81f11e666` 的 README、parser 行为与测试案例；未复制或改编其 GPL Python/Perl 实现。
+- 生成产物位于 `crates/tree-sitter-kat-graph-easy/vendor/graph_easy/`，由现有 `xtask` 生成 ABI 15 parser。
+- 覆盖节点、边、标签、属性、类默认值、分组和注释的常见结构；不执行布局或属性语义校验，不承诺完整兼容 Perl Graph::Easy 的全部扩展语法。
+
 ## Mermaid
 
 - Upstream: [Latias94/merman](https://github.com/Latias94/merman), `distribution/tree-sitter-mermaid`, package version `0.3.0`

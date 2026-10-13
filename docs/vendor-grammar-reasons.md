@@ -6,6 +6,8 @@
 
 ## 没有可用的 crates.io grammar crate
 
+- `graph_easy`：没有可直接使用的 parser，依据 Graph::Easy 常见 DSL 独立编写 MIT grammar。与 DOT 分离，支持节点、边标签、属性及分组等源码结构；行为参考与边界见 [`../metadata/graph_easy.toml`](../metadata/graph_easy.toml)。
+
 - `git_config`
 - `git_link`
 - `git_log`
