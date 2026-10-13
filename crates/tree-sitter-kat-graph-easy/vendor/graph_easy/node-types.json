@@ -126,11 +126,15 @@
           "named": true
         },
         {
+          "type": "directed_edge_operator",
+          "named": true
+        },
+        {
           "type": "edge_label",
           "named": true
         },
         {
-          "type": "edge_operator",
+          "type": "undirected_edge_operator",
           "named": true
         }
       ]
@@ -305,11 +309,11 @@
     "extra": true
   },
   {
-    "type": "edge_label",
+    "type": "directed_edge_operator",
     "named": true
   },
   {
-    "type": "edge_operator",
+    "type": "edge_label",
     "named": true
   },
   {
@@ -326,6 +330,10 @@
   },
   {
     "type": "node_text",
+    "named": true
+  },
+  {
+    "type": "undirected_edge_operator",
     "named": true
   },
   {

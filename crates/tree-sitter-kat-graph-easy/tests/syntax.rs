@@ -23,6 +23,8 @@ node.warning { color: red; }
 [ Cache ] ..> [ Store ] ==> [ Backup ] ~~> [ Remote ] ##> [ Done ]
 [ A ], [ B ] -> [ C ] -> [ D ]
 Start -> Finish <- Other
+[ A ] -- request-v2 --> [ B ]
+build-step -> deploy.step
 [ 多行\n标签 ] -- [ Hash # inside ]
 "#;
     let mut parser = Parser::new();
@@ -44,6 +46,8 @@ Start -> Finish <- Other
         assert!(count(root, kind) > 0, "missing {kind}: {}", root.to_sexp());
     }
     assert_eq!(count(root, "comment"), 1);
+    assert_eq!(count(root, "bare_node"), 5);
+    assert_eq!(count(root, "edge_label"), 2);
 }
 
 #[test]
