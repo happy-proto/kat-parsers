@@ -13,7 +13,7 @@ include = ["build.rs", "src/lib.rs", "vendor/**"]
 path = "src/lib.rs"
 
 [dev-dependencies]
-tree-sitter = "0.26.8"
+tree-sitter = "0.27.1"
 
 [dependencies]
 tree-sitter-language = "0.1.7"

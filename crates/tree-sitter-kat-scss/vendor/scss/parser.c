@@ -11,7 +11,7 @@
 #elif defined(__clang__)
 #pragma clang optimize off
 #elif defined(__GNUC__)
-#pragma GCC optimize ("O0")
+#pragma GCC optimize ("O0", "jump-tables")
 #endif
 
 #define LANGUAGE_VERSION 15
@@ -32249,7 +32249,7 @@ TS_PUBLIC const TSLanguage *tree_sitter_scss(void) {
     .metadata = {
       .major_version = 0,
       .minor_version = 0,
-      .patch_version = 1,
+      .patch_version = 0,
     },
   };
   return &language;

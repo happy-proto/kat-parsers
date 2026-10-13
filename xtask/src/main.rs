@@ -4,14 +4,16 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use anstyle::{AnsiColor, Style};
-use anyhow::{Context, Result, anyhow, bail};
+use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use serde::Deserialize;
 use tempfile::TempDir;
 
-const PARSER_STAGE_VERSION: &str = "parser-stage-v4";
 const PARSER_STAMP_FILE: &str = ".parser-inputs";
 const TREE_SITTER_ABI_VERSION: &str = "15";
+const TREE_SITTER_JS_RUNTIME: &str = "node";
+const GENERATED_FILES: [&str; 3] = ["grammar.json", "node-types.json", "parser.c"];
+const SHARED_HEADERS: [&str; 3] = ["parser.h", "alloc.h", "array.h"];
 const AGGREGATE_CRATE_NAME: &str = "tree-sitter-kat-parsers";
 const COMMON_CRATE_NAME: &str = "kat-parser-common";
 
@@ -53,7 +55,7 @@ enum Commands {
         /// Only regenerate the named grammar; defaults to all registered grammars when omitted.
         #[arg(value_name = "LANGUAGE")]
         language: Option<String>,
-        /// Regenerate `parser.c` even when the cached parser inputs have not changed.
+        /// Regenerate all parser artifacts even when their inputs and outputs are unchanged.
         #[arg(long)]
         force: bool,
     },
@@ -83,47 +85,84 @@ fn generate(repo_root: &Path, language: Option<&str>, force: bool) -> Result<()>
     }
 
     let cli_version = tree_sitter_version()?;
+    if !cli_version
+        .split_whitespace()
+        .nth(1)
+        .is_some_and(|version| version.starts_with("0.27."))
+    {
+        bail!(
+            "Tree-sitter CLI 0.27.x is required; install the version pinned in Generated Check (found {cli_version})"
+        );
+    }
     println!(
         "{} Generating {} grammar crate(s) with {}{}",
         paint("==>", accent_style()),
         selected.len(),
         paint(&cli_version, success_style()),
         if force {
-            " (forced parser refresh)"
+            " (forced artifact refresh)"
         } else {
             ""
         }
     );
 
-    write_common_crate(repo_root)?;
+    let mut rust_sources = Vec::new();
+    write_common_crate(repo_root, &mut rust_sources)?;
     cleanup_obsolete_generated_crates(repo_root, &specs)?;
 
     for spec in &specs {
-        write_language_crate_scaffolding(spec)?;
+        write_language_crate_scaffolding(spec, &mut rust_sources)?;
     }
 
     for spec in selected {
-        generate_one(spec, &cli_version, force)?;
-        write_language_crate_lib(spec)?;
+        generate_one(
+            spec,
+            &cli_version,
+            force,
+            &repo_root.join("crates/kat-parser-common/include/tree_sitter"),
+        )?;
     }
 
     for spec in &specs {
         if spec.vendor_dir.join("parser.c").is_file() {
-            write_language_crate_lib(spec)?;
+            write_language_crate_lib(spec, &mut rust_sources)?;
         }
     }
 
-    write_aggregate_crate(repo_root, &specs)?;
-    format_generated_rust_files(repo_root, &specs)?;
+    write_aggregate_crate(repo_root, &specs, &mut rust_sources)?;
+    format_generated_rust_files(&rust_sources)?;
     Ok(())
 }
 
-fn generate_one(spec: &GrammarSpec, cli_version: &str, force: bool) -> Result<()> {
+fn generate_one(
+    spec: &GrammarSpec,
+    cli_version: &str,
+    force: bool,
+    shared_include_dir: &Path,
+) -> Result<()> {
     let upstream_dir = &spec.upstream_dir;
     let vendor_dir = &spec.vendor_dir;
     let stamp_file = vendor_dir.join(PARSER_STAMP_FILE);
 
-    print_section(spec, "Preparing temporary workspace");
+    // Scanner/support changes do not affect parser generation, but must always
+    // reach the vendored crate even when the grammar cache is current.
+    for file in vendored_support_files(spec) {
+        copy_file(
+            &upstream_dir.join(file),
+            &vendor_dir.join(vendored_support_destination(file)),
+        )?;
+    }
+
+    let input_hash = compute_parser_input_hash(spec, cli_version)?;
+    if !force
+        && let Some(output_hash) = generated_output_hash(vendor_dir, shared_include_dir)?
+        && stamp_matches(&stamp_file, &format!("{input_hash}\n{output_hash}"))
+    {
+        print_skip(spec, "Parser artifacts are up to date");
+        return Ok(());
+    }
+
+    print_section(spec, "Generating parser artifacts");
     let temp_dir = TempDir::new().context("failed to create temp dir for tree-sitter generate")?;
     let temp_root = temp_dir.path();
     let workspace_dir = temp_root.join(&spec.metadata.language);
@@ -136,60 +175,26 @@ fn generate_one(spec: &GrammarSpec, cli_version: &str, force: bool) -> Result<()
     for file in &spec.metadata.generator_support_files {
         copy_file(&upstream_dir.join(file), &workspace_dir.join(file))?;
     }
-    write_file(
-        &workspace_dir.join("tree-sitter.json"),
-        &synthesized_tree_sitter_json(&spec.metadata.language),
-    )?;
-
-    print_section(
-        spec,
-        "Stage 1/3: Regenerating grammar.json and node-types.json",
-    );
-    run_tree_sitter_generate_no_parser(&workspace_dir)?;
-    copy_file(
-        &workspace_dir.join("src/grammar.json"),
-        &vendor_dir.join("grammar.json"),
-    )?;
-    copy_file(
-        &workspace_dir.join("src/node-types.json"),
-        &vendor_dir.join("node-types.json"),
-    )?;
-
-    print_section(spec, "Stage 2/3: Syncing vendored support files");
-    for file in vendored_support_files(spec) {
+    // Since 0.27, ABI 15 requires no synthetic tree-sitter.json. A single
+    // invocation produces all three artifacts.
+    run_tree_sitter_generate_parser(&workspace_dir)?;
+    // Use the generator's public scanner headers, not runtime-private headers
+    // or historical copies bundled with individual upstream grammars.
+    for header in SHARED_HEADERS {
         copy_file(
-            &upstream_dir.join(file),
-            &vendor_dir.join(vendored_support_destination(file)),
+            &workspace_dir.join("src/tree_sitter").join(header),
+            &shared_include_dir.join(header),
         )?;
     }
-
-    let parser_input_hash = compute_parser_input_hash(&workspace_dir, cli_version)?;
-    if !force
-        && stamp_matches(&stamp_file, &parser_input_hash)
-        && vendor_dir.join("parser.c").is_file()
-    {
-        print_skip(
-            spec,
-            "Stage 3/3: parser.c is already up to date; skipping heavy regeneration",
-        );
-        return Ok(());
+    for file in GENERATED_FILES {
+        copy_file(
+            &workspace_dir.join("src").join(file),
+            &vendor_dir.join(file),
+        )?;
     }
-
-    let parser_reason = if force {
-        "forced refresh requested"
-    } else {
-        "parser inputs changed"
-    };
-    print_section(
-        spec,
-        &format!("Stage 3/3: Regenerating parser.c ({parser_reason})"),
-    );
-    run_tree_sitter_generate_parser(&workspace_dir)?;
-    copy_file(
-        &workspace_dir.join("src/parser.c"),
-        &vendor_dir.join("parser.c"),
-    )?;
-    write_file(&stamp_file, &format!("{parser_input_hash}\n"))?;
+    let output_hash = generated_output_hash(vendor_dir, shared_include_dir)?
+        .context("missing generated artifacts")?;
+    write_file(&stamp_file, &format!("{input_hash}\n{output_hash}\n"))?;
 
     print_done(spec);
     Ok(())
@@ -239,10 +244,10 @@ fn language_const_prefix(language: &str) -> String {
     language.replace('-', "_").to_ascii_uppercase()
 }
 
-fn write_common_crate(repo_root: &Path) -> Result<()> {
+fn write_common_crate(repo_root: &Path, rust_sources: &mut Vec<(PathBuf, String)>) -> Result<()> {
     let crate_dir = repo_root.join("crates").join(COMMON_CRATE_NAME);
     write_file(&crate_dir.join("Cargo.toml"), &common_cargo_toml())?;
-    write_file(&crate_dir.join("src/lib.rs"), COMMON_LIB_RS)?;
+    rust_sources.push((crate_dir.join("src/lib.rs"), COMMON_LIB_RS.to_owned()));
     Ok(())
 }
 
@@ -292,12 +297,18 @@ fn cleanup_obsolete_generated_crates(repo_root: &Path, specs: &[GrammarSpec]) ->
     Ok(())
 }
 
-fn write_language_crate_scaffolding(spec: &GrammarSpec) -> Result<()> {
+fn write_language_crate_scaffolding(
+    spec: &GrammarSpec,
+    rust_sources: &mut Vec<(PathBuf, String)>,
+) -> Result<()> {
     write_file(
         &spec.crate_dir.join("Cargo.toml"),
         &language_crate_cargo_toml(spec),
     )?;
-    write_file(&spec.crate_dir.join("build.rs"), LANGUAGE_BUILD_RS)?;
+    rust_sources.push((
+        spec.crate_dir.join("build.rs"),
+        LANGUAGE_BUILD_RS.to_owned(),
+    ));
     Ok(())
 }
 
@@ -318,7 +329,7 @@ include = ["build.rs", "src/lib.rs", "vendor/**"]
 path = "src/lib.rs"
 
 [dev-dependencies]
-tree-sitter = "0.26.8"
+tree-sitter = "0.27.1"
 
 [dependencies]
 tree-sitter-language = "0.1.7"
@@ -331,13 +342,16 @@ kat-parser-common = {{ path = "../kat-parser-common" }}
     )
 }
 
-fn write_language_crate_lib(spec: &GrammarSpec) -> Result<()> {
+fn write_language_crate_lib(
+    spec: &GrammarSpec,
+    rust_sources: &mut Vec<(PathBuf, String)>,
+) -> Result<()> {
     let parser_path = spec.vendor_dir.join("parser.c");
     let symbol_name = extract_symbol_name(&parser_path)?;
-    write_file(
-        &spec.crate_dir.join("src/lib.rs"),
-        &language_crate_lib_rs(spec, &symbol_name),
-    )?;
+    rust_sources.push((
+        spec.crate_dir.join("src/lib.rs"),
+        language_crate_lib_rs(spec, &symbol_name),
+    ));
     Ok(())
 }
 
@@ -379,10 +393,14 @@ mod tests {{
     )
 }
 
-fn write_aggregate_crate(repo_root: &Path, specs: &[GrammarSpec]) -> Result<()> {
+fn write_aggregate_crate(
+    repo_root: &Path,
+    specs: &[GrammarSpec],
+    rust_sources: &mut Vec<(PathBuf, String)>,
+) -> Result<()> {
     let crate_dir = repo_root.join("crates").join(AGGREGATE_CRATE_NAME);
     write_file(&crate_dir.join("Cargo.toml"), &aggregate_cargo_toml(specs))?;
-    write_file(&crate_dir.join("src/lib.rs"), &aggregate_lib_rs(specs))?;
+    rust_sources.push((crate_dir.join("src/lib.rs"), aggregate_lib_rs(specs)));
     Ok(())
 }
 
@@ -433,16 +451,15 @@ fn repo_root() -> Result<PathBuf> {
         .context("xtask must live under the repository root")
 }
 
-fn format_generated_rust_files(repo_root: &Path, specs: &[GrammarSpec]) -> Result<()> {
-    let common_dir = repo_root.join("crates").join(COMMON_CRATE_NAME);
-    let aggregate_dir = repo_root.join("crates").join(AGGREGATE_CRATE_NAME);
-    let mut paths = vec![
-        common_dir.join("src/lib.rs"),
-        aggregate_dir.join("src/lib.rs"),
-    ];
-    for spec in specs {
-        paths.push(spec.crate_dir.join("build.rs"));
-        paths.push(spec.crate_dir.join("src/lib.rs"));
+fn format_generated_rust_files(sources: &[(PathBuf, String)]) -> Result<()> {
+    // Format away from the checkout. Comparing an unformatted template with a
+    // formatted file would otherwise rewrite it on every run and invalidate Cargo.
+    let temp_dir = TempDir::new().context("failed to create Rust formatting workspace")?;
+    let mut paths = Vec::new();
+    for (index, (_, contents)) in sources.iter().enumerate() {
+        let path = temp_dir.path().join(format!("{index}.rs"));
+        write_file(&path, contents)?;
+        paths.push(path);
     }
 
     let status = Command::new("rustfmt")
@@ -451,6 +468,9 @@ fn format_generated_rust_files(repo_root: &Path, specs: &[GrammarSpec]) -> Resul
         .context("failed to execute rustfmt on generated Rust sources")?;
     if !status.success() {
         bail!("rustfmt exited with {status}");
+    }
+    for ((destination, _), source) in sources.iter().zip(paths) {
+        copy_file(&source, destination)?;
     }
     Ok(())
 }
@@ -525,27 +545,6 @@ fn is_license_file(path: &str) -> bool {
         .is_some_and(|name| name.starts_with("LICENSE"))
 }
 
-fn synthesized_tree_sitter_json(language: &str) -> String {
-    let template = r#"{
-  "grammars": [
-    {
-      "name": "__LANGUAGE__",
-      "path": "."
-    }
-  ],
-  "metadata": {
-    "version": "0.0.1"
-  },
-  "bindings": {
-    "c": true,
-    "rust": true
-  }
-}
-"#;
-
-    template.replace("__LANGUAGE__", language)
-}
-
 fn paint(text: &str, style: Style) -> String {
     format!("{}{}{}", style.render(), text, style.render_reset())
 }
@@ -581,31 +580,65 @@ fn tree_sitter_version() -> Result<String> {
         .map(|value| value.trim().to_owned())
 }
 
-fn compute_parser_input_hash(temp_root: &Path, cli_version: &str) -> Result<String> {
+fn compute_parser_input_hash(spec: &GrammarSpec, cli_version: &str) -> Result<String> {
     let mut hasher = blake3::Hasher::new();
+    hash_bytes(&mut hasher, b"tree-sitter-cli", cli_version.as_bytes());
     hash_bytes(
         &mut hasher,
-        b"parser-stage-version",
-        PARSER_STAGE_VERSION.as_bytes(),
+        b"js-runtime",
+        TREE_SITTER_JS_RUNTIME.as_bytes(),
     );
-    hash_bytes(&mut hasher, b"tree-sitter-cli", cli_version.as_bytes());
     hash_bytes(
         &mut hasher,
         b"tree-sitter-abi-version",
         TREE_SITTER_ABI_VERSION.as_bytes(),
     );
-    let grammar_json_path = temp_root.join("src/grammar.json");
-    let grammar_json = fs::read(&grammar_json_path)
-        .with_context(|| format!("failed to read {}", grammar_json_path.display()))?;
-    hash_bytes(&mut hasher, b"grammar.json", &grammar_json);
-    let tree_sitter_json_path = temp_root.join("tree-sitter.json");
-    if tree_sitter_json_path.is_file() {
-        let tree_sitter_json = fs::read(&tree_sitter_json_path)
-            .with_context(|| format!("failed to read {}", tree_sitter_json_path.display()))?;
-        hash_bytes(&mut hasher, b"tree-sitter.json", &tree_sitter_json);
+    let mut inputs = generator_input_files(spec);
+    inputs.extend(
+        spec.metadata
+            .generator_support_files
+            .iter()
+            .map(String::as_str),
+    );
+    inputs.sort_unstable();
+    inputs.dedup();
+    for input in inputs {
+        let path = spec.upstream_dir.join(input);
+        let bytes =
+            fs::read(&path).with_context(|| format!("failed to read {}", path.display()))?;
+        hash_bytes(&mut hasher, input.as_bytes(), &bytes);
     }
 
     Ok(hasher.finalize().to_hex().to_string())
+}
+
+// Validate outputs as well as inputs: missing or edited artifacts must never
+// become invisible to check-generated merely because the grammar is unchanged.
+fn generated_output_hash(vendor_dir: &Path, shared_include_dir: &Path) -> Result<Option<String>> {
+    let mut hasher = blake3::Hasher::new();
+    let outputs = GENERATED_FILES
+        .into_iter()
+        .map(|file| vendor_dir.join(file))
+        .chain(
+            SHARED_HEADERS
+                .into_iter()
+                .map(|file| shared_include_dir.join(file)),
+        );
+    for path in outputs {
+        let bytes = match fs::read(&path) {
+            Ok(bytes) => bytes,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+            Err(error) => {
+                return Err(error).with_context(|| format!("failed to read {}", path.display()));
+            }
+        };
+        hash_bytes(
+            &mut hasher,
+            path.file_name().unwrap().as_encoded_bytes(),
+            &bytes,
+        );
+    }
+    Ok(Some(hasher.finalize().to_hex().to_string()))
 }
 
 fn hash_bytes(hasher: &mut blake3::Hasher, label: &[u8], bytes: &[u8]) {
@@ -621,33 +654,22 @@ fn stamp_matches(path: &Path, expected: &str) -> bool {
         .unwrap_or(false)
 }
 
-fn run_tree_sitter_generate_no_parser(temp_root: &Path) -> Result<()> {
-    let status = Command::new("tree-sitter")
-        .arg("generate")
-        .arg("--abi")
-        .arg(TREE_SITTER_ABI_VERSION)
-        .arg("--no-parser")
-        .current_dir(temp_root)
-        .status()
-        .context("failed to execute tree-sitter generate --abi 15 --no-parser")?;
-    if !status.success() {
-        return Err(anyhow!("tree-sitter generate exited with {status}"));
-    }
-    Ok(())
-}
-
 fn run_tree_sitter_generate_parser(temp_root: &Path) -> Result<()> {
+    // Keep the generator out of xtask's dependency graph: a prebuilt, optimized
+    // CLI avoids choosing between compiling the generator quickly and running
+    // it quickly. Node handles both CommonJS and the CSS ES module imported by
+    // Less/SCSS; QuickJS's require loader cannot load that module.
     let status = Command::new("tree-sitter")
         .arg("generate")
         .arg("--abi")
         .arg(TREE_SITTER_ABI_VERSION)
+        .arg("--js-runtime")
+        .arg(TREE_SITTER_JS_RUNTIME)
         .current_dir(temp_root)
         .status()
         .context("failed to execute tree-sitter generate --abi 15")?;
     if !status.success() {
-        return Err(anyhow!(
-            "tree-sitter generate --abi 15 exited with {status}"
-        ));
+        bail!("tree-sitter generate --abi 15 exited with {status}");
     }
     Ok(())
 }
@@ -681,27 +703,25 @@ fn extract_symbol_name(parser_path: &Path) -> Result<String> {
 }
 
 fn copy_file(source: &Path, destination: &Path) -> Result<()> {
+    let bytes = fs::read(source).with_context(|| format!("failed to read {}", source.display()))?;
+    write_bytes(destination, &bytes)
+}
+
+fn write_bytes(destination: &Path, contents: &[u8]) -> Result<()> {
+    if fs::read(destination).is_ok_and(|existing| existing == contents) {
+        return Ok(());
+    }
     let parent = destination
         .parent()
         .with_context(|| format!("{} has no parent directory", destination.display()))?;
     fs::create_dir_all(parent).with_context(|| format!("failed to create {}", parent.display()))?;
-    fs::copy(source, destination).with_context(|| {
-        format!(
-            "failed to copy {} to {}",
-            source.display(),
-            destination.display()
-        )
-    })?;
+    fs::write(destination, contents)
+        .with_context(|| format!("failed to write {}", destination.display()))?;
     Ok(())
 }
 
 fn write_file(path: &Path, contents: &str) -> Result<()> {
-    let parent = path
-        .parent()
-        .with_context(|| format!("{} has no parent directory", path.display()))?;
-    fs::create_dir_all(parent).with_context(|| format!("failed to create {}", parent.display()))?;
-    fs::write(path, contents).with_context(|| format!("failed to write {}", path.display()))?;
-    Ok(())
+    write_bytes(path, contents.as_bytes())
 }
 
 const LANGUAGE_BUILD_RS: &str = r#"fn main() {
@@ -722,6 +742,7 @@ const COMMON_LIB_RS: &str = r##"pub mod build_support {
         let shared_include_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("include");
 
         emit_watch_directives(&vendor_dir);
+        emit_watch_directives(&shared_include_dir);
 
         let mut c_build = cc::Build::new();
         c_build.std("c11");
@@ -791,7 +812,8 @@ const COMMON_LIB_RS: &str = r##"pub mod build_support {
             for path in entries {
                 if path.is_dir() {
                     stack.push(path);
-                } else {
+                } else if path.extension().and_then(|value| value.to_str())
+                    .is_some_and(|extension| matches!(extension, "c" | "cc" | "cpp" | "h" | "hpp")) {
                     println!("cargo:rerun-if-changed={}", path.display());
                 }
             }
@@ -838,3 +860,184 @@ const COMMON_LIB_RS: &str = r##"pub mod build_support {
     }
 }
 "##;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unchanged_generated_files_keep_their_modification_time() -> Result<()> {
+        let dir = TempDir::new()?;
+        let source = dir.path().join("source");
+        let destination = dir.path().join("destination");
+        write_file(&source, "unchanged")?;
+        copy_file(&source, &destination)?;
+        let before = fs::metadata(&destination)?.modified()?;
+        std::thread::sleep(std::time::Duration::from_millis(20));
+        copy_file(&source, &destination)?;
+        assert_eq!(before, fs::metadata(&destination)?.modified()?);
+        write_file(&destination, "unchanged")?;
+        assert_eq!(before, fs::metadata(&destination)?.modified()?);
+        write_file(&source, "changed")?;
+        copy_file(&source, &destination)?;
+        assert_eq!(fs::read_to_string(&destination)?, "changed");
+        Ok(())
+    }
+
+    fn fixture(root: &Path) -> Result<GrammarSpec> {
+        let upstream_dir = root.join("upstreams/fixture");
+        write_file(
+            &upstream_dir.join("grammar.js"),
+            "module.exports = grammar({name: 'fixture', rules: {source: $ => require('../shared/token.js')}});",
+        )?;
+        write_file(
+            &root.join("upstreams/shared/token.js"),
+            "module.exports = 'a';",
+        )?;
+        write_file(&upstream_dir.join("scanner.c"), "/* initial scanner */")?;
+        let crate_dir = root.join("crates/tree-sitter-kat-fixture");
+        Ok(GrammarSpec {
+            metadata: GrammarMetadata {
+                language: "fixture".to_owned(),
+                generator_support_files: vec!["../shared/token.js".to_owned()],
+                copied: CopiedFiles {
+                    files: vec!["grammar.js".to_owned(), "scanner.c".to_owned()],
+                },
+            },
+            upstream_dir,
+            vendor_dir: crate_dir.join("vendor/fixture"),
+            crate_dir,
+            package_name: "tree-sitter-kat-fixture".to_owned(),
+            crate_ident: "tree_sitter_kat_fixture".to_owned(),
+            constant_prefix: "FIXTURE".to_owned(),
+        })
+    }
+
+    #[test]
+    #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
+    fn generation_tracks_imports_and_repairs_missing_or_modified_outputs() -> Result<()> {
+        let dir = TempDir::new()?;
+        let spec = fixture(dir.path())?;
+        let cli_version = tree_sitter_version()?;
+        let shared_include_dir = dir
+            .path()
+            .join("crates/kat-parser-common/include/tree_sitter");
+        let run = |force| generate_one(&spec, &cli_version, force, &shared_include_dir);
+        run(false)?;
+        let original_grammar = fs::read(spec.vendor_dir.join("grammar.json"))?;
+        let parser = fs::read_to_string(spec.vendor_dir.join("parser.c"))?;
+        assert!(parser.contains("#define LANGUAGE_VERSION 15"));
+        assert!(parser.contains(".patch_version = 0"));
+
+        // A shared imported file is an input even though it lives outside the
+        // grammar directory. Scanner bytes are synchronized independently.
+        write_file(
+            &dir.path().join("upstreams/shared/token.js"),
+            "module.exports = 'b';",
+        )?;
+        run(false)?;
+        assert_ne!(
+            original_grammar,
+            fs::read(spec.vendor_dir.join("grammar.json"))?
+        );
+        let stamp_path = spec.vendor_dir.join(PARSER_STAMP_FILE);
+        let stamp_time = fs::metadata(&stamp_path)?.modified()?;
+        write_file(
+            &spec.upstream_dir.join("scanner.c"),
+            "/* changed scanner */",
+        )?;
+        run(false)?;
+        assert_eq!(stamp_time, fs::metadata(&stamp_path)?.modified()?);
+        assert_eq!(
+            fs::read_to_string(spec.vendor_dir.join("scanner.c"))?,
+            "/* changed scanner */"
+        );
+
+        for file in GENERATED_FILES {
+            let path = spec.vendor_dir.join(file);
+            let expected = fs::read(&path)?;
+            fs::remove_file(&path)?;
+            run(false)?;
+            assert_eq!(expected, fs::read(&path)?);
+            write_file(&path, "corrupt artifact")?;
+            run(false)?;
+            assert_eq!(expected, fs::read(&path)?);
+        }
+        for header in SHARED_HEADERS {
+            let path = shared_include_dir.join(header);
+            let expected = fs::read(&path)?;
+            fs::remove_file(&path)?;
+            run(false)?;
+            assert_eq!(expected, fs::read(&path)?);
+            write_file(&path, "corrupt header")?;
+            run(false)?;
+            assert_eq!(expected, fs::read(&path)?);
+        }
+
+        // Exercise the generated public array API under optimization in both
+        // languages used by external scanners, including growth and deletion.
+        let array_source = dir.path().join("array.c");
+        write_file(&array_source, include_str!("../tests/fixtures/array.c"))?;
+        for (compiler, language, standard) in [("cc", "c", "c11"), ("c++", "c++", "c++11")] {
+            let binary = dir.path().join(format!("array-{language}"));
+            let status = Command::new(compiler)
+                .args([
+                    "-x",
+                    language,
+                    &format!("-std={standard}"),
+                    "-O2",
+                    "-fstrict-aliasing",
+                    "-Werror",
+                    "-I",
+                ])
+                .arg(shared_include_dir.parent().unwrap())
+                .arg(&array_source)
+                .arg("-o")
+                .arg(&binary)
+                .status()?;
+            assert!(
+                status.success(),
+                "{compiler} failed to compile public scanner headers"
+            );
+            assert!(Command::new(binary).status()?.success());
+        }
+
+        write_file(
+            &dir.path().join("metadata/fixture.toml"),
+            "language = 'fixture'\ngenerator_support_files = ['../shared/token.js']\n[copied]\nfiles = ['grammar.js', 'scanner.c']\n",
+        )?;
+        generate(dir.path(), None, false)?;
+        let paths = [
+            dir.path().join("crates/kat-parser-common/src/lib.rs"),
+            dir.path().join("crates/tree-sitter-kat-parsers/src/lib.rs"),
+            spec.crate_dir.join("src/lib.rs"),
+            spec.crate_dir.join("build.rs"),
+            spec.vendor_dir.join("parser.c"),
+            stamp_path,
+        ];
+        let before = paths
+            .iter()
+            .map(|path| fs::metadata(path)?.modified())
+            .collect::<std::io::Result<Vec<_>>>()?;
+        // Even a forced, byte-identical regeneration must preserve timestamps,
+        // including Rust sources whose templates need formatting.
+        generate(dir.path(), None, true)?;
+        let after = paths
+            .iter()
+            .map(|path| fs::metadata(path)?.modified())
+            .collect::<std::io::Result<Vec<_>>>()?;
+        assert_eq!(before, after);
+        Ok(())
+    }
+
+    #[test]
+    fn cli_version_invalidates_the_generation_cache() -> Result<()> {
+        let dir = TempDir::new()?;
+        let spec = fixture(dir.path())?;
+        assert_ne!(
+            compute_parser_input_hash(&spec, "tree-sitter 0.27.0")?,
+            compute_parser_input_hash(&spec, "tree-sitter 0.27.1")?,
+        );
+        Ok(())
+    }
+}

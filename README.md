@@ -28,7 +28,8 @@
 本地要求：
 
 - Rust toolchain
-- `tree-sitter` CLI 0.27.0 在 `PATH` 中（与 Generated Check 使用同一版本）
+- `tree-sitter` CLI 0.27.1 在 `PATH` 中（与 Generated Check 使用同一版本）
+- Node.js 24 或更新版本，用来执行 grammar 的 JavaScript 源码
 - `just`
 
 常用命令：
@@ -39,7 +40,7 @@ just check-generated
 just check
 ```
 
-- `just generate`：总是重生成 `grammar.json` / `node-types.json`，总是同步各语言声明的 vendored support files，只在 grammar 输入、临时合成的最小 `tree-sitter.json` 模板或 `tree-sitter` CLI 版本变化时重生成 `parser.c`；生成阶段统一产出 ABI 15 parser
+- `just generate`：同步 vendored support files；仅在完整 grammar 输入、CLI 版本、生成参数或产物内容变化时，通过一次 CLI 调用生成 `grammar.json` / `node-types.json` / `parser.c`，统一使用 ABI 15。相同内容不会重新写入文件
 - `just check-generated`：重跑一次生成，然后用 `git diff --exit-code` 确认各语言 crate 里提交的 `parser.c` / `grammar.json` 等产物是最新的
 - `just check`：执行 `cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings` 和 `cargo test --workspace`
 - `just test`：普通测试入口，不需要安装 Ghostty，也不下载或运行 Ghostty
@@ -55,11 +56,13 @@ tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", 
 
 - 上游 grammar 的来源与 revision 见 `THIRD_PARTY.md`；为什么这些 grammar 被外置到本仓库，见 `docs/vendor-grammar-reasons.md`
 - `tree-sitter` CLI 负责预先生成 `grammar.json` / `node-types.json` / `parser.c`
-- 仓库不提交 `tree-sitter.json`；如某些 grammar 为了稳定生成 ABI 15 需要它，`xtask` 会只在临时工作目录里合成一份最小配置
+- 使用 Tree-sitter 0.27 原生的无配置 ABI 15 生成能力，不合成 `tree-sitter.json`
 - parser 生成发生在 `just` / GitHub Actions 中，而不是 `build.rs`
 - 每个语言 crate 的 `build.rs` 只负责编译已经提交到仓库里的 C / C++ 产物；共享逻辑统一收口到 `kat-parser-common`
 - Mermaid 使用 Merman 0.3.0 的模块化 grammar 与 scanner，按固定上游 revision 同步；接入原因与生成边界见 [`docs/vendor-grammar-reasons.md`](docs/vendor-grammar-reasons.md)。
 - 依赖状态由 deps.rs 展示，Cargo 与 GitHub Actions 的自动更新策略统一维护在 [`.github/dependabot.yml`](.github/dependabot.yml)。
+
+生成器使用预编译 CLI，而不是将生成库编进 `xtask`：这样既省去本地和 CI 编译生成器的时间，又保留优化后生成器的执行效率。缓存、构建边界和验证方法见 [生成与构建](docs/generation.md)。
 
 ## TODO
 
