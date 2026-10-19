@@ -19,11 +19,13 @@ jobs:
     permissions:
       contents: write
       actions: write
-    uses: happy-proto/kat-parsers/.github/workflows/sync-git-dependencies.yml@master
+    uses: happy-proto/kat-parsers/.github/workflows/sync-git-dependencies.yml@FULL_COMMIT_SHA
     with:
       ci_workflow: ci.yml
 ```
 
-调用仓库需要允许 workflow token 写入内容并调度 Actions。`ci_workflow` 是唯一输入，默认值为 `ci.yml`；该 workflow 必须支持 `workflow_dispatch`。
+将 `FULL_COMMIT_SHA` 替换为已审查的完整提交 SHA，并通过调用方的 Actions 依赖更新流程维护。调用仓库需要允许 workflow token 写入内容并调度 Actions。`ci_workflow` 是唯一输入，默认值为 `ci.yml`；该 workflow 必须支持 `workflow_dispatch`。
+
+已有更新分支没有新改动时仍会重新调度 CI，以便恢复上次推送成功、调度中断的情况。同步 job 成功只表示调度请求被接受，实际 CI 结果需独立检查。
 
 可复用 workflow 从默认分支开始工作，并复用 `chore/sync-git-dependencies` 分支：已有分支会先合并默认分支。仅当 lockfile 或分支提交有变化时才推送，因此仅合并默认分支也会推送并触发 CI。它不会 force-push，也不会创建或合并 PR。组织禁止 Actions 创建 PR，所以 workflow 会在 summary 中提供带中文标题的 Compare 链接，由维护者审阅后创建 PR。成功推送后会显式调度调用方指定的 CI workflow；GitHub token 推送本身不会触发常规 CI。

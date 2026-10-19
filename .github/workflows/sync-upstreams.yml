@@ -32,7 +32,9 @@ jobs:
         run: |
           set -euo pipefail
           branch=chore/sync-upstreams
+          existing=false
           if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+            existing=true
             git fetch origin "${branch}"
             git switch -c "${branch}" FETCH_HEAD
             previous=$(git rev-parse HEAD)
@@ -46,18 +48,21 @@ jobs:
           changed=$(git status --porcelain -- metadata upstreams crates)
           if [[ -z "${changed}" && "$(git rev-parse HEAD)" == "${previous}" ]]; then
             echo "上游快照与生成产物均未变化" >> "${GITHUB_STEP_SUMMARY}"
-            exit 0
+            if [[ "${existing}" == false ]]; then
+              exit 0
+            fi
+          else
+            cargo fmt --check
+            cargo clippy --locked --workspace --all-targets -- -D warnings
+            cargo test --locked --workspace
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            if [[ -n "${changed}" ]]; then
+              git add metadata upstreams crates
+              git commit -m "chore(parsers): synchronize upstream grammars"
+            fi
+            git push origin "${branch}"
           fi
-          cargo fmt --check
-          cargo clippy --locked --workspace --all-targets -- -D warnings
-          cargo test --locked --workspace
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          if [[ -n "${changed}" ]]; then
-            git add metadata upstreams crates
-            git commit -m "chore(parsers): synchronize upstream grammars"
-          fi
-          git push origin "${branch}"
           # 组织禁止 GITHUB_TOKEN 创建 PR；保留自动同步分支和可审阅的比较链接。
           title=$(node -p 'encodeURIComponent("chore(parsers): 批量同步上游语法")')
           compare="${{ github.server_url }}/${{ github.repository }}/compare/${{ github.event.repository.default_branch }}...${branch}?expand=1&template=upstreams.md&title=${title}"

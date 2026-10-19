@@ -33,12 +33,14 @@ jobs:
         run: |
           set -euo pipefail
           branch=chore/sync-git-dependencies
+          existing=false
           if [[ -z "${DEFAULT_BRANCH}" || -z "${CI_WORKFLOW}" ]]; then
             echo "仓库默认分支或 CI workflow 文件名为空" >&2
             exit 1
           fi
 
           if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+            existing=true
             git fetch origin "${branch}"
             git switch -c "${branch}" FETCH_HEAD
             previous=$(git rev-parse HEAD)
@@ -63,18 +65,22 @@ jobs:
           lock_changes=$(git status --porcelain -- Cargo.lock)
           if [[ -z "${lock_changes}" && "$(git rev-parse HEAD)" == "${previous}" ]]; then
             echo "Cargo.lock 与默认分支均无变化，无需推送。" >> "${GITHUB_STEP_SUMMARY}"
-            exit 0
+            if [[ "${existing}" == false ]]; then
+              exit 0
+            fi
+          else
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            if [[ -n "${lock_changes}" ]]; then
+              git add Cargo.lock
+              git commit -m "chore(deps): update Git dependency lockfile"
+            fi
+            git push origin "${branch}"
           fi
-
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          if [[ -n "${lock_changes}" ]]; then
-            git add Cargo.lock
-            git commit -m "chore(deps): update Git dependency lockfile"
-          fi
-          git push origin "${branch}"
 
           title=$(node -p 'encodeURIComponent("chore(deps): 更新 Git 依赖锁定")')
           compare="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${DEFAULT_BRANCH}...${branch}?expand=1&title=${title}"
+          echo "Git 依赖更新分支：[${branch}](${compare})；可从该 Compare 页面创建更新 PR。" >> "${GITHUB_STEP_SUMMARY}"
+          # 已有分支没有新改动时也重试调度，恢复上次推送后中断的 CI。
           gh workflow run "${CI_WORKFLOW}" --ref "${branch}"
-          echo "Git 依赖锁定分支已推送，CI 已调度：[${branch}](${compare})；可从该 Compare 页面创建更新 PR。" >> "${GITHUB_STEP_SUMMARY}"
+          echo "更新分支的 CI 已调度；请检查实际运行结果。" >> "${GITHUB_STEP_SUMMARY}"
