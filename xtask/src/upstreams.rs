@@ -164,7 +164,7 @@ pub fn sync(root: &Path, language: Option<&str>, check: bool, locked: bool) -> R
                 .any(|file| fs::read(current.join(file)).ok() != fs::read(stage.join(file)).ok());
         let assets = files
             .iter()
-            .map(|file| file.to_string_lossy().into_owned())
+            .map(|file| portable_asset_name(file))
             .collect::<BTreeSet<_>>();
         if content_changed
             || revision != previous
@@ -217,7 +217,7 @@ pub fn sync(root: &Path, language: Option<&str>, check: bool, locked: bool) -> R
         let assets = item
             .files
             .iter()
-            .map(|file| file.to_string_lossy().into_owned())
+            .map(|file| portable_asset_name(file))
             .collect::<BTreeSet<_>>();
         if old_revision != item.revision || declared.as_ref() != Some(&assets) {
             value["sync"]["revision"] = item.revision.clone().into();
@@ -457,6 +457,13 @@ fn copy_asset(source: &Path, destination: &Path) -> Result<()> {
     Ok(())
 }
 
+fn portable_asset_name(path: &Path) -> String {
+    path.iter()
+        .map(|part| part.to_string_lossy())
+        .collect::<Vec<_>>()
+        .join("/")
+}
+
 fn asset_files(root: &Path) -> Result<Vec<PathBuf>> {
     let mut files = Vec::new();
     let mut stack = vec![root.to_path_buf()];
@@ -487,8 +494,10 @@ mod tests {
     fn fixture() -> Result<(TempDir, TempDir, String)> {
         let repository = TempDir::new()?;
         fs::write(repository.path().join("grammar.js"), "original")?;
+        fs::create_dir(repository.path().join("support"))?;
+        fs::write(repository.path().join("support/scanner.h"), "header")?;
         git(repository.path(), &["init", "--quiet"])?;
-        git(repository.path(), &["add", "grammar.js"])?;
+        git(repository.path(), &["add", "grammar.js", "support"])?;
         git(
             repository.path(),
             &[
@@ -508,7 +517,7 @@ mod tests {
         fs::write(
             root.path().join("metadata/example.toml"),
             format!(
-                "language = \"example\"\n[sync]\nrepository = {:?}\nrevision = {:?}\n[sync.files]\n\"grammar.js\" = \"grammar.js\"\n",
+                "language = \"example\"\n[sync]\nrepository = {:?}\nrevision = {:?}\n[sync.files]\n\"grammar.js\" = \"grammar.js\"\n\"include\" = \"support\"\n",
                 repository.path().to_str().unwrap(),
                 revision
             ),
@@ -520,6 +529,10 @@ mod tests {
     fn pinned_replay_is_idempotent_and_detects_local_drift() -> Result<()> {
         let (_repository, root, _) = fixture()?;
         sync(root.path(), None, false, true)?;
+        assert_eq!(
+            fs::read_to_string(root.path().join("upstreams/example/include/scanner.h"))?,
+            "header"
+        );
         let grammar = root.path().join("upstreams/example/grammar.js");
         let modified = fs::metadata(&grammar)?.modified()?;
         sync(root.path(), None, true, true)?;
