@@ -7,7 +7,6 @@
 - Generated ABI 15 assets live in `crates/tree-sitter-kat-jam/vendor/jam/`.
 - Original B2 test inputs under `crates/tree-sitter-kat-jam/tests/fixtures/b2/` are imported under the Boost Software License 1.0 from the same revision. Their copyright notices, complete license and per-file provenance are retained in that directory. Parser source remains independently authored; the fixture license is separate from the MIT implementation.
 - Covers build rules, assignments, variable expansion, lists, conditions, loops, modules/classes, target scope, file generation and balanced raw actions. It does not execute builds, validate build properties or parse platform-specific action commands. The public `tree-sitter-jam` crate targets an unrelated programming language.
-- Default scanner boundaries, upstream test procedure and syntax-error exclusions are documented in [docs/jam.md](docs/jam.md).
 
 ## Graph::Easy（自维护）
 

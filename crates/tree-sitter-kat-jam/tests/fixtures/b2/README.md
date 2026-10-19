@@ -18,8 +18,3 @@ notices and use the [Boost Software License 1.0](LICENSE.txt).
 For Python tests, the string value is extracted with Python AST literal evaluation;
 Python backslash escapes must be decoded before testing the Jam input. Copyright
 and source comments are prepended; the Jam string values themselves are unchanged.
-
-`tests/upstream.rs` checks the original inputs and structural word boundaries.
-`tests/syntax.rs` keeps independently minimized regressions for individual failures.
-These tests parse source only; they do not execute B2 builds or assert runtime
-variable-expansion semantics.
