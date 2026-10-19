@@ -1,18 +1,19 @@
 ---
 name: kat-parser-grammar
-description: 为 kat-parsers 新增或更新单个 tree-sitter grammar 支持；当需要引入新 grammar、同步上游快照、生成 vendor parser 产物、调整 xtask/build.rs/lib.rs、补 metadata 或 THIRD_PARTY 记录时使用。
+description: 为 kat-parsers 新增、更新或修复单个 tree-sitter grammar；适用于语言接入、语法覆盖缺口、上游快照同步、parser 生成构建及来源记录维护。
 ---
 
-用于在 `kat-parsers` 中新增或更新单个 grammar。以 `<lang>` 表示语言目录名，例如 `coffeescript`、`crystal`。
+用于在 `kat-parsers` 中新增或更新单个 grammar。以 `<lang>` 表示语言目录名。
 
 ## 流程
 
 1. 先确认仓库边界。
    - 阅读 [README.md](../../../README.md)，确认这次改动属于 `kat-parsers` 的职责范围。
    - 修改生成或构建链路时读取 [生成与构建](../../../docs/generation.md)，沿用预编译 CLI、无配置 ABI 15 和完整输入/输出缓存的约定。
-2. 先补失败测试，再改实现。
-   - 最小目标：`tree-sitter-kat-parsers` 能暴露 `<LANG>_LANGUAGE`，并能被 `tree_sitter::Parser` 成功加载。
+2. 确定验证依据，先补失败测试，再改实现。
+   - 接入测试确认 `tree-sitter-kat-parsers` 能暴露 `<LANG>_LANGUAGE`，并能被 `tree_sitter::Parser` 成功加载；这些只证明接入成功，不代表语法覆盖充分。
    - 如果该语言已经暴露 `GRAMMAR` / `NODE_TYPES` 常量，测试里顺手断言非空。
+   - 新增、更新或修复语法时，读取 [语法覆盖验证](references/grammar-validation.md)，确定目标语言版本、方言、权威实现和测试语料；不能以少量自编样例作为覆盖验收的全部依据。
    - 如果当前任务明确不需要补测试，要在改动说明里写清楚理由。
 3. 盘点上游最小必要资产。
    - 必选：`grammar.js`
@@ -56,6 +57,8 @@ just check
    - 第一条验证单语言接入。
    - 第二条验证全量生成链路一致。
    - 如果修改了 parser input hash 规则，记得接受现有语言 `.parser-inputs` 的更新。
+   - 对可运行的 parser 执行权威语料对照，分类差异，将确认的语法缺陷缩减为持久化回归，先复现失败再修复并重新生成；修复后重跑选定语料和项目检查。详见 [语法覆盖验证](references/grammar-validation.md)。
+   - 大规模语料留在仓库外；仓库内保留接入测试、必要的结构契约测试和确认缺陷的精简回归，不整批移植上游测试集。
 9. 更新记录。
    - 修改第三方资产边界时，更新 [THIRD_PARTY.md](../../../THIRD_PARTY.md)，补充上游来源、license、导入资产、生成产物。
    - 仓库级流程或规则变化时，再更新 [README.md](../../../README.md)。
@@ -80,7 +83,9 @@ just check
 
 ## 完成定义
 
-- 失败测试先被稳定复现，再被实现修复通过；如果本次明确不补测试，说明理由。
+- 接入测试通过；发现的语法缺陷均有修复前失败、修复后通过的回归证据。如果本次明确不补测试，说明理由；未发现缺陷时如实记录，不制造失败用例。
+- 新增或修改语法已完成权威语料对照；记录来源及版本、可复现的命令或脚本、实际范围、跳过项、发现的缺陷与复查结果。无法运行权威实现或存在未解决差异时，说明替代依据、限制和剩余缺口，不宣称完整覆盖。
+- 回归断言能检出原缺陷；精简或合并用例后仍保留这一能力，且修复未造成选定语料中的新退化。
 - `cargo run -p xtask -- generate <lang>` 成功。
 - `cargo run -p xtask -- generate` 成功。
 - `just check` 成功。
@@ -89,3 +94,4 @@ just check
 ## 资源
 
 - [metadata-template.toml](assets/metadata-template.toml)
+- [语法覆盖验证](references/grammar-validation.md)：新增或修改语法时的权威对照、差异分类和精简回归准则。
