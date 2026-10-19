@@ -933,6 +933,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-jam"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-jinja"
 version = "0.1.0"
 dependencies = [
@@ -1075,6 +1084,7 @@ dependencies = [
  "tree-sitter-kat-graphql",
  "tree-sitter-kat-hcl",
  "tree-sitter-kat-ignore",
+ "tree-sitter-kat-jam",
  "tree-sitter-kat-jinja",
  "tree-sitter-kat-jq",
  "tree-sitter-kat-just",

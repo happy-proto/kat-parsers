@@ -52,6 +52,7 @@ tree-sitter-kat-graph-easy = { path = "../tree-sitter-kat-graph-easy" }
 tree-sitter-kat-graphql = { path = "../tree-sitter-kat-graphql" }
 tree-sitter-kat-hcl = { path = "../tree-sitter-kat-hcl" }
 tree-sitter-kat-ignore = { path = "../tree-sitter-kat-ignore" }
+tree-sitter-kat-jam = { path = "../tree-sitter-kat-jam" }
 tree-sitter-kat-jinja = { path = "../tree-sitter-kat-jinja" }
 tree-sitter-kat-jq = { path = "../tree-sitter-kat-jq" }
 tree-sitter-kat-just = { path = "../tree-sitter-kat-just" }

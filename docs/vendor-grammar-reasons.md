@@ -127,3 +127,7 @@
 
 - 默认优先迁移那些没有本地改造、crate API 与当前 `tree-sitter` 主版本兼容、且不会引入额外许可证问题的 grammar。
 - 一旦某个保留原因消失，例如上游 crate 升级到当前 `tree-sitter` 主版本，或仓库不再依赖某份 vendored support file，就应优先重新评估迁移。
+
+## Jam build language
+
+`jam` is independently maintained from the B2 language specification: the published `tree-sitter-jam` crate parses a different programming language. The parser provides structural source highlighting for Jam/B2 build scripts, with raw balanced actions and no build execution or shell assumptions. Reference revision and files are recorded in `metadata/jam.toml` and `THIRD_PARTY.md`.
