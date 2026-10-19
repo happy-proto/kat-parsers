@@ -1,0 +1,15 @@
+--- a/grammar.js
++++ b/grammar.js
+@@ -1,3 +1,3 @@
+-const defineGrammar = require('../common/define-grammar.js');
++const defineGrammar = require('./common/define-grammar.js');
+ 
+ module.exports = defineGrammar('php');
+--- a/scanner.c
++++ b/scanner.c
+@@ -1,4 +1,4 @@
+-#include "../../common/scanner.h"
++#include "scanner.h"
+ 
+ void *tree_sitter_php_external_scanner_create() {
+     return external_scanner_create();

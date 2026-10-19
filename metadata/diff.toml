@@ -1,0 +1,23 @@
+language = "diff"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/tree-sitter-grammars/tree-sitter-diff"
+upstream_commit = "4867e8470e1b0ad7364c4e3ffab762c361bbb635"
+upstream_version = "0.1.0"
+license = "MIT"
+reason = "crates.io manifest 记录的 tree-sitter/tree-sitter-diff 仓库已不可访问；同一 revision 在 tree-sitter-grammars/tree-sitter-diff 镜像中保留。"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate diff"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-diff.git"
+revision = "4867e8470e1b0ad7364c4e3ffab762c361bbb635"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

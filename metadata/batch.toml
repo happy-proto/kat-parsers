@@ -1,0 +1,22 @@
+language = "batch"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/wharflab/tree-sitter-batch"
+upstream_commit = "b5ebbfd167ee4bf8b8ff39d883f9db031a6898f4"
+upstream_version = "0.11.1"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate batch"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/wharflab/tree-sitter-batch.git"
+revision = "b5ebbfd167ee4bf8b8ff39d883f9db031a6898f4"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

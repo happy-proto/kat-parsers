@@ -1,0 +1,22 @@
+language = "c"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/tree-sitter/tree-sitter-c"
+upstream_commit = "b780e47fc780ddc8da13afa35a3f4ed5c157823d"
+upstream_version = "0.24.2"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate c"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/tree-sitter/tree-sitter-c.git"
+revision = "b780e47fc780ddc8da13afa35a3f4ed5c157823d"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

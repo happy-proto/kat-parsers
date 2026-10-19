@@ -1,0 +1,22 @@
+language = "clojure"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://codeberg.org/grammar-orchard/tree-sitter-clojure-orchard"
+upstream_commit = "0ae6bf0e1a3c6db2556adbb3b915ea5e410daae0"
+upstream_version = "0.2.8"
+license = "CC0-1.0"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate clojure"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://codeberg.org/grammar-orchard/tree-sitter-clojure-orchard.git"
+revision = "0ae6bf0e1a3c6db2556adbb3b915ea5e410daae0"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

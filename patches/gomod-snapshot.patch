@@ -1,0 +1,151 @@
+diff --git a/grammar.js b/grammar.js
+index 055b868..21bd23d 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -1,4 +1,8 @@
+-// https://golang.org/ref/mod#go-mod-file-grammar
++// Adapted from tree-sitter-gomod.
++// Source: https://github.com/camdencheek/tree-sitter-go-mod
++// License: MIT
++// Reference: https://go.dev/ref/mod
++
+ module.exports = grammar({
+   name: "gomod",
+ 
+@@ -11,13 +15,11 @@ module.exports = grammar({
+       choice(
+         $.module_directive,
+         $.go_directive,
+-        $.tool_directive,
+         $.toolchain_directive,
+         $.require_directive,
+         $.exclude_directive,
+         $.replace_directive,
+-        $.retract_directive,
+-        $.ignore_directive,
++        $.retract_directive
+       ),
+ 
+     _string_literal: ($) =>
+@@ -29,9 +31,9 @@ module.exports = grammar({
+       seq(
+         '"',
+         repeat(
+-          choice(token.immediate(prec(1, /[^"\n\\]+/)), $.escape_sequence),
++          choice(token.immediate(prec(1, /[^"\n\\]+/)), $.escape_sequence)
+         ),
+-        '"',
++        '"'
+       ),
+ 
+     escape_sequence: ($) =>
+@@ -43,24 +45,23 @@ module.exports = grammar({
+             /\d{2,3}/,
+             /x[0-9a-fA-F]{2,}/,
+             /u[0-9a-fA-F]{4}/,
+-            /U[0-9a-fA-F]{8}/,
+-          ),
+-        ),
++            /U[0-9a-fA-F]{8}/
++          )
++        )
+       ),
+ 
+-    _identifier: ($) => token(/[^\s,\[\]/][^\s,\[\]]+/),
++    _identifier: ($) => token(/[^\s,\[\]]+/),
+ 
+     _string_or_ident: ($) => choice($._string_literal, $._identifier),
+ 
+     module_path: ($) => $._string_or_ident,
+     go_version: ($) => $._string_or_ident,
+     version: ($) => $._string_or_ident,
+-    tool: ($) => $._string_or_ident,
+ 
+     module_directive: ($) =>
+       seq(
+         "module",
+-        choice($.module_path, seq("(", "\n", $.module_path, "\n", ")")),
++        choice($.module_path, seq("(", "\n", $.module_path, "\n", ")"))
+       ),
+ 
+     go_directive: ($) => seq("go", $.go_version, "\n"),
+@@ -75,8 +76,8 @@ module.exports = grammar({
+         "require",
+         choice(
+           $.require_spec,
+-          seq("(", "\n", repeat($.require_spec), ")", "\n"),
+-        ),
++          seq("(", "\n", repeat($.require_spec), ")", "\n")
++        )
+       ),
+ 
+     require_spec: ($) => seq($.module_path, $.version, "\n"),
+@@ -86,8 +87,8 @@ module.exports = grammar({
+         "exclude",
+         choice(
+           $.exclude_spec,
+-          seq("(", "\n", repeat($.exclude_spec), ")", "\n"),
+-        ),
++          seq("(", "\n", repeat($.exclude_spec), ")", "\n")
++        )
+       ),
+ 
+     exclude_spec: ($) => seq($.module_path, $.version, "\n"),
+@@ -97,8 +98,8 @@ module.exports = grammar({
+         "replace",
+         choice(
+           $.replace_spec,
+-          seq("(", "\n", repeat($.replace_spec), ")", "\n"),
+-        ),
++          seq("(", "\n", repeat($.replace_spec), ")", "\n")
++        )
+       ),
+ 
+     replace_spec: ($) =>
+@@ -110,13 +111,10 @@ module.exports = grammar({
+           "=>",
+           $.module_path,
+           $.version,
+-          "\n",
+-        ),
++          "\n"
++        )
+       ),
+ 
+-    tool_directive: ($) =>
+-      seq("tool", choice($.tool, seq("(", "\n", repeat($.tool), ")", "\n"))),
+-
+     file_path: ($) => $._identifier,
+ 
+     retract_directive: ($) =>
+@@ -124,27 +122,16 @@ module.exports = grammar({
+         "retract",
+         choice(
+           seq("(", "\n", repeat($.retract_spec), ")", "\n"),
+-          $.retract_spec,
+-        ),
++          $.retract_spec
++        )
+       ),
+ 
+     retract_spec: ($) =>
+       seq(
+         choice(seq("[", $.version, prec(1, ","), $.version, "]"), $.version),
+-        "\n",
++        "\n"
+       ),
+ 
+-    ignore_directive: ($) =>
+-      seq(
+-        "ignore",
+-        choice(
+-          seq("(", "\n", repeat($.ignore_spec), ")", "\n"),
+-          $.ignore_spec,
+-        ),
+-      ),
+-
+-    ignore_spec: ($) => seq($.file_path, "\n"),
+-
+     comment: ($) => seq("//", /.*/),
+   },
+ });

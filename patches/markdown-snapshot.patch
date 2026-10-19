@@ -1,0 +1,13 @@
+diff --git a/grammar.js b/grammar.js
+index 1f749de..fc8a672 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -4,7 +4,7 @@
+ 
+ /// <reference types="tree-sitter-cli/dsl" />
+ 
+-const common = require('../common/common');
++const common = require('./common');
+ 
+ const PRECEDENCE_LEVEL_LINK = common.PRECEDENCE_LEVEL_LINK;
+ 

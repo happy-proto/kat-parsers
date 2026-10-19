@@ -1,0 +1,23 @@
+language = "dart"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/nielsenko/tree-sitter-dart"
+upstream_commit = "b57d734c84f510bbd524097902cab671e4dbfca9"
+upstream_version = "0.2.0"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "scanner.c", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate dart"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]
+
+[sync]
+repository = "https://github.com/nielsenko/tree-sitter-dart.git"
+revision = "b57d734c84f510bbd524097902cab671e4dbfca9"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"

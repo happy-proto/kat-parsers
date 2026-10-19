@@ -22,3 +22,14 @@ outputs = [
   "grammar.json",
   "node-types.json",
 ]
+
+[sync]
+repository = "https://github.com/crystal-lang-tools/tree-sitter-crystal"
+revision = "50ca9e6fcfb16a2cbcad59203cfd8ad650e25c49"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"src/scanner.c" = "src/scanner.c"
+"src/unicode.c" = "src/unicode.c"
+"LICENSE" = "LICENSE"

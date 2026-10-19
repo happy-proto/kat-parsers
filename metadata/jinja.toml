@@ -22,3 +22,17 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/cathaysia/tree-sitter-jinja"
+revision = "7e254abb76618227806f6881525980231faa1610"
+reference = "HEAD"
+patches = ["patches/jinja-snapshot.patch"]
+
+[sync.files]
+"base_grammar.js" = "grammar.js"
+"common/common.js" = "common/common.js"
+"common/expression.js" = "common/expression.js"
+"common/literal.js" = "common/literal.js"
+"grammar.js" = "tree-sitter-jinja/grammar.js"
+"scanner.c" = "tree-sitter-jinja/src/scanner.c"

@@ -1,0 +1,39 @@
+language = "fsharp_signature"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留上游 F# signature grammar，并通过 generation support file 导入共享的 F# grammar；scanner include 路径按本仓库的 vendor 布局调整。"
+upstream_repo = "https://github.com/ionide/tree-sitter-fsharp"
+upstream_commit = "aefd0c8741bdf3aeb827a228aa4a996a6536697e"
+upstream_version = "0.3.12"
+license = "MIT"
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+  "common/fsharp-grammar.js",
+  "common/scanner.h",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate fsharp_signature"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+
+[sync]
+repository = "https://github.com/ionide/tree-sitter-fsharp.git"
+revision = "aefd0c8741bdf3aeb827a228aa4a996a6536697e"
+reference = "HEAD"
+patches = ["patches/fsharp-scanner.patch", "patches/fsharp-signature.patch"]
+
+[sync.files]
+"grammar.js" = "fsharp_signature/grammar.js"
+"scanner.c" = "fsharp_signature/src/scanner.c"
+"common/fsharp-grammar.js" = "fsharp/grammar.js"
+"common/scanner.h" = "common/scanner.h"
+"LICENSE" = "LICENSE"

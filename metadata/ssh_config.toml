@@ -15,3 +15,11 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-ssh-config"
+revision = "71d2693deadaca8cdc09e38ba41d2f6042da1616"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"

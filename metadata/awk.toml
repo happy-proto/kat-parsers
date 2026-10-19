@@ -17,3 +17,13 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/Beaglefoot/tree-sitter-awk"
+revision = "34bbdc7cce8e803096f47b625979e34c1be38127"
+reference = "HEAD"
+patches = ["patches/awk-snapshot.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"

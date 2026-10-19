@@ -1,0 +1,67 @@
+name: Sync upstream grammars
+
+on:
+  schedule:
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: sync-upstreams
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+  actions: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm install -g tree-sitter-cli@0.27.1
+      - name: 同步所有上游并生成产物
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          branch=chore/sync-upstreams
+          if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+            git fetch origin "${branch}"
+            git switch -c "${branch}" FETCH_HEAD
+            previous=$(git rev-parse HEAD)
+            git -c user.name=github-actions -c user.email=41898282+github-actions[bot]@users.noreply.github.com merge --no-edit "origin/${{ github.event.repository.default_branch }}"
+          else
+            git switch -c "${branch}"
+            previous=$(git rev-parse HEAD)
+          fi
+          cargo run --locked -p xtask -- sync
+          cargo run --locked -p xtask -- generate
+          changed=$(git status --porcelain -- metadata upstreams crates)
+          if [[ -z "${changed}" && "$(git rev-parse HEAD)" == "${previous}" ]]; then
+            echo "上游快照与生成产物均未变化" >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          cargo fmt --check
+          cargo clippy --locked --workspace --all-targets -- -D warnings
+          cargo test --locked --workspace
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          if [[ -n "${changed}" ]]; then
+            git add metadata upstreams crates
+            git commit -m "chore(parsers): synchronize upstream grammars"
+          fi
+          git push origin "${branch}"
+          # 组织禁止 GITHUB_TOKEN 创建 PR；保留自动同步分支和可审阅的比较链接。
+          title=$(node -p 'encodeURIComponent("chore(parsers): 批量同步上游语法")')
+          compare="${{ github.server_url }}/${{ github.repository }}/compare/${{ github.event.repository.default_branch }}...${branch}?expand=1&template=upstreams.md&title=${title}"
+          echo "上游更新已推送到 [${branch}](${compare})；可从该链接创建中文更新 PR。" >> "${GITHUB_STEP_SUMMARY}"
+          # GITHUB_TOKEN 的推送不会触发普通 CI，显式调度所需检查。
+          gh workflow run ci.yml --ref "${branch}"
+          gh workflow run generated-check.yml --ref "${branch}"

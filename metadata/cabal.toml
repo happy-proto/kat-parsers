@@ -17,3 +17,13 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/thomasvergne/tree-sitter-cabal"
+revision = "1762ded13e5351c0bc662a2273d523b80d314b4e"
+reference = "HEAD"
+patches = ["patches/cabal-snapshot.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"

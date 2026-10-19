@@ -1,0 +1,24 @@
+diff --git a/grammar.js b/grammar.js
+index e29d486..aa8e559 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -1,4 +1,4 @@
+-const gram = require('../grammar.js');
++const gram = require('./base_grammar.js');
+ 
+ module.exports = grammar({
+   name: 'jinja',
+diff --git a/scanner.c b/scanner.c
+index 5e06bc0..e2b8e3b 100644
+--- a/scanner.c
++++ b/scanner.c
+@@ -213,7 +213,8 @@ unsigned tree_sitter_jinja_external_scanner_serialize(void *payload, char *buffe
+ }
+ 
+ void tree_sitter_jinja_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
+-    if(buffer == NULL) {
++    if(buffer == NULL || length != sizeof(Scanner)) {
++        memset(payload, 0, sizeof(Scanner));
+         return;
+     }
+     memcpy(payload, buffer, sizeof(Scanner));

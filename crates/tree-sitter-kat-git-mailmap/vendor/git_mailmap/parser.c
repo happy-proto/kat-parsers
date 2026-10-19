@@ -8,7 +8,7 @@
 
 #define LANGUAGE_VERSION 15
 #define STATE_COUNT 19
-#define LARGE_STATE_COUNT 4
+#define LARGE_STATE_COUNT 2
 #define SYMBOL_COUNT 14
 #define ALIAS_COUNT 0
 #define TOKEN_COUNT 7
@@ -315,171 +315,31 @@ static const TSLexerMode ts_lex_modes[STATE_COUNT] = {
 };
 
 static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
-  [STATE(0)] = {
-    [ts_builtin_sym_end] = ACTIONS(1),
-    [sym_person_name] = ACTIONS(1),
-    [sym_email] = ACTIONS(1),
-    [sym_comment] = ACTIONS(1),
-    [sym__space] = ACTIONS(1),
-    [sym__newline] = ACTIONS(1),
-    [anon_sym_NULL] = ACTIONS(1),
-  },
-  [STATE(1)] = {
-    [sym_source] = STATE(17),
-    [sym_entry_line] = STATE(2),
-    [sym_mapping] = STATE(5),
-    [sym_comment_line] = STATE(2),
-    [aux_sym_source_repeat1] = STATE(2),
-    [ts_builtin_sym_end] = ACTIONS(3),
-    [sym_person_name] = ACTIONS(5),
-    [sym_email] = ACTIONS(7),
-    [sym_comment] = ACTIONS(9),
-    [sym__newline] = ACTIONS(11),
-  },
-  [STATE(2)] = {
-    [sym_entry_line] = STATE(3),
-    [sym_mapping] = STATE(5),
-    [sym_comment_line] = STATE(3),
-    [aux_sym_source_repeat1] = STATE(3),
-    [ts_builtin_sym_end] = ACTIONS(13),
-    [sym_person_name] = ACTIONS(5),
-    [sym_email] = ACTIONS(7),
-    [sym_comment] = ACTIONS(9),
-    [sym__newline] = ACTIONS(15),
-  },
-  [STATE(3)] = {
-    [sym_entry_line] = STATE(3),
-    [sym_mapping] = STATE(5),
-    [sym_comment_line] = STATE(3),
-    [aux_sym_source_repeat1] = STATE(3),
-    [ts_builtin_sym_end] = ACTIONS(17),
-    [sym_person_name] = ACTIONS(19),
-    [sym_email] = ACTIONS(22),
-    [sym_comment] = ACTIONS(25),
-    [sym__newline] = ACTIONS(28),
-  },
+{
+  0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+},
+{
+  0x3, 0x5, 0x7, 0x9, 0x0, 0xb, 0x0, 0x11, 0x2, 0x5, 0x2, 0x0, 0x0, 0x2,
+},
 };
 
-static const uint16_t ts_small_parse_table[] = {
-  [0] = 6,
-    ACTIONS(7), 1,
-      sym_email,
-    ACTIONS(31), 1,
-      sym_person_name,
-    ACTIONS(33), 1,
-      sym__newline,
-    ACTIONS(35), 1,
-      anon_sym_NULL,
-    STATE(8), 1,
-      sym_mapping,
-    STATE(9), 2,
-      sym__eof,
-      sym__line_ending,
-  [20] = 3,
-    ACTIONS(37), 1,
-      sym__space,
-    ACTIONS(39), 2,
-      sym__newline,
-      anon_sym_NULL,
-    STATE(7), 2,
-      sym__eof,
-      sym__line_ending,
-  [32] = 1,
-    ACTIONS(41), 5,
-      ts_builtin_sym_end,
-      sym_person_name,
-      sym_email,
-      sym_comment,
-      sym__newline,
-  [40] = 1,
-    ACTIONS(43), 5,
-      ts_builtin_sym_end,
-      sym_person_name,
-      sym_email,
-      sym_comment,
-      sym__newline,
-  [48] = 3,
-    ACTIONS(45), 1,
-      sym__space,
-    ACTIONS(47), 2,
-      sym__newline,
-      anon_sym_NULL,
-    STATE(10), 2,
-      sym__eof,
-      sym__line_ending,
-  [60] = 1,
-    ACTIONS(49), 5,
-      ts_builtin_sym_end,
-      sym_person_name,
-      sym_email,
-      sym_comment,
-      sym__newline,
-  [68] = 1,
-    ACTIONS(51), 5,
-      ts_builtin_sym_end,
-      sym_person_name,
-      sym_email,
-      sym_comment,
-      sym__newline,
-  [76] = 1,
-    ACTIONS(53), 5,
-      ts_builtin_sym_end,
-      sym_person_name,
-      sym_email,
-      sym_comment,
-      sym__newline,
-  [84] = 2,
-    ACTIONS(55), 2,
-      sym__newline,
-      anon_sym_NULL,
-    STATE(6), 2,
-      sym__eof,
-      sym__line_ending,
-  [93] = 2,
-    ACTIONS(57), 2,
-      sym__newline,
-      anon_sym_NULL,
-    STATE(11), 2,
-      sym__eof,
-      sym__line_ending,
-  [102] = 1,
-    ACTIONS(59), 3,
-      sym__space,
-      sym__newline,
-      anon_sym_NULL,
-  [108] = 1,
-    ACTIONS(61), 3,
-      sym__space,
-      sym__newline,
-      anon_sym_NULL,
-  [114] = 1,
-    ACTIONS(63), 1,
-      sym__space,
-  [118] = 1,
-    ACTIONS(65), 1,
-      ts_builtin_sym_end,
-  [122] = 1,
-    ACTIONS(67), 1,
-      sym_email,
+static const unsigned char ts_compact_zstd[] = {
+  0x28, 0xb5, 0x2f, 0xfd, 0x60, 0xa0, 0x0, 0xf5, 0x5, 0x0, 0x16, 0x90, 0x24, 0x1e, 0x50, 0xd9,
+  0xb0, 0x6, 0xb0, 0xd8, 0xbb, 0xdd, 0x5e, 0x23, 0x45, 0xd0, 0x6b, 0x44, 0xc4, 0xb7, 0xe0, 0xb5,
+  0xa0, 0x59, 0x58, 0x84, 0x92, 0x3d, 0x69, 0x6c, 0xb2, 0xb7, 0x4c, 0x1, 0x1b, 0x0, 0x1f, 0x0,
+  0x1f, 0x0, 0x97, 0xf1, 0xde, 0xc5, 0xaf, 0xa2, 0x20, 0x62, 0xe1, 0xa0, 0x56, 0x4b, 0x78, 0xb7,
+  0xdb, 0x9b, 0xf8, 0x45, 0xd4, 0x5e, 0xc2, 0xec, 0x15, 0xbc, 0x77, 0x2b, 0x8, 0x5b, 0x6d, 0xf6,
+  0xbe, 0xad, 0x3c, 0xc1, 0xc0, 0x6d, 0x96, 0x12, 0xf0, 0x4e, 0x6a, 0xf, 0xd, 0xb3, 0x84, 0xc1,
+  0xc0, 0x2b, 0xb9, 0xbd, 0x11, 0x48, 0xe0, 0x51, 0x7b, 0x1d, 0xb3, 0x1, 0x1b, 0x3f, 0x7b, 0x47,
+  0xef, 0x57, 0xf4, 0x6e, 0x8, 0xf4, 0x6, 0x6e, 0x1, 0xb5, 0x9f, 0x67, 0xf0, 0xcc, 0x2, 0x9d,
+  0x19, 0x67, 0xa3, 0x29, 0x60, 0x2, 0xde, 0x4b, 0xcd, 0xf2, 0x6, 0x8f, 0x1d, 0xf6, 0xd7, 0x5d,
+  0x6f, 0x9d, 0xf5, 0xd5, 0x55, 0x4f, 0x1d, 0xf5, 0xd3, 0x4d, 0x2f, 0x9d, 0xf4, 0xcc, 0x1, 0x11,
+  0x20, 0xb0, 0x2e, 0x98, 0xeb, 0x1, 0x0, 0x86, 0x37, 0x95, 0x59, 0x14, 0x79, 0x92, 0x6f, 0x21,
+  0x1b, 0x1c, 0x47, 0xc7, 0xe8, 0xf2, 0x72, 0x77, 0xd9, 0x39, 0x3e, 0xa1, 0x25, 0x71, 0x6d, 0xcf,
+  0x82, 0x75, 0xcc, 0x64, 0x99, 0x1f, 0x32, 0x3,
 };
 
-static const uint32_t ts_small_parse_table_map[] = {
-  [SMALL_STATE(4)] = 0,
-  [SMALL_STATE(5)] = 20,
-  [SMALL_STATE(6)] = 32,
-  [SMALL_STATE(7)] = 40,
-  [SMALL_STATE(8)] = 48,
-  [SMALL_STATE(9)] = 60,
-  [SMALL_STATE(10)] = 68,
-  [SMALL_STATE(11)] = 76,
-  [SMALL_STATE(12)] = 84,
-  [SMALL_STATE(13)] = 93,
-  [SMALL_STATE(14)] = 102,
-  [SMALL_STATE(15)] = 108,
-  [SMALL_STATE(16)] = 114,
-  [SMALL_STATE(17)] = 118,
-  [SMALL_STATE(18)] = 122,
-};
+
 
 static const TSParseActionEntry ts_parse_actions[] = {
   [0] = {.entry = {.count = 0, .reusable = false}},
@@ -528,8 +388,9 @@ extern "C" {
 #define TS_PUBLIC __attribute__((visibility("default")))
 #endif
 
-TS_PUBLIC const TSLanguage *tree_sitter_git_mailmap(void) {
-  static const TSLanguage language = {
+/* KAT_COMPRESSED_TABLE_V1: LE uint16 data, aligned LE uint32 map. */
+TS_PUBLIC const TSLanguage *tree_sitter_git_mailmap_compressed(const unsigned char *(*decode)(const unsigned char *, size_t, size_t, size_t)) {
+  static TSLanguage language = {
     .abi_version = LANGUAGE_VERSION,
     .symbol_count = SYMBOL_COUNT,
     .alias_count = ALIAS_COUNT,
@@ -542,8 +403,8 @@ TS_PUBLIC const TSLanguage *tree_sitter_git_mailmap(void) {
     .field_count = FIELD_COUNT,
     .max_alias_sequence_length = MAX_ALIAS_SEQUENCE_LENGTH,
     .parse_table = &ts_parse_table[0][0],
-    .small_parse_table = ts_small_parse_table,
-    .small_parse_table_map = ts_small_parse_table_map,
+    .small_parse_table = NULL,
+    .small_parse_table_map = NULL,
     .parse_actions = ts_parse_actions,
     .symbol_names = ts_symbol_names,
     .field_names = ts_field_names,
@@ -564,6 +425,9 @@ TS_PUBLIC const TSLanguage *tree_sitter_git_mailmap(void) {
       .patch_version = 0,
     },
   };
+  const unsigned char *data = decode(ts_compact_zstd, sizeof(ts_compact_zstd), 416, 348);
+  language.small_parse_table = (const uint16_t *)data;
+  language.small_parse_table_map = (const uint32_t *)(data + 348);
   return &language;
 }
 #ifdef __cplusplus

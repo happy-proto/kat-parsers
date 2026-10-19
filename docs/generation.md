@@ -42,3 +42,13 @@ Generated Check 随后强制重生成所有 grammar，再执行 `git diff --exit
 | 73 个 grammar，输入和产物未变 | 20.65 秒 | 4.23 秒 |
 
 本次适配中，相同产物强制重生成后，`cargo check -p tree-sitter-kat-parsers` 耗时 0.21 秒，未出现 `Compiling` 或 `Checking`，说明生成没有触发 C/Rust 重编译。这是已有构建产物的增量检查，不是首次构建测量。普通 workspace 测试与 Node.js 24 的生成契约测试均通过；尚未测量 kat 端到端解析吞吐量。
+
+## 预生成压缩表
+
+所有托管 grammar 经过同一条生成流程。`xtask` 在 CLI 生成 C 之后，编译一个只读取静态数组的 C 导出工具，把前两个状态以外的行转换成 Tree-sitter 原生紧凑表，再用 Zstd level 19 压缩；仅在压缩数据加保留的两行小于原表时采用压缩，不设置语言体积门槛。导出工具逐项比较全部状态与符号的原表值和紧凑表值，转换错误会终止生成。parser 的其它数组、scanner、Tree-sitter ABI 和查表逻辑保持原样。
+
+压缩字节直接进入提交的 C 产物，不在消费方重新生成。消费方只需正常构建 Rust 与 C/C++，不需要 Node、Tree-sitter CLI、Python、独立 Cargo home 或应用导出的解压函数。`kat-parser-common` 仍只提供构建支撑；普通依赖 `kat-parser-runtime` 提供共享 Zstd 解码，每个语言的 Rust `LANGUAGE` 包装通过 `OnceLock` 只初始化一次，单独依赖某个语言 crate 也能工作。
+
+文件布局固定为小端 uint16 紧凑表、最多三个补齐字节、四字节对齐的小端 uint32 索引。运行时分配 `Box<[u32]>` 保证对齐，在大端目标分别转换两种整数。解压内存与语言指针均保留至进程结束；首次获取语言有解压成本，后续解析直接使用原生表。压缩减少 binary 体积，并不表示运行时表也只占压缩后的大小。
+
+缓存包含打包器实现、导出工具、格式版本、压缩参数和 Zstd 版本。Generated Check 强制重生成并检查差异，避免只验证缓存。`parser-conformance` 仅用于测试：从提交的压缩数据恢复静态原生表，对照 CoffeeScript scanner、错误输入、增量解析与 lookahead，并验证并发首次初始化；其原生对照表不进入消费方依赖链路。

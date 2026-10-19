@@ -13,3 +13,6 @@ files = ["grammar.js"]
 [generated]
 command = "cargo run -p xtask -- generate graph_easy"
 outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+local = true

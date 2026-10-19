@@ -15,3 +15,11 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/PorterAtGoogle/tree-sitter-textproto"
+revision = "568471b80fd8793d37ed01865d8c2208a9fefd1b"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"

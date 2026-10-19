@@ -1,0 +1,42 @@
+language = "tsx"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 tsx grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/tree-sitter/tree-sitter-typescript"
+upstream_commit = "f975a621f4e7f532fe322e13c4f79495e0a7b2e7"
+upstream_version = "0.23.2"
+upstream_path = "tsx"
+upstream_crate = "tree-sitter-typescript"
+license = "MIT"
+grammar_file = "grammar.json"
+
+[sync]
+repository = "https://github.com/tree-sitter/tree-sitter-typescript.git"
+revision = "f975a621f4e7f532fe322e13c4f79495e0a7b2e7"
+reference = "HEAD"
+patches = ["patches/tsx/paths.patch"]
+
+[sync.files]
+"grammar.json" = "tsx/src/grammar.json"
+"scanner.c" = "tsx/src/scanner.c"
+"scanner.h" = "common/scanner.h"
+"LICENSE" = "LICENSE"
+
+[copied]
+files = [
+  "grammar.json",
+  "scanner.c",
+  "scanner.h",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate tsx"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "tsx"

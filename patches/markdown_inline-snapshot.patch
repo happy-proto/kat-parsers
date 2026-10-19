@@ -1,0 +1,13 @@
+diff --git a/grammar.js b/grammar.js
+index 860f5d8..fa4eef3 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -4,7 +4,7 @@
+ 
+ /// <reference types="tree-sitter-cli/dsl" />
+ 
+-const common = require('../common/common');
++const common = require('../markdown/common');
+ 
+ // Levels used for dynmic precedence. Ideally
+ // n * PRECEDENCE_LEVEL_EMPHASIS > PRECEDENCE_LEVEL_LINK for any n, so maybe the

@@ -1,0 +1,20 @@
+--- a/grammar.js
++++ b/grammar.js
+@@ -7,7 +7,7 @@
+ /// <reference types="tree-sitter-cli/dsl" />
+ // @ts-check
+ 
+-import * as c from '../common/common.mjs';
++import * as c from './common/common.mjs';
+ 
+ const O = optional;
+ 
+--- a/scanner.c
++++ b/scanner.c
+@@ -1,5 +1,5 @@
+ #define TS_XML
+-#include "../../common/scanner.h"
++#include "scanner.h"
+ #include "tree_sitter/array.h"
+ 
+ #include <string.h>

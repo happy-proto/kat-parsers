@@ -1,0 +1,32 @@
+language = "systemverilog"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留上游 grammar 源并纳入统一 parser crate，避免 Kat 为该语言单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/gmlarumbe/tree-sitter-systemverilog"
+upstream_commit = "3390da8c76a976b6f47d19667accc43e81a1483b"
+upstream_version = "0.4.1"
+license = "MIT"
+
+[copied]
+files = [
+  "grammar.js",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate systemverilog"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+]
+
+[sync]
+repository = "https://github.com/gmlarumbe/tree-sitter-systemverilog.git"
+revision = "3390da8c76a976b6f47d19667accc43e81a1483b"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

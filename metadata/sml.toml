@@ -17,3 +17,13 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/MatthewFluet/tree-sitter-sml"
+revision = "fd4b4955bb998262840ab8119885b3edf20ea75a"
+reference = "HEAD"
+patches = ["patches/sml-snapshot.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"

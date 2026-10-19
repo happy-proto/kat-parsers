@@ -1,0 +1,26 @@
+diff --git a/common/define-grammar.js b/common/define-grammar.js
+index a2e158e..0da85e3 100644
+--- a/common/define-grammar.js
++++ b/common/define-grammar.js
+@@ -34,7 +34,7 @@ module.exports = function defineGrammar(dialect, separator) {
+ 
+       number: _ => choice(/\d+/, /0[xX][0-9a-fA-F]+/),
+       float: _ => choice(/\d*\.\d+/, /\d+\.\d*/),
+-      boolean: _ => choice('true', 'false'),
++      boolean: _ => choice("true", "false"),
+       text: _ => token(choice(
+         new RegExp(`[^${separator}\\r\\n]*`),
+         seq('"', repeat(choice(/[^"]/, '""')), '"'),
+diff --git a/grammar.js b/grammar.js
+index 93cdd2f..71f918c 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -4,6 +4,6 @@
+  * @license MIT
+  */
+ 
+-const defineGrammar = require('../common/define-grammar');
++const defineGrammar = require("./common/define-grammar");
+ 
+-module.exports = defineGrammar('csv', ',');
++module.exports = defineGrammar("csv", ",");

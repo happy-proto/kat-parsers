@@ -8,7 +8,7 @@
 
 #define LANGUAGE_VERSION 15
 #define STATE_COUNT 19
-#define LARGE_STATE_COUNT 8
+#define LARGE_STATE_COUNT 2
 #define SYMBOL_COUNT 22
 #define ALIAS_COUNT 0
 #define TOKEN_COUNT 15
@@ -523,196 +523,32 @@ static const TSLexerMode ts_lex_modes[STATE_COUNT] = {
 };
 
 static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
-  [STATE(0)] = {
-    [ts_builtin_sym_end] = ACTIONS(1),
-    [anon_sym_h1_DOT] = ACTIONS(1),
-    [anon_sym_h2_DOT] = ACTIONS(1),
-    [anon_sym_h3_DOT] = ACTIONS(1),
-    [anon_sym_h4_DOT] = ACTIONS(1),
-    [anon_sym_h5_DOT] = ACTIONS(1),
-    [anon_sym_h6_DOT] = ACTIONS(1),
-    [aux_sym_heading_token1] = ACTIONS(1),
-    [anon_sym_bc_DOT] = ACTIONS(1),
-    [anon_sym_pre_DOT] = ACTIONS(1),
-    [aux_sym_list_item_token1] = ACTIONS(1),
-    [aux_sym_list_item_token2] = ACTIONS(1),
-    [sym__newline] = ACTIONS(1),
-  },
-  [STATE(1)] = {
-    [sym_source_file] = STATE(12),
-    [sym_heading] = STATE(2),
-    [sym_code_block] = STATE(2),
-    [sym_list_item] = STATE(2),
-    [sym_paragraph] = STATE(2),
-    [sym__blank_line] = STATE(2),
-    [aux_sym_source_file_repeat1] = STATE(2),
-    [ts_builtin_sym_end] = ACTIONS(3),
-    [anon_sym_h1_DOT] = ACTIONS(5),
-    [anon_sym_h2_DOT] = ACTIONS(5),
-    [anon_sym_h3_DOT] = ACTIONS(5),
-    [anon_sym_h4_DOT] = ACTIONS(5),
-    [anon_sym_h5_DOT] = ACTIONS(5),
-    [anon_sym_h6_DOT] = ACTIONS(5),
-    [anon_sym_bc_DOT] = ACTIONS(7),
-    [anon_sym_pre_DOT] = ACTIONS(7),
-    [aux_sym_list_item_token1] = ACTIONS(9),
-    [aux_sym_list_item_token2] = ACTIONS(9),
-    [aux_sym_paragraph_token1] = ACTIONS(11),
-    [sym__newline] = ACTIONS(13),
-  },
-  [STATE(2)] = {
-    [sym_heading] = STATE(3),
-    [sym_code_block] = STATE(3),
-    [sym_list_item] = STATE(3),
-    [sym_paragraph] = STATE(3),
-    [sym__blank_line] = STATE(3),
-    [aux_sym_source_file_repeat1] = STATE(3),
-    [ts_builtin_sym_end] = ACTIONS(15),
-    [anon_sym_h1_DOT] = ACTIONS(5),
-    [anon_sym_h2_DOT] = ACTIONS(5),
-    [anon_sym_h3_DOT] = ACTIONS(5),
-    [anon_sym_h4_DOT] = ACTIONS(5),
-    [anon_sym_h5_DOT] = ACTIONS(5),
-    [anon_sym_h6_DOT] = ACTIONS(5),
-    [anon_sym_bc_DOT] = ACTIONS(7),
-    [anon_sym_pre_DOT] = ACTIONS(7),
-    [aux_sym_list_item_token1] = ACTIONS(9),
-    [aux_sym_list_item_token2] = ACTIONS(9),
-    [aux_sym_paragraph_token1] = ACTIONS(11),
-    [sym__newline] = ACTIONS(17),
-  },
-  [STATE(3)] = {
-    [sym_heading] = STATE(3),
-    [sym_code_block] = STATE(3),
-    [sym_list_item] = STATE(3),
-    [sym_paragraph] = STATE(3),
-    [sym__blank_line] = STATE(3),
-    [aux_sym_source_file_repeat1] = STATE(3),
-    [ts_builtin_sym_end] = ACTIONS(19),
-    [anon_sym_h1_DOT] = ACTIONS(21),
-    [anon_sym_h2_DOT] = ACTIONS(21),
-    [anon_sym_h3_DOT] = ACTIONS(21),
-    [anon_sym_h4_DOT] = ACTIONS(21),
-    [anon_sym_h5_DOT] = ACTIONS(21),
-    [anon_sym_h6_DOT] = ACTIONS(21),
-    [anon_sym_bc_DOT] = ACTIONS(24),
-    [anon_sym_pre_DOT] = ACTIONS(24),
-    [aux_sym_list_item_token1] = ACTIONS(27),
-    [aux_sym_list_item_token2] = ACTIONS(27),
-    [aux_sym_paragraph_token1] = ACTIONS(30),
-    [sym__newline] = ACTIONS(33),
-  },
-  [STATE(4)] = {
-    [ts_builtin_sym_end] = ACTIONS(36),
-    [anon_sym_h1_DOT] = ACTIONS(38),
-    [anon_sym_h2_DOT] = ACTIONS(38),
-    [anon_sym_h3_DOT] = ACTIONS(38),
-    [anon_sym_h4_DOT] = ACTIONS(38),
-    [anon_sym_h5_DOT] = ACTIONS(38),
-    [anon_sym_h6_DOT] = ACTIONS(38),
-    [anon_sym_bc_DOT] = ACTIONS(38),
-    [anon_sym_pre_DOT] = ACTIONS(38),
-    [aux_sym_list_item_token1] = ACTIONS(38),
-    [aux_sym_list_item_token2] = ACTIONS(38),
-    [aux_sym_paragraph_token1] = ACTIONS(38),
-    [sym__newline] = ACTIONS(36),
-  },
-  [STATE(5)] = {
-    [ts_builtin_sym_end] = ACTIONS(40),
-    [anon_sym_h1_DOT] = ACTIONS(42),
-    [anon_sym_h2_DOT] = ACTIONS(42),
-    [anon_sym_h3_DOT] = ACTIONS(42),
-    [anon_sym_h4_DOT] = ACTIONS(42),
-    [anon_sym_h5_DOT] = ACTIONS(42),
-    [anon_sym_h6_DOT] = ACTIONS(42),
-    [anon_sym_bc_DOT] = ACTIONS(42),
-    [anon_sym_pre_DOT] = ACTIONS(42),
-    [aux_sym_list_item_token1] = ACTIONS(42),
-    [aux_sym_list_item_token2] = ACTIONS(42),
-    [aux_sym_paragraph_token1] = ACTIONS(42),
-    [sym__newline] = ACTIONS(40),
-  },
-  [STATE(6)] = {
-    [ts_builtin_sym_end] = ACTIONS(44),
-    [anon_sym_h1_DOT] = ACTIONS(46),
-    [anon_sym_h2_DOT] = ACTIONS(46),
-    [anon_sym_h3_DOT] = ACTIONS(46),
-    [anon_sym_h4_DOT] = ACTIONS(46),
-    [anon_sym_h5_DOT] = ACTIONS(46),
-    [anon_sym_h6_DOT] = ACTIONS(46),
-    [anon_sym_bc_DOT] = ACTIONS(46),
-    [anon_sym_pre_DOT] = ACTIONS(46),
-    [aux_sym_list_item_token1] = ACTIONS(46),
-    [aux_sym_list_item_token2] = ACTIONS(46),
-    [aux_sym_paragraph_token1] = ACTIONS(46),
-    [sym__newline] = ACTIONS(44),
-  },
-  [STATE(7)] = {
-    [ts_builtin_sym_end] = ACTIONS(48),
-    [anon_sym_h1_DOT] = ACTIONS(50),
-    [anon_sym_h2_DOT] = ACTIONS(50),
-    [anon_sym_h3_DOT] = ACTIONS(50),
-    [anon_sym_h4_DOT] = ACTIONS(50),
-    [anon_sym_h5_DOT] = ACTIONS(50),
-    [anon_sym_h6_DOT] = ACTIONS(50),
-    [anon_sym_bc_DOT] = ACTIONS(50),
-    [anon_sym_pre_DOT] = ACTIONS(50),
-    [aux_sym_list_item_token1] = ACTIONS(50),
-    [aux_sym_list_item_token2] = ACTIONS(50),
-    [aux_sym_paragraph_token1] = ACTIONS(50),
-    [sym__newline] = ACTIONS(48),
-  },
+{
+  0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x0, 0x1, 0x1, 0x1, 0x1, 0x0, 0x1, 0x0,
+  0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+},
+{
+  0x3, 0x5, 0x5, 0x5, 0x5, 0x5, 0x5, 0x0, 0x0, 0x7, 0x7, 0x9, 0x9, 0xb, 0xd, 0xc,
+  0x2, 0x2, 0x2, 0x2, 0x2, 0x2,
+},
 };
 
-static const uint16_t ts_small_parse_table[] = {
-  [0] = 1,
-    ACTIONS(52), 1,
-      aux_sym_heading_token1,
-  [4] = 1,
-    ACTIONS(54), 1,
-      aux_sym_heading_token1,
-  [8] = 1,
-    ACTIONS(56), 1,
-      aux_sym_heading_token1,
-  [12] = 1,
-    ACTIONS(58), 1,
-      sym__newline,
-  [16] = 1,
-    ACTIONS(60), 1,
-      ts_builtin_sym_end,
-  [20] = 1,
-    ACTIONS(62), 1,
-      aux_sym_heading_token2,
-  [24] = 1,
-    ACTIONS(64), 1,
-      aux_sym_heading_token2,
-  [28] = 1,
-    ACTIONS(66), 1,
-      aux_sym_heading_token2,
-  [32] = 1,
-    ACTIONS(68), 1,
-      sym__newline,
-  [36] = 1,
-    ACTIONS(70), 1,
-      sym__newline,
-  [40] = 1,
-    ACTIONS(72), 1,
-      sym__newline,
+static const unsigned char ts_compact_zstd[] = {
+  0x28, 0xb5, 0x2f, 0xfd, 0x60, 0xb4, 0x0, 0x45, 0x5, 0x0, 0x2, 0xd, 0x1f, 0x1e, 0x50, 0x59,
+  0x73, 0xb0, 0x38, 0x1c, 0x59, 0x1c, 0x99, 0x76, 0xd3, 0x6e, 0xda, 0x2d, 0x9e, 0x5, 0xcf, 0x82,
+  0x67, 0x41, 0x5c, 0x38, 0xf0, 0x6b, 0x81, 0x78, 0x9f, 0x6d, 0x99, 0x2, 0xbf, 0xdd, 0xf6, 0xda,
+  0x69, 0x9f, 0x5d, 0xf6, 0xd8, 0x61, 0x7f, 0xdd, 0xf5, 0xd6, 0x59, 0x5f, 0x5d, 0xf5, 0xd3, 0x2d,
+  0x9f, 0x42, 0x9d, 0x4c, 0x25, 0x2, 0xe9, 0x48, 0x21, 0xa, 0x81, 0xbe, 0xdd, 0xf7, 0xf3, 0x79,
+  0x3a, 0x9c, 0x8d, 0x26, 0x93, 0x9b, 0x88, 0x78, 0x68, 0x58, 0x38, 0xc4, 0x54, 0x9c, 0x7b, 0xc9,
+  0x45, 0x26, 0x92, 0x8a, 0x6f, 0x65, 0xe2, 0x4b, 0xf9, 0xfb, 0xd8, 0x8d, 0x84, 0x7c, 0x74, 0x6c,
+  0x64, 0x1c, 0x4, 0x4, 0x2, 0x72, 0xdf, 0x41, 0x41, 0xc4, 0x43, 0x6e, 0xa1, 0x61, 0x21, 0xb7,
+  0xab, 0xf8, 0x36, 0xfe, 0x2e, 0x26, 0xbe, 0x87, 0x5d, 0x18, 0xa8, 0x10, 0xd8, 0x79, 0x15, 0xda,
+  0xe7, 0x80, 0x15, 0x18, 0x3c, 0x90, 0x2, 0x9, 0x72, 0x4e, 0xf9, 0x53, 0x38, 0x7, 0x80, 0x5c,
+  0x16, 0x3b, 0xe0, 0x9c, 0x75, 0xee, 0xc, 0x3d, 0x1a, 0x6d, 0xec, 0xef, 0xea, 0x11, 0x23, 0x7f,
+  0xfc, 0x53,
 };
 
-static const uint32_t ts_small_parse_table_map[] = {
-  [SMALL_STATE(8)] = 0,
-  [SMALL_STATE(9)] = 4,
-  [SMALL_STATE(10)] = 8,
-  [SMALL_STATE(11)] = 12,
-  [SMALL_STATE(12)] = 16,
-  [SMALL_STATE(13)] = 20,
-  [SMALL_STATE(14)] = 24,
-  [SMALL_STATE(15)] = 28,
-  [SMALL_STATE(16)] = 32,
-  [SMALL_STATE(17)] = 36,
-  [SMALL_STATE(18)] = 40,
-};
+
 
 static const TSParseActionEntry ts_parse_actions[] = {
   [0] = {.entry = {.count = 0, .reusable = false}},
@@ -763,8 +599,9 @@ extern "C" {
 #define TS_PUBLIC __attribute__((visibility("default")))
 #endif
 
-TS_PUBLIC const TSLanguage *tree_sitter_textile(void) {
-  static const TSLanguage language = {
+/* KAT_COMPRESSED_TABLE_V1: LE uint16 data, aligned LE uint32 map. */
+TS_PUBLIC const TSLanguage *tree_sitter_textile_compressed(const unsigned char *(*decode)(const unsigned char *, size_t, size_t, size_t)) {
+  static TSLanguage language = {
     .abi_version = LANGUAGE_VERSION,
     .symbol_count = SYMBOL_COUNT,
     .alias_count = ALIAS_COUNT,
@@ -777,8 +614,8 @@ TS_PUBLIC const TSLanguage *tree_sitter_textile(void) {
     .field_count = FIELD_COUNT,
     .max_alias_sequence_length = MAX_ALIAS_SEQUENCE_LENGTH,
     .parse_table = &ts_parse_table[0][0],
-    .small_parse_table = ts_small_parse_table,
-    .small_parse_table_map = ts_small_parse_table_map,
+    .small_parse_table = NULL,
+    .small_parse_table_map = NULL,
     .parse_actions = ts_parse_actions,
     .symbol_names = ts_symbol_names,
     .field_names = ts_field_names,
@@ -799,6 +636,9 @@ TS_PUBLIC const TSLanguage *tree_sitter_textile(void) {
       .patch_version = 0,
     },
   };
+  const unsigned char *data = decode(ts_compact_zstd, sizeof(ts_compact_zstd), 436, 368);
+  language.small_parse_table = (const uint16_t *)data;
+  language.small_parse_table_map = (const uint32_t *)(data + 368);
   return &language;
 }
 #ifdef __cplusplus

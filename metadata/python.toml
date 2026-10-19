@@ -1,0 +1,37 @@
+language = "python"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 python grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/tree-sitter/tree-sitter-python"
+upstream_commit = "293fdc02038ee2bf0e2e206711b69c90ac0d413f"
+upstream_version = "0.25.0"
+upstream_crate = "tree-sitter-python"
+license = "MIT"
+
+[sync]
+repository = "https://github.com/tree-sitter/tree-sitter-python.git"
+revision = "293fdc02038ee2bf0e2e206711b69c90ac0d413f"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate python"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "python"

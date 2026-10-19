@@ -1,0 +1,24 @@
+language = "html"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/tree-sitter/tree-sitter-html"
+upstream_commit = "5a5ca8551a179998360b4a4ca2c0f366a35acc03"
+upstream_version = "0.23.2"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "scanner.c", "tag.h", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate html"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c", "tag.h"]
+
+[sync]
+repository = "https://github.com/tree-sitter/tree-sitter-html.git"
+revision = "5a5ca8551a179998360b4a4ca2c0f366a35acc03"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"tag.h" = "src/tag.h"
+"LICENSE" = "LICENSE"

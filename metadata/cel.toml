@@ -1,0 +1,22 @@
+language = "cel"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/bufbuild/tree-sitter-cel"
+upstream_commit = "fd2e8efaa07e71e46dcc1d5c4c85556a742d8c36"
+upstream_version = "0.0.1"
+license = "Apache-2.0"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate cel"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/bufbuild/tree-sitter-cel.git"
+revision = "fd2e8efaa07e71e46dcc1d5c4c85556a742d8c36"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

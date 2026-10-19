@@ -1,0 +1,11 @@
+--- a/scanner.c
++++ b/scanner.c
+@@ -2,7 +2,7 @@
+ #include "tree_sitter/parser.h"
+ 
+ #define _str(x) #x
+-#define _file(x) _str(schema.x.c)
++#define _file(x) _str(schema/schema.x.c)
+ 
+ #ifndef YAML_SCHEMA
+ #define YAML_SCHEMA core

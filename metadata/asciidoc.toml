@@ -32,3 +32,21 @@ outputs = [
   "tree_sitter_asciidoc/scanner.h",
   "tree_sitter_asciidoc/tokens.h",
 ]
+
+[sync]
+repository = "https://github.com/cpkio/tree-sitter-asciidoc"
+revision = "a00a91dd44cd6c228f3bc10b3e548f651058e0db"
+reference = "HEAD"
+patches = ["patches/asciidoc-snapshot.patch"]
+
+[sync.files]
+"common/grammar.js" = "common/grammar.js"
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"tree_sitter_asciidoc/chars.c" = "src/tree_sitter_asciidoc/chars.c"
+"tree_sitter_asciidoc/chars.h" = "src/tree_sitter_asciidoc/chars.h"
+"tree_sitter_asciidoc/marker_types.h" = "src/tree_sitter_asciidoc/marker_types.h"
+"tree_sitter_asciidoc/markers.h" = "src/tree_sitter_asciidoc/markers.h"
+"tree_sitter_asciidoc/scanner.c" = "src/tree_sitter_asciidoc/scanner.c"
+"tree_sitter_asciidoc/scanner.h" = "src/tree_sitter_asciidoc/scanner.h"
+"tree_sitter_asciidoc/tokens.h" = "src/tree_sitter_asciidoc/tokens.h"

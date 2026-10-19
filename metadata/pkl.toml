@@ -1,0 +1,37 @@
+language = "pkl"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 pkl grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/apple/tree-sitter-pkl"
+upstream_commit = "c837eff683d62f3cb5e6309b44c257640f202d4b"
+upstream_version = "0.21.0"
+upstream_crate = "tree-sitter-pkl"
+license = "Apache-2.0"
+
+[sync]
+repository = "https://github.com/apple/tree-sitter-pkl.git"
+revision = "c837eff683d62f3cb5e6309b44c257640f202d4b"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE.txt" = "LICENSE.txt"
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+  "LICENSE.txt",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate pkl"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "pkl"

@@ -1,0 +1,37 @@
+language = "nix"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 nix grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/nix-community/tree-sitter-nix"
+upstream_commit = "ea1d87f7996be1329ef6555dcacfa63a69bd55c6"
+upstream_version = "0.3.0"
+upstream_crate = "tree-sitter-nix"
+license = "MIT"
+
+[sync]
+repository = "https://github.com/nix-community/tree-sitter-nix.git"
+revision = "ea1d87f7996be1329ef6555dcacfa63a69bd55c6"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate nix"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "nix"

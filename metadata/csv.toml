@@ -16,3 +16,13 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-csv"
+revision = "f6bf6e35eb0b95fbadea4bb39cb9709507fcb181"
+reference = "HEAD"
+patches = ["patches/csv-snapshot.patch"]
+
+[sync.files]
+"common/define-grammar.js" = "common/define-grammar.js"
+"grammar.js" = "csv/grammar.js"

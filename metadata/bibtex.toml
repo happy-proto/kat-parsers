@@ -15,3 +15,11 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/latex-lsp/tree-sitter-bibtex"
+revision = "8d04ed27b3bc7929f14b7df9236797dab9f3fa66"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"

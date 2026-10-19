@@ -262,123 +262,26 @@ static const TSLexerMode ts_lex_modes[STATE_COUNT] = {
 };
 
 static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
-  [STATE(0)] = {
-    [ts_builtin_sym_end] = ACTIONS(1),
-    [anon_sym_COLON] = ACTIONS(1),
-    [sym_key] = ACTIONS(1),
-    [sym_comment] = ACTIONS(1),
-    [sym__space] = ACTIONS(1),
-    [sym__newline] = ACTIONS(1),
-    [anon_sym_NULL] = ACTIONS(1),
-  },
-  [STATE(1)] = {
-    [sym_source] = STATE(12),
-    [sym_directive_line] = STATE(2),
-    [sym_comment_line] = STATE(2),
-    [aux_sym_source_repeat1] = STATE(2),
-    [ts_builtin_sym_end] = ACTIONS(3),
-    [sym_key] = ACTIONS(5),
-    [sym_comment] = ACTIONS(7),
-    [sym__newline] = ACTIONS(9),
-  },
+{
+  0x1, 0x1, 0x1, 0x0, 0x1, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+},
+{
+  0x3, 0x0, 0x5, 0x0, 0x7, 0x0, 0x9, 0x0, 0xc, 0x2, 0x2, 0x0, 0x0, 0x2,
+},
 };
 
-static const uint16_t ts_small_parse_table[] = {
-  [0] = 5,
-    ACTIONS(5), 1,
-      sym_key,
-    ACTIONS(7), 1,
-      sym_comment,
-    ACTIONS(11), 1,
-      ts_builtin_sym_end,
-    ACTIONS(13), 1,
-      sym__newline,
-    STATE(3), 3,
-      sym_directive_line,
-      sym_comment_line,
-      aux_sym_source_repeat1,
-  [18] = 5,
-    ACTIONS(15), 1,
-      ts_builtin_sym_end,
-    ACTIONS(17), 1,
-      sym_key,
-    ACTIONS(20), 1,
-      sym_comment,
-    ACTIONS(23), 1,
-      sym__newline,
-    STATE(3), 3,
-      sym_directive_line,
-      sym_comment_line,
-      aux_sym_source_repeat1,
-  [36] = 2,
-    ACTIONS(26), 2,
-      sym__newline,
-      anon_sym_NULL,
-    STATE(5), 2,
-      sym__eof,
-      sym__line_ending,
-  [45] = 1,
-    ACTIONS(28), 4,
-      ts_builtin_sym_end,
-      sym_key,
-      sym_comment,
-      sym__newline,
-  [52] = 2,
-    ACTIONS(30), 2,
-      sym__newline,
-      anon_sym_NULL,
-    STATE(7), 2,
-      sym__eof,
-      sym__line_ending,
-  [61] = 1,
-    ACTIONS(32), 4,
-      ts_builtin_sym_end,
-      sym_key,
-      sym_comment,
-      sym__newline,
-  [68] = 2,
-    ACTIONS(34), 2,
-      sym__newline,
-      anon_sym_NULL,
-    STATE(9), 2,
-      sym__eof,
-      sym__line_ending,
-  [77] = 1,
-    ACTIONS(36), 4,
-      ts_builtin_sym_end,
-      sym_key,
-      sym_comment,
-      sym__newline,
-  [84] = 2,
-    ACTIONS(38), 1,
-      sym_path,
-    ACTIONS(40), 1,
-      sym__space,
-  [91] = 1,
-    ACTIONS(42), 1,
-      anon_sym_COLON,
-  [95] = 1,
-    ACTIONS(44), 1,
-      ts_builtin_sym_end,
-  [99] = 1,
-    ACTIONS(46), 1,
-      sym_path,
+static const unsigned char ts_compact_zstd[] = {
+  0x28, 0xb5, 0x2f, 0xfd, 0x60, 0x0, 0x0, 0x8d, 0x3, 0x0, 0x72, 0xb, 0x17, 0x18, 0x40, 0x75,
+  0x86, 0x31, 0x84, 0xf6, 0xd, 0x47, 0x9e, 0xe0, 0x23, 0x69, 0x49, 0x8b, 0x8, 0x54, 0xbd, 0x13,
+  0x91, 0x5e, 0xd2, 0xb6, 0x4c, 0x1, 0xdf, 0x5c, 0xf3, 0xcc, 0x31, 0xbf, 0xdc, 0xf2, 0xca, 0x29,
+  0x97, 0xbc, 0xf1, 0xc2, 0xdf, 0xb9, 0x93, 0xfb, 0x46, 0xee, 0x2e, 0xe4, 0xae, 0xfb, 0xe8, 0x5c,
+  0x47, 0x43, 0x62, 0x2c, 0x22, 0x45, 0x15, 0xfa, 0x54, 0x7f, 0x26, 0x6e, 0xe0, 0x54, 0x5d, 0xa3,
+  0x50, 0x15, 0x51, 0x1d, 0x3e, 0xd7, 0x50, 0x5d, 0xc2, 0x77, 0x70, 0x15, 0x4, 0x94, 0x3a, 0x9d,
+  0xd0, 0x15, 0x7c, 0xa7, 0xcf, 0x8d, 0xaa, 0xbb, 0xae, 0x7, 0x20, 0x70, 0x33, 0xf, 0x47, 0x94,
+  0xcb, 0xd8, 0x23, 0xcb, 0xdd, 0x30, 0x7b, 0x79, 0xba, 0x6, 0x5,
 };
 
-static const uint32_t ts_small_parse_table_map[] = {
-  [SMALL_STATE(2)] = 0,
-  [SMALL_STATE(3)] = 18,
-  [SMALL_STATE(4)] = 36,
-  [SMALL_STATE(5)] = 45,
-  [SMALL_STATE(6)] = 52,
-  [SMALL_STATE(7)] = 61,
-  [SMALL_STATE(8)] = 68,
-  [SMALL_STATE(9)] = 77,
-  [SMALL_STATE(10)] = 84,
-  [SMALL_STATE(11)] = 91,
-  [SMALL_STATE(12)] = 95,
-  [SMALL_STATE(13)] = 99,
-};
+
 
 static const TSParseActionEntry ts_parse_actions[] = {
   [0] = {.entry = {.count = 0, .reusable = false}},
@@ -417,8 +320,9 @@ extern "C" {
 #define TS_PUBLIC __attribute__((visibility("default")))
 #endif
 
-TS_PUBLIC const TSLanguage *tree_sitter_git_link(void) {
-  static const TSLanguage language = {
+/* KAT_COMPRESSED_TABLE_V1: LE uint16 data, aligned LE uint32 map. */
+TS_PUBLIC const TSLanguage *tree_sitter_git_link_compressed(const unsigned char *(*decode)(const unsigned char *, size_t, size_t, size_t)) {
+  static TSLanguage language = {
     .abi_version = LANGUAGE_VERSION,
     .symbol_count = SYMBOL_COUNT,
     .alias_count = ALIAS_COUNT,
@@ -431,8 +335,8 @@ TS_PUBLIC const TSLanguage *tree_sitter_git_link(void) {
     .field_count = FIELD_COUNT,
     .max_alias_sequence_length = MAX_ALIAS_SEQUENCE_LENGTH,
     .parse_table = &ts_parse_table[0][0],
-    .small_parse_table = ts_small_parse_table,
-    .small_parse_table_map = ts_small_parse_table_map,
+    .small_parse_table = NULL,
+    .small_parse_table_map = NULL,
     .parse_actions = ts_parse_actions,
     .symbol_names = ts_symbol_names,
     .field_names = ts_field_names,
@@ -453,6 +357,9 @@ TS_PUBLIC const TSLanguage *tree_sitter_git_link(void) {
       .patch_version = 0,
     },
   };
+  const unsigned char *data = decode(ts_compact_zstd, sizeof(ts_compact_zstd), 256, 208);
+  language.small_parse_table = (const uint16_t *)data;
+  language.small_parse_table_map = (const uint32_t *)(data + 208);
   return &language;
 }
 #ifdef __cplusplus
