@@ -68,6 +68,8 @@ tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", 
 
 批量检查、同步所有上游和定时更新分支的约定见 [批量维护上游语法](docs/upstreams.md)。`just sync` 完成源码同步、重新生成与检查；`just check-upstream-sources` 验证锁定来源和本地补丁可重放。
 
+消费方可直接引用 [Git 依赖同步工作流](docs/git-dependencies.md)，统一更新直接与间接 Git 锁定，无需复制脚本或额外声明间接依赖。
+
 ## TODO
 
 - CoffeeScript 在生成时仍会出现 `unnecessary conflicts` warning；当前不影响生成和使用，先记录为已知情况，后续如开始深度维护该 grammar，再评估是否清理上游 `grammar.js` 中的陈旧 `conflicts` 声明
