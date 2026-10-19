@@ -173,6 +173,10 @@ pub use tree_sitter_kat_ignore::{
     GRAMMAR as IGNORE_GRAMMAR, LANGUAGE as IGNORE_LANGUAGE, NODE_TYPES as IGNORE_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_jam::{
+    GRAMMAR as JAM_GRAMMAR, LANGUAGE as JAM_LANGUAGE, NODE_TYPES as JAM_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_jinja::{
     GRAMMAR as JINJA_GRAMMAR, LANGUAGE as JINJA_LANGUAGE, NODE_TYPES as JINJA_NODE_TYPES,
 };

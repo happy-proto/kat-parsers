@@ -1,5 +1,13 @@
 # Third-Party Sources
 
+## Jam build language（自维护）
+
+- `upstreams/jam/grammar.js` and `scanner.c` are independently authored MIT code for source highlighting.
+- Behavioral references: [B2 language manual](https://www.bfgroup.xyz/b2/manual/release/index.html#bbv2.jam.language) and [bfgroup/b2](https://github.com/bfgroup/b2) revision `4ca043f11b3b6de25bb268d5d874d714344074d9`, `src/engine/jamgram.y` and `src/engine/scan.cpp`. No engine source or third-party grammar/query is copied or adapted.
+- Generated ABI 15 assets live in `crates/tree-sitter-kat-jam/vendor/jam/`.
+- Original B2 test inputs under `crates/tree-sitter-kat-jam/tests/fixtures/b2/` are imported under the Boost Software License 1.0 from the same revision. Their copyright notices, complete license and per-file provenance are retained in that directory. Parser source remains independently authored; the fixture license is separate from the MIT implementation.
+- Covers build rules, assignments, variable expansion, lists, conditions, loops, modules/classes, target scope, file generation and balanced raw actions. It does not execute builds, validate build properties or parse platform-specific action commands. The public `tree-sitter-jam` crate targets an unrelated programming language.
+
 ## Graph::Easy（自维护）
 
 - `upstreams/graph_easy/grammar.js` 为本仓库独立编写的 MIT 高亮 grammar。

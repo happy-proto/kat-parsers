@@ -1,0 +1,10 @@
+# Copyright 2011 Steven Watanabe
+# Copyright 2020 Rene Ferdinand Rivera Morell
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE.txt or copy at
+# https://www.bfgroup.xyz/b2/LICENSE.txt)
+# Source: test/core_at_file.py:14 (write string value, unchanged)
+
+name = n1 n2 ;
+contents = M1 M2 ;
+EXIT "file:" "@(o$(name:J=) .txt:E= test -D$(contents))" : 0 ;
