@@ -9,8 +9,8 @@ reference_docs = "https://www.bfgroup.xyz/b2/manual/release/index.html#bbv2.jam.
 license = "MIT"
 
 [copied]
-files = ["grammar.js"]
+files = ["grammar.js", "scanner.c"]
 
 [generated]
 command = "cargo run -p xtask -- generate jam"
-outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]

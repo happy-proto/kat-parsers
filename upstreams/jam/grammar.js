@@ -1,6 +1,7 @@
 // Independently authored for kat from the B2 language reference.
 module.exports = grammar({
   name: 'jam',
+  externals: $ => [$._literal_prefix],
   extras: $ => [/\s+/, $.comment],
   rules: {
     source_file: $ => repeat($._statement),
@@ -13,16 +14,17 @@ module.exports = grammar({
       $.break_statement, $.continue_statement, $.actions_definition,
     ),
     block: $ => seq('{', repeat($._statement), '}'),
-    assignment: $ => prec(1, seq(field('name', $.word),
+    assignment: $ => prec(1, seq(field('name', $._argument),
       optional(seq('on', repeat1($._argument))),
       field('operator', choice('=', '+=', '?=', seq('default', '='))), repeat($._argument), ';')),
-    local_statement: $ => seq('local', repeat1($.word), optional(seq('=', repeat($._argument))), ';'),
+    local_statement: $ => seq('local', repeat($._argument), optional(seq('=', repeat($._argument))), ';'),
     call_statement: $ => seq(field('name', $.word), seq(repeat($._argument), repeat(seq(':', repeat($._argument)))), ';'),
     _argument: $ => choice($.word, $.rule_call),
     rule_call: $ => seq('[', optional(seq('on', $._argument)), field('name', $.word), seq(repeat($._argument), repeat(seq(':', repeat($._argument)))), ']'),
     rule_definition: $ => seq(optional('local'), 'rule', field('name', $.word),
       optional($.parameters), $._statement),
-    parameters: $ => seq('(', repeat(choice($.word, ':')), ')'),
+    parameters: $ => seq('(', repeat(choice($.word, $.parameter_type, ':')), ')'),
+    parameter_type: _ => token(/\[[^\]\s]+\]/),
     if_statement: $ => seq('if', $.condition, $.block, optional(seq('else', $._statement))),
     condition: $ => choice(
       $._argument,
@@ -54,18 +56,23 @@ module.exports = grammar({
     // A Jam value is a single whitespace-delimited word, possibly assembled
     // from literal, quoted and expanded pieces (e.g. <include>$(ROOT)/src).
     word: $ => seq($._word_part, repeat($._word_continuation)),
-    _word_part: $ => choice($.file_expansion, $.literal, $.quoted, $.variable_expansion),
+    _word_part: $ => choice(alias($._literal_prefix, $.literal), $.file_expansion, $.literal, alias('$', $.literal), alias('$$', $.literal), $.quoted, $.variable_expansion),
     _word_continuation: $ => choice(
-      alias(token.immediate(/[^\s"$\[\]{};]+/), $.literal),
+      alias(token.immediate('$'), $.literal), alias(token.immediate('$$'), $.literal),
+      alias(token.immediate(prec(1, /([^\s"$\\]|\\[\s\S])+/)), $.literal),
       alias($.adjacent_quoted, $.quoted), alias($.adjacent_variable_expansion, $.variable_expansion)),
     file_expansion: $ => seq('@(', repeat(choice(alias(token.immediate(/[^()"$]+/), $.literal), $.quoted, $.variable_expansion)), ')'),
-    literal: _ => token(/([^\s"$\[\]{};:\\]|\\[^\n])+/),
+    // In B2's default scanner punctuation embedded in a word stays literal;
+    // standalone delimiters win ties against this regex. This also handles
+    // switch glob classes, drive letters and quoted paths without exceptions.
+    literal: _ => token(/([^\s"$\\]|\\[\s\S])+/),
     quoted: $ => seq('"', repeat(choice($.string_content, $.escape_sequence, '$', $.adjacent_variable_expansion)), token.immediate('"')),
     adjacent_quoted: $ => seq(token.immediate('"'), repeat(choice($.string_content, $.escape_sequence, '$', $.adjacent_variable_expansion)), token.immediate('"')),
-    string_content: _ => token.immediate(/[^"\\$]+/),
-    escape_sequence: _ => token.immediate(/\\./),
-    variable_expansion: $ => seq('$(', repeat(choice($.variable_content, $.adjacent_variable_expansion)), token.immediate(')')),
-    adjacent_variable_expansion: $ => seq(token.immediate('$('), repeat(choice($.variable_content, $.adjacent_variable_expansion)), token.immediate(')')),
-    variable_content: _ => token.immediate(/[^()$]+/),
+    string_content: _ => token.immediate(prec(1, /[^"\\$]+/)),
+    escape_sequence: _ => token.immediate(/\\[\s\S]/),
+    variable_expansion: $ => seq('$(', repeat(choice($.variable_content, $.variable_group, alias(token.immediate('$'), $.literal), $.adjacent_variable_expansion)), token.immediate(')')),
+    adjacent_variable_expansion: $ => seq(token.immediate('$('), repeat(choice($.variable_content, $.variable_group, alias(token.immediate('$'), $.literal), $.adjacent_variable_expansion)), token.immediate(')')),
+    variable_group: $ => seq(token.immediate('('), repeat(choice($.variable_content, $.variable_group, alias(token.immediate('$'), $.literal), $.adjacent_variable_expansion)), token.immediate(')')),
+    variable_content: _ => token.immediate(prec(1, /[^()$]+/)),
   },
 });

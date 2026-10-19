@@ -65,7 +65,15 @@
           "named": true
         },
         {
+          "type": "literal",
+          "named": true
+        },
+        {
           "type": "variable_content",
+          "named": true
+        },
+        {
+          "type": "variable_group",
           "named": true
         }
       ]
@@ -79,6 +87,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "rule_call",
+            "named": true
+          },
           {
             "type": "word",
             "named": true
@@ -543,7 +555,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "rule_call",
@@ -674,6 +686,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "parameter_type",
+          "named": true
+        },
         {
           "type": "word",
           "named": true
@@ -963,7 +979,42 @@
           "named": true
         },
         {
+          "type": "literal",
+          "named": true
+        },
+        {
           "type": "variable_content",
+          "named": true
+        },
+        {
+          "type": "variable_group",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "variable_group",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "adjacent_variable_expansion",
+          "named": true
+        },
+        {
+          "type": "literal",
+          "named": true
+        },
+        {
+          "type": "variable_content",
+          "named": true
+        },
+        {
+          "type": "variable_group",
           "named": true
         }
       ]
@@ -1183,6 +1234,10 @@
   {
     "type": "on",
     "named": false
+  },
+  {
+    "type": "parameter_type",
+    "named": true
   },
   {
     "type": "piecemeal",

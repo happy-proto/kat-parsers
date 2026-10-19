@@ -1,0 +1,11 @@
+# Copyright (C) Mateusz Loskot 2020.
+# Distributed under the Boost Software License, Version 1.0. (See
+# accompanying file LICENSE.txt or copy at
+# https://www.bfgroup.xyz/b2/LICENSE.txt)
+# Test that Jam syntax error results in non-zero exit status
+# Create a temporary working directory.
+# Source: test/core_syntax_error_exit_status.py:16 (write string value, unchanged)
+
+
+exe hello : hello.cpp
+

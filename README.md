@@ -60,6 +60,7 @@ tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", 
 - parser 生成发生在 `just` / GitHub Actions 中，而不是 `build.rs`
 - 每个语言 crate 的 `build.rs` 只负责编译已经提交到仓库里的 C / C++ 产物；共享逻辑统一收口到 `kat-parser-common`
 - Mermaid 使用 Merman 0.3.0 的模块化 grammar 与 scanner，按固定上游 revision 同步；接入原因与生成边界见 [`docs/vendor-grammar-reasons.md`](docs/vendor-grammar-reasons.md)。
+- Jam 按 B2 默认分词语法维护，原始上游测试与词法回归的验证方式见 [Jam 构建语言](docs/jam.md)。
 - 依赖状态由 deps.rs 展示，Cargo 与 GitHub Actions 的自动更新策略统一维护在 [`.github/dependabot.yml`](.github/dependabot.yml)。
 
 生成器使用预编译 CLI，而不是将生成库编进 `xtask`：这样既省去本地和 CI 编译生成器的时间，又保留优化后生成器的执行效率。缓存、构建边界和验证方法见 [生成与构建](docs/generation.md)。

@@ -1,0 +1,16 @@
+# Copyright 2012. Jurko Gospodnetic
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE.txt or copy at
+# https://www.bfgroup.xyz/b2/LICENSE.txt)
+# Test Boost Jam parser's source line tracking & reporting.
+# Source: test/core_source_line_tracking.py:15 (write string value, unchanged)
+
+
+
+
+aaa = "
+
+
+
+
+

@@ -93,3 +93,39 @@ fn retains_complete_statements_before_unfinished_input() {
         "call_statement"
     );
 }
+
+#[test]
+fn computed_local_names_from_upstream_core_language() {
+    parse("local [ names ] = [ values ] ;\n[ names ] on target = value ;\nlocal ;\n");
+}
+
+#[test]
+fn comments_inside_quotes_from_upstream_core_scanner() {
+    parse("echo a # comment\nb #| multi\nline |# c \"#literal\" ;\n");
+    parse("local text = \"#include <file.h>\" ;\n");
+}
+
+#[test]
+fn typed_parameters_from_upstream_core_typecheck() {
+    parse("rule check ( [path] file : [number] count ? ) { return $(file) ; }\n");
+}
+
+#[test]
+fn literal_dollars_from_upstream_regexes_and_escaping() {
+    parse("local pattern = ^<(.*)>$ ;\nlocal value = $ $HOME $$(ROOT) ;\n");
+}
+
+#[test]
+fn parenthesized_variable_content_from_upstream_configuration() {
+    parse("echo $(name:E=(unknown)) $(config($(key))) ;\n");
+}
+
+#[test]
+fn escaped_newlines_from_upstream_print() {
+    parse("echo \\\n\\\"message\\\" $(name)\\\nnext ;\n");
+}
+
+#[test]
+fn escaped_newline_inside_quoted_string_matches_b2_scanner() {
+    parse("EXIT \"value: first\\\nsecond\" : 0 ;\n");
+}
