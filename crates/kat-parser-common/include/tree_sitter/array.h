@@ -66,13 +66,13 @@ extern "C" {
 
 /// Free any memory allocated for this array. Note that this does not free any
 /// memory allocated for the array's contents.
-#define array_delete(self)                           \
-  do {                                               \
-    if ((self)->contents) ts_free((self)->contents); \
-    (self)->contents = NULL;                         \
-    (self)->size = 0;                                \
-    (self)->capacity = 0;                            \
-  } while (0)
+static inline void _kat_array_delete(void *self, size_t size) {
+  void *contents;
+  memcpy(&contents, self, sizeof(contents));
+  if (contents) ts_free(contents);
+  memset(self, 0, size);
+}
+#define array_delete(self) _kat_array_delete((self), sizeof(*(self)))
 
 /// Push a new `element` onto the end of the array.
 #define array_push(self, element)                                 \

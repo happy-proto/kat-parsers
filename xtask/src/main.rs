@@ -1,3 +1,4 @@
+mod headers;
 mod packing;
 
 use std::ffi::OsStr;
@@ -215,6 +216,7 @@ fn generate_one(
             &workspace_dir.join("src/grammar.json"),
         )?;
     }
+    headers::normalize_array_header(&workspace_dir.join("src/tree_sitter/array.h"))?;
     // Use the generator's public scanner headers, not runtime-private headers
     // or historical copies bundled with individual upstream grammars.
     for header in SHARED_HEADERS {
@@ -665,6 +667,11 @@ fn compute_parser_input_hash(spec: &GrammarSpec, cli_version: &str) -> Result<St
     );
     hash_bytes(&mut hasher, b"packer-version", packing::VERSION.as_bytes());
     hash_bytes(&mut hasher, b"packer-source", include_bytes!("packing.rs"));
+    hash_bytes(
+        &mut hasher,
+        b"scanner-headers",
+        include_bytes!("headers.rs"),
+    );
     hash_bytes(
         &mut hasher,
         b"packer-exporter",

@@ -24,6 +24,8 @@
 
 scanner 等 support files 独立同步：修改 scanner 不需要重算 parser 状态表，但仍必须进入 vendored crate。`parser.h`、`alloc.h` 和 `array.h` 统一同步自 CLI 的生成结果，不复制 grammar 私有的旧版本，也不使用 runtime 内部头文件。新 grammar 的所有 JS/JSON import 都必须在 metadata 中声明；不依赖临时目录外的 npm 包或机器上的隐式文件。
 
+生成阶段对 CLI 0.27.1 的 `array_delete` 做一项共享兼容适配：参数只求值一次，支持 XML scanner 的 `array_delete(&array_pop(tags))`，避免重复出栈。释放和清零通过字节访问完成，不将不同 `Array(T)` 强转为另一种结构体类型，保留严格别名安全性。适配实现参与输入缓存；CLI 升级改变该宏结构时生成会报错，要求重新检查适配。生成契约测试在优化和严格别名检查下运行 C/C++ 副作用参数与嵌套数组删除回归，真实 XML 测试覆盖嵌套标签、自闭合标签和错误结束标签。
+
 内容相同的文件保持原修改时间。Rust 模板先在临时目录中格式化，再与 checkout 比较，避免“写入未格式化模板、然后 rustfmt 改回”的无效重编译。C/C++ 构建只监听源文件和头文件，并包含共享头文件；grammar JSON 和生成缓存变化不会单独触发 C 重编译。
 
 ## 验证

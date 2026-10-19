@@ -8,6 +8,21 @@ mod tests {
         fn tree_sitter_coffeescript_baseline() -> *const ();
     }
 
+    #[test]
+    fn xml_scanner_handles_nested_self_closing_and_mismatched_tags() {
+        let language = tree_sitter_kat_xml::LANGUAGE.into();
+        let mut parser = Parser::new();
+        parser.set_language(&language).unwrap();
+        for (source, has_error) in [
+            ("<root><child>text</child></root>", false),
+            ("<root><child/></root>", false),
+            ("<root><child></wrong></root>", true),
+        ] {
+            let tree = parser.parse(source, None).unwrap();
+            assert_eq!(tree.root_node().has_error(), has_error, "{source}");
+        }
+    }
+
     fn languages() -> [Language; 2] {
         let native =
             unsafe { tree_sitter::Language::from_raw(tree_sitter_coffeescript_baseline().cast()) };

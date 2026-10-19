@@ -358,6 +358,7 @@ dependencies = [
  "regex",
  "tree-sitter",
  "tree-sitter-kat-coffeescript",
+ "tree-sitter-kat-xml",
  "zstd",
 ]
 

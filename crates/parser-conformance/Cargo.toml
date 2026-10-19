@@ -10,6 +10,7 @@ repository.workspace = true
 [dev-dependencies]
 tree-sitter = "0.27.1"
 tree-sitter-kat-coffeescript = { path = "../tree-sitter-kat-coffeescript" }
+tree-sitter-kat-xml = { path = "../tree-sitter-kat-xml" }
 
 [build-dependencies]
 cc = "1.9.0"
