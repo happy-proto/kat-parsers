@@ -1,97 +1,52 @@
 ---
 name: kat-parser-grammar
-description: 为 kat-parsers 新增、更新或修复单个 tree-sitter grammar；适用于语言接入、语法覆盖缺口、上游快照同步、parser 生成构建及来源记录维护。
+description: 在 kat-parsers 中新增、更新或修复 Tree-sitter grammar，排查语法覆盖与解析结构问题，或维护上游快照、parser 生成构建和来源记录。
 ---
 
-用于在 `kat-parsers` 中新增或更新单个 grammar。以 `<lang>` 表示语言目录名。
+交付能忠实保留目标语言源码结构、可重复生成、具有有效回归保护的 parser。以 `<lang>` 表示 metadata 中的语言标识。
 
-## 流程
+## 边界与入口
 
-1. 先确认仓库边界。
-   - 阅读 [README.md](../../../README.md)，确认这次改动属于 `kat-parsers` 的职责范围。
-   - 修改生成或构建链路时读取 [生成与构建](../../../docs/generation.md)，沿用预编译 CLI、无配置 ABI 15 和完整输入/输出缓存的约定。
-2. 确定验证依据，先补失败测试，再改实现。
-   - 接入测试确认 `tree-sitter-kat-parsers` 能暴露 `<LANG>_LANGUAGE`，并能被 `tree_sitter::Parser` 成功加载；这些只证明接入成功，不代表语法覆盖充分。
-   - 如果该语言已经暴露 `GRAMMAR` / `NODE_TYPES` 常量，测试里顺手断言非空。
-   - 新增、更新或修复语法时，读取 [语法覆盖验证](references/grammar-validation.md)，确定目标语言版本、方言、权威实现和测试语料；不能以少量自编样例作为覆盖验收的全部依据。
-   - 如果当前任务明确不需要补测试，要在改动说明里写清楚理由。
-3. 盘点上游最小必要资产。
-   - 必选：`grammar.js`
-   - 常见可选：`src/scanner.c`、`src/unicode.c`、`src/tree_sitter/*.h`；生成不需要 `tree-sitter.json`
-   - 先看上游仓库实际文件，不要机械套用别的语言模板。
-   - 同时确认上游 license、分发条件和附带文件要求；只有在确认当前引用、复制、提交生成产物的方式不违反授权协议后，才继续引入。
-   - 可用命令：
+先读 [README.md](../../../README.md)，确认任务落在 parser 层。这里维护 grammar、scanner、生成产物和 Rust parser crate；文件识别、query、注入和最终高亮属于消费方。先用 AST 定位问题，避免为高亮规则的错误放宽 grammar。
 
-```bash
-git ls-remote <upstream-repo> HEAD
-git clone --depth 1 <upstream-repo> /tmp/<repo-name>
-find /tmp/<repo-name> -maxdepth 3 -type f | sort
-```
+按实际改动选择参考文档；任务同时涉及多类改动时组合使用。
 
-4. 同步上游快照到 `upstreams/<lang>/`。
-   - 只复制生成和构建必需文件。
-   - 同步上游许可证文件，文件名保持上游原样，例如 `LICENSE` 或 `LICENSE.txt`。
-   - 不把 `parser.c`、`grammar.json`、`node-types.json` 这类生成物放进 `upstreams/`。
-5. 补 `metadata/<lang>.toml`。
-   - 用 [metadata-template.toml](assets/metadata-template.toml) 起步。
-   - 参考 [metadata](../../../metadata) 里的现有语言条目。
-   - `copied.files` 只列上游快照文件。
-   - `generated.outputs` 只列 `vendor/<lang>/` 下实际由本仓库生成或同步的产物。
-6. 接生成链路和编译链路。
-   - `grammar_specs()` 从 metadata 自动发现语言；JS/JSON import 必须列入 `copied.files`，跨语言目录的 import 列入 `generator_support_files`，使缓存覆盖完整输入。
-   - C/C++ scanner 与 support files 由 metadata 同步到各语言 vendor 目录，并由共享 build support 编译；不手改生成的 crate scaffolding。
-   - 如果需要新的根目录输入文件，优先在 `xtask` 的 language spec 里显式声明，不要写死到通用逻辑里。
-7. 接 crate 导出接口。
-   - 生成器自动生成单语言 crate 和聚合 re-export，统一暴露：
-     - `<LANG>_LANGUAGE`
-     - `<LANG>_GRAMMAR`
-     - `<LANG>_NODE_TYPES`
-8. 生成并验证。
+| 改动 | 需要读取与落实的内容 |
+| --- | --- |
+| 新语言、上游快照更新、输入文件或编译方式变化 | [仓库接入](references/integration.md)：资产、metadata、生成与构建边界 |
+| grammar 或 scanner 的新增、更新、修复 | [语法验证](references/grammar-validation.md)：权威依据、外部语料、结构断言和精简回归 |
+| 只改生成器、缓存或 crate 模板 | [生成与构建](../../../docs/generation.md) 和相关实现、契约测试；验证受影响链路，无需重新审计全部语言 |
 
-```bash
-cargo run -p xtask -- generate <lang>
-cargo run -p xtask -- generate
-just check
-```
+## 先确定要保留的语法
 
-   - 第一条验证单语言接入。
-   - 第二条验证全量生成链路一致。
-   - 如果修改了 parser input hash 规则，记得接受现有语言 `.parser-inputs` 的更新。
-   - 对可运行的 parser 执行权威语料对照，分类差异，将确认的语法缺陷缩减为持久化回归，先复现失败再修复并重新生成；修复后重跑选定语料和项目检查。详见 [语法覆盖验证](references/grammar-validation.md)。
-   - 大规模语料留在仓库外；仓库内保留接入测试、必要的结构契约测试和确认缺陷的精简回归，不整批移植上游测试集。
-9. 更新记录。
-   - 修改第三方资产边界时，更新 [THIRD_PARTY.md](../../../THIRD_PARTY.md)，补充上游来源、license、导入资产、生成产物。
-   - 仓库级流程或规则变化时，再更新 [README.md](../../../README.md)。
+- 明确语言身份、版本及方言，以官方或事实标准的语法定义、词法规则和实现为依据。上游 Tree-sitter grammar 是候选实现，不因名称匹配、能生成或已有 crate 就认为覆盖充分。
+- 有可用上游时先评估复用及已有本地改动；没有适合的实现时，依据权威文法和解析行为自维护。不要从几份样例反推整门语言，也不要用通用字符串、注释或 shell 规则替代该语言的词法上下文。
+- 写清本次需要识别的结构、需要原样保留的文本以及已知范围限制。允许语言定义的原始文本区块；不把有结构的语法整体吞成文本来换取无 `ERROR`。
+- 更新前确认来源 revision、本地修补和现有测试，保留修补的目的及行为；修复前保存可运行的基线。新增 parser 先完成最小接入，使后续语料能够实际运行。
 
-## 规范
+## 以差异驱动实现
 
-- 语言标识统一使用小写 ASCII 名称，贯穿 `upstreams/<lang>`、`metadata/<lang>.toml`、`vendor/<lang>`、`xtask` 的 `name`。
-- Rust 常量统一使用全大写前缀：`<LANG>_LANGUAGE`、`<LANG>_GRAMMAR`、`<LANG>_NODE_TYPES`。
-- 不手改 `vendor/<lang>/parser.c`、`grammar.json`、`node-types.json`；这些文件只通过 `xtask generate` 生成。
-- `build.rs` 只编译已经提交到仓库里的 C 产物，不在构建期执行 `tree-sitter generate`。
-- `upstreams/` 只保留最小上游快照，不放 query、测试、bindings 等下游不需要的内容。
-- `tree_sitter/parser.h`、`alloc.h` 和 `array.h` 使用 CLI 生成并共享的版本，不引入 grammar 自带副本；其它 scanner 专用头文件按 metadata 声明。
-- `metadata`、`THIRD_PARTY.md`、`vendor/<lang>/` 必须和上游快照一起更新，避免仓库状态半完成。
-- 引用第三方 grammar 时，先确认上游协议允许当前这种复制、生成和随仓库分发方式；不要只因为技术上可行就直接 vendoring。
-- 新语言如没有 `scanner.c` 或 `unicode.c`，不要制造空文件，直接在 spec 里声明 absence。
+1. 选择与目标版本匹配的权威实现及语料，在仓库外运行。优先使用官方测试及其原有上下文，再补官方源码、示例和真实项目；按语法类别检查范围，补足相关边界与组合，不能只挑容易通过的文件。
+2. 在同一批输入上检查本仓库 parser。合法输入需无 `ERROR`／`MISSING`，关键结构需核对节点、字段或字节范围；同时检查相关的不完整输入恢复。接入测试只证明能加载，不能充当覆盖验收。
+3. 分类差异，确认哪些是 grammar／scanner 缺陷，哪些是非法输入、版本差异或运行环境问题。把确认的缺陷缩减为能独立检出的回归，先在修复前版本复现失败，再修改源码并通过生成器更新产物。
+4. 修复后重跑相同外部语料和持久化回归，检查已有行为是否退化。只保留必要契约和真实缺陷的精简回归；同类缺陷去重，相关语法可组合，但不能丢失对每类原缺陷的检出能力。
 
-## 例外
+无法运行权威工具时，继续用正式文法、官方测试预期及真实语料交叉验证，并明确验证缺口。正常验证未发现缺陷时如实记录；不要制造失败或为了达成通过率修改输入预期。
 
-- 使用项目固定的 Tree-sitter 0.27 CLI 和 ABI 15；缺少 `tree-sitter.json` 时采用原生默认元数据，不合成配置或增加 ABI 14 分支。
-- 如生成时出现 `unnecessary conflicts` warning，先区分它是否只是陈旧 `conflicts` 声明；若不影响生成和使用，可以先记录为已知情况，不要顺手清理 grammar。
-- 完整生成使用一次 CLI 调用产出三个文件，不另加 `--no-parser` 预生成步骤。
+## 生成与验收
 
-## 完成定义
+在仓库根目录执行；按改动风险补充测试，不把整个命令清单套用于不相关任务。
 
-- 接入测试通过；发现的语法缺陷均有修复前失败、修复后通过的回归证据。如果本次明确不补测试，说明理由；未发现缺陷时如实记录，不制造失败用例。
-- 新增或修改语法已完成权威语料对照；记录来源及版本、可复现的命令或脚本、实际范围、跳过项、发现的缺陷与复查结果。无法运行权威实现或存在未解决差异时，说明替代依据、限制和剩余缺口，不宣称完整覆盖。
-- 回归断言能检出原缺陷；精简或合并用例后仍保留这一能力，且修复未造成选定语料中的新退化。
-- `cargo run -p xtask -- generate <lang>` 成功。
-- `cargo run -p xtask -- generate` 成功。
-- `just check` 成功。
-- `git status` 中只剩预期改动。
+| 改动范围 | 必要检查 |
+| --- | --- |
+| 新增或修改 grammar、scanner、metadata 输入 | `cargo run -p xtask -- generate <lang>`；目标语言的回归和外部语料复查；`cargo run -p xtask -- generate`；`just check` |
+| 生成器、共享构建或模板 | 相关契约测试（需要 CLI 的测试使用 `cargo test -p xtask -- --include-ignored`）；全量生成及 `just check`；检查确定性时使用 `generate --force` |
 
-## 资源
+检查完整 diff，确认源码、metadata、来源说明、scanner/support files、生成物和导出一致。单语言生成也会维护共享 crate 和聚合导出，不能假定只触碰该语言目录。生成器会覆盖 scaffolding，测试应放在非生成路径。
 
-- [metadata-template.toml](assets/metadata-template.toml)
-- [语法覆盖验证](references/grammar-validation.md)：新增或修改语法时的权威对照、差异分类和精简回归准则。
+验收看实际证据：
+
+- parser 可通过 Rust API 加载，单语言导出 `LANGUAGE`／`GRAMMAR`／`NODE_TYPES`，聚合 crate 对应导出 `<LANG>_*`；已有加载测试之外，关键结构有可观察的断言。
+- 修复具有先失败后通过的回归证据，外部语料复查没有新增退化；确认的未解决缺陷仍是剩余工作，不以“已记录”冒充修复完成。
+- 改动范围对应的生成和检查通过，工作区只有预期变化。生成或共享构建契约发生变化时，遵循 [生成与构建](../../../docs/generation.md) 验证完整输入、输出和强制生成，不能以缓存命中作为正确性证明。
+- 交付说明包含验证来源及版本、可复现入口、实际范围、跳过项、差异处理和剩余限制；区分本地测试、CI 与消费方验收，不用“编译通过”宣称语言完整支持。
