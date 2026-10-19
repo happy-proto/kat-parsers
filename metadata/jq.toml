@@ -21,7 +21,6 @@ outputs = [
 repository = "https://github.com/flurie/tree-sitter-jq"
 revision = "c204e36d2c3c6fce1f57950b12cabcc24e5cc4d9"
 reference = "HEAD"
-patches = ["patches/jq-snapshot.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

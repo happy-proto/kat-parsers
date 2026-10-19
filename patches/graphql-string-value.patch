@@ -1,0 +1,19 @@
+diff --git a/grammar.js b/grammar.js
+index 53bba73..18165e0 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -278,11 +278,9 @@ export default grammar({
+       ),
+     variable: ($) => seq("$", $.name),
+     string_value: ($) =>
+-      token(
+-        choice(
+-          seq('"""', /([^"]|\n|""?[^"])*/, '"""'),
+-          seq('"', /[^"\\\n]*/, '"')
+-        )
++      choice(
++        seq('"""', /([^"]|\n|""?[^"])*/, '"""'),
++        seq('"', /[^"\\\n]*/, '"')
+       ),
+     int_value: ($) => /-?(0|[1-9][0-9]*)/,
+     float_value: ($) =>

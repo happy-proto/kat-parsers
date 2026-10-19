@@ -1,5 +1,3 @@
-diff --git a/grammar.js b/grammar.js
-index e29d486..aa8e559 100644
 --- a/grammar.js
 +++ b/grammar.js
 @@ -1,4 +1,4 @@
@@ -8,11 +6,9 @@ index e29d486..aa8e559 100644
  
  module.exports = grammar({
    name: 'jinja',
-diff --git a/scanner.c b/scanner.c
-index 5e06bc0..e2b8e3b 100644
 --- a/scanner.c
 +++ b/scanner.c
-@@ -213,7 +213,8 @@ unsigned tree_sitter_jinja_external_scanner_serialize(void *payload, char *buffe
+@@ -213,7 +213,8 @@
  }
  
  void tree_sitter_jinja_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {

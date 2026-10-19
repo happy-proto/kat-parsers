@@ -20,7 +20,7 @@ outputs = [
 repository = "https://github.com/nvim-treesitter/tree-sitter-query"
 revision = "8e9e223812ff30854fbc912adbec696ba5f0e023"
 reference = "HEAD"
-patches = ["patches/query-snapshot.patch"]
+patches = ["patches/query-grammar.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

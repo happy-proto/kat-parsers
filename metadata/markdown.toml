@@ -24,7 +24,7 @@ outputs = [
 repository = "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
 revision = "a0a00f817d02412bd92c54d316f164d827b57b5c"
 reference = "HEAD"
-patches = ["patches/markdown-snapshot.patch"]
+patches = ["patches/markdown-path.patch"]
 
 [sync.files]
 "common.js" = "common/common.js"

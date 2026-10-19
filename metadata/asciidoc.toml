@@ -37,7 +37,7 @@ outputs = [
 repository = "https://github.com/cpkio/tree-sitter-asciidoc"
 revision = "a00a91dd44cd6c228f3bc10b3e548f651058e0db"
 reference = "HEAD"
-patches = ["patches/asciidoc-snapshot.patch"]
+patches = ["patches/asciidoc-scanner-safety.patch"]
 
 [sync.files]
 "common/grammar.js" = "common/grammar.js"

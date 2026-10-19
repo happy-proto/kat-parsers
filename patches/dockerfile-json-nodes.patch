@@ -1,0 +1,185 @@
+--- a/grammar.js
++++ b/grammar.js
+@@ -53,14 +53,14 @@
+             $.mount_param
+           )
+         ),
+-        choice($.json_string_array, $.shell_command),
++        choice($.command_json_string_array, $.shell_command),
+         repeat($.heredoc_block)
+       ),
+ 
+     cmd_instruction: ($) =>
+       seq(
+         alias(/[cC][mM][dD]/, "CMD"),
+-        choice($.json_string_array, $.shell_command)
++        choice($.command_json_string_array, $.shell_command)
+       ),
+ 
+     label_instruction: ($) =>
+@@ -103,7 +103,7 @@
+     entrypoint_instruction: ($) =>
+       seq(
+         alias(/[eE][nN][tT][rR][yY][pP][oO][iI][nN][tT]/, "ENTRYPOINT"),
+-        choice($.json_string_array, $.shell_command)
++        choice($.command_json_string_array, $.shell_command)
+       ),
+ 
+     volume_instruction: ($) =>
+@@ -186,7 +186,7 @@
+       ),
+ 
+     shell_instruction: ($) =>
+-      seq(alias(/[sS][hH][eE][lL][lL]/, "SHELL"), $.json_string_array),
++      seq(alias(/[sS][hH][eE][lL][lL]/, "SHELL"), $.command_json_string_array),
+ 
+     maintainer_instruction: () =>
+       seq(
+@@ -333,38 +333,92 @@
+       ),
+ 
+     // Generic parsing of options passed right after an instruction name.
+-    param: () =>
++    param: ($) =>
+       seq(
+         "--",
+-        field("name", token.immediate(/[a-z][-a-z]*/)),
++        field("name", alias(token.immediate(/[a-z][-a-z]*/), $.param_name)),
+         token.immediate("="),
+-        field("value", token.immediate(/[^\s]+/))
+-      ),
+-
+-    // Specific parsing of the --mount option e.g.
+-    //
+-    //   --mount=type=cache,target=/root/.cache/go-build
+-    //
+-    mount_param: ($) => seq(
+-      "--",
+-      field("name", token.immediate("mount")),
+-      token.immediate("="),
+-      field(
+-        "value",
+-        seq(
+-          $.mount_param_param,
+-          repeat(
+-            seq(token.immediate(","), $.mount_param_param)
+-          )
+-        )
+-      )
+-    ),
+-
+-    mount_param_param: () => seq(
+-      token.immediate(/[^\s=,]+/),
+-      token.immediate("="),
+-      token.immediate(/[^\s=,]+/)
+-    ),
++        field(
++          "value",
++          alias(
++            repeat1(choice(token.immediate(/[^\s\$]+/), $._immediate_expansion)),
++            $.param_value
++          )
++        )
++      ),
++
++    mount_param: ($) =>
++      seq(
++        "--",
++        field("name", alias(token.immediate("mount"), $.param_name)),
++        token.immediate("="),
++        field("value", $.mount_param_value)
++      ),
++
++    mount_param_value: ($) =>
++      alias(
++        seq($.mount_param_param, repeat(seq(token.immediate(","), $.mount_param_param))),
++        $.param_value
++      ),
++
++    mount_param_param: ($) =>
++      choice(
++        seq(
++          field("key", alias(token.immediate("type"), $.mount_param_key)),
++          token.immediate("="),
++          field("value", alias($._mount_param_text_value, $.mount_param_enum_value))
++        ),
++        seq(
++          field("key", alias(token.immediate("sharing"), $.mount_param_key)),
++          token.immediate("="),
++          field("value", alias($._mount_param_text_value, $.mount_param_enum_value))
++        ),
++        seq(
++          field(
++            "key",
++            alias(
++              token.immediate(choice("target", "source", "src", "dst", "destination", "from", "id")),
++              $.mount_param_key
++            )
++          ),
++          token.immediate("="),
++          field("value", alias($._mount_param_text_value, $.mount_param_string_value))
++        ),
++        seq(
++          field("key", alias(token.immediate("env"), $.mount_param_key)),
++          token.immediate("="),
++          field("value", alias($._mount_param_text_value, $.mount_param_identifier_value))
++        ),
++        seq(
++          field(
++            "key",
++            alias(token.immediate(choice("uid", "gid", "mode")), $.mount_param_key)
++          ),
++          token.immediate("="),
++          field("value", alias(token.immediate(/[0-9]+/), $.mount_param_numeric_value))
++        ),
++        seq(
++          field(
++            "key",
++            alias(token.immediate(choice("readonly", "required")), $.mount_param_key)
++          ),
++          token.immediate("="),
++          field(
++            "value",
++            alias(token.immediate(choice("true", "false")), $.mount_param_boolean_value)
++          )
++        ),
++        seq(
++          field("key", alias(token.immediate(/[^\s=,]+/), $.mount_param_key)),
++          token.immediate("="),
++          field("value", alias($._mount_param_text_value, $.mount_param_value_part))
++        ),
++        alias(token.immediate(choice("readonly", "required")), $.mount_param_flag),
++        alias(token.immediate(/[^\s=,]+/), $.mount_param_flag)
++      ),
++
++    _mount_param_text_value: ($) =>
++      repeat1(choice(token.immediate(/[^\s=,\$]+/), $._immediate_expansion)),
+ 
+     image_alias: ($) => seq(
+       choice(/[-a-zA-Z0-9_]+/, $.expansion),
+@@ -418,6 +472,18 @@
+     // Note that JSON strings are different from the other double-quoted
+     // strings. They don't support $-expansions.
+     // Convenient reference: https://www.json.org/
++    command_json_string_array: ($) =>
++      seq(
++        "[",
++        optional(
++          seq(
++            alias($.json_string, $.json_string_command),
++            repeat(seq(",", $.json_string))
++          )
++        ),
++        "]"
++      ),
++
+     json_string: ($) => seq(
+       '"',
+       repeat(
+@@ -487,5 +553,6 @@
+     _non_newline_whitespace: () => token.immediate(/[\t ]+/),
+ 
+     comment: () => /#.*/,
++
+   },
+ });

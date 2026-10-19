@@ -21,7 +21,7 @@ outputs = [
 repository = "https://github.com/camdencheek/tree-sitter-go-mod"
 revision = "2e886870578eeba1927a2dc4bd2e2b3f598c5f9a"
 reference = "HEAD"
-patches = ["patches/gomod-snapshot.patch"]
+patches = ["patches/gomod-semantics.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

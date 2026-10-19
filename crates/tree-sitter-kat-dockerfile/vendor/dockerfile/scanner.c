@@ -1,7 +1,3 @@
-/* Adapted from camdencheek/tree-sitter-dockerfile.
- * Source: https://github.com/camdencheek/tree-sitter-dockerfile
- * License: MIT
- */
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,8 +52,13 @@ unsigned tree_sitter_dockerfile_external_scanner_serialize(void *payload,
     buffer[pos++] = state->stripping_heredoc;
 
     for (unsigned i = 0; i < state->heredoc_count; i++) {
+        // Add the ending null byte to the length since we'll have to copy it as
+        // well.
         unsigned len = strlen(state->heredocs[i]) + 1;
 
+        // If we run out of space, just drop the heredocs that don't fit.
+        // We need at least len + 1 bytes space since we'll copy len bytes below
+        // and later add a null byte at the end.
         if (pos + len + 1 > TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
             break;
         }
@@ -66,6 +67,7 @@ unsigned tree_sitter_dockerfile_external_scanner_serialize(void *payload,
         pos += len;
     }
 
+    // Add a null byte at the end to make it easy to detect.
     buffer[pos++] = 0;
     return pos;
 }
@@ -74,6 +76,8 @@ void tree_sitter_dockerfile_external_scanner_deserialize(void *payload,
                                                          const char *buffer,
                                                          unsigned length) {
     scanner_state *state = payload;
+    // Free all current heredocs to avoid leaking memory when we overwrite the
+    // array later.
     for (unsigned i = 0; i < state->heredoc_count; i++) {
         free(state->heredocs[i]);
         state->heredocs[i] = NULL;
@@ -92,9 +96,11 @@ void tree_sitter_dockerfile_external_scanner_deserialize(void *payload,
         for (unsigned i = 0; i < MAX_HEREDOCS; i++) {
             unsigned len = strlen(&buffer[pos]);
 
+            // We found the ending null byte which means that we're done.
             if (len == 0)
                 break;
 
+            // Account for the ending null byte in strings (again).
             len++;
             char *heredoc = malloc(len);
             memcpy(heredoc, &buffer[pos], len);
@@ -137,7 +143,16 @@ static bool scan_marker(scanner_state *state, TSLexer *lexer) {
         lexer->advance(lexer, false);
     }
 
+    // Reserve a reasonable amount of space for the heredoc delimiter string.
+    // Most heredocs (like EOF, EOT, EOS, FILE, etc.) are pretty short so we'll
+    // usually only need a few bytes. We're also limited to less than 1024 bytes
+    // by tree-sitter since our state has to fit in
+    // TREE_SITTER_SERIALIZATION_BUFFER_SIZE.
     char delimiter[DEL_SPACE];
+
+    // We start recording the actual string at position 1 since we store whether
+    // it's a stripping heredoc in the first position (with either a dash or a
+    // space).
     unsigned del_idx = 1;
 
     while (lexer->lookahead != '\0' &&
@@ -155,6 +170,10 @@ static bool scan_marker(scanner_state *state, TSLexer *lexer) {
         }
         lexer->advance(lexer, false);
 
+        // If we run out of space, stop recording the delimiter but keep
+        // advancing the lexer to ensure that we at least parse the marker
+        // correctly. Reserve two bytes: one for the strip indicator and
+        // one for the terminating null byte.
         if (del_idx >= DEL_SPACE - 2) {
             del_idx = 0;
         }
@@ -175,6 +194,8 @@ static bool scan_marker(scanner_state *state, TSLexer *lexer) {
     delimiter[0] = stripping ? '-' : ' ';
     delimiter[del_idx] = '\0';
 
+    // We copy the delimiter string to the heap here since we can't store our
+    // stack-allocated string in our state (which is stored on the heap).
     char *del_copy = malloc(del_idx + 1);
     memcpy(del_copy, delimiter, del_idx + 1);
 
@@ -207,6 +228,7 @@ static bool scan_content(scanner_state *state, TSLexer *lexer,
 
     if (valid_symbols[HEREDOC_END]) {
         unsigned delim_idx = 1;
+        // Look for the current heredoc delimiter.
         while (state->heredocs[0][delim_idx] != '\0' &&
                lexer->lookahead != '\0' &&
                lexer->lookahead == state->heredocs[0][delim_idx]) {
@@ -214,9 +236,11 @@ static bool scan_content(scanner_state *state, TSLexer *lexer,
             delim_idx++;
         }
 
+        // Check if the entire string matched.
         if (state->heredocs[0][delim_idx] == '\0') {
             lexer->result_symbol = HEREDOC_END;
 
+            // Shift the first heredoc off the list.
             free(state->heredocs[0]);
 
             for (unsigned i = 1; i < state->heredoc_count; i++) {
@@ -271,6 +295,9 @@ bool tree_sitter_dockerfile_external_scanner_scan(void *payload, TSLexer *lexer,
         }
     }
 
+    // HEREDOC_NL only matches a linebreak if there are open heredocs. This is
+    // necessary to avoid a conflict in the grammar since a normal line break
+    // could either be the start of a heredoc or the end of an instruction.
     if (valid_symbols[HEREDOC_NL]) {
         if (state->heredoc_count > 0 && lexer->lookahead == '\n') {
             lexer->result_symbol = HEREDOC_NL;

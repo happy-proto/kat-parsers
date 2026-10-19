@@ -1,0 +1,44 @@
+--- a/tree_sitter_asciidoc/scanner.c
++++ b/tree_sitter_asciidoc/scanner.c
+@@ -229,8 +229,10 @@
+ 
+ static void adoc_scanner_deserialize(ADOCScanner* scanner, const char* buffer, unsigned length)
+ {
+-    if (buffer != NULL) {
+-        memcpy(scanner->lookbehind, (void*)buffer, sizeof(lookbehind_s));
++    if (buffer != NULL && length == sizeof(lookbehind_s)) {
++        memcpy(scanner->lookbehind, buffer, sizeof(lookbehind_s));
++    } else {
++        memset(scanner->lookbehind, 0, sizeof(lookbehind_s));
+     }
+ }
+ 
+@@ -258,10 +260,10 @@
+     printf("list: node address is (%p)\n", node);
+     printf("  list: node char is `%c`\n", node->glyph);
+     printf("  list: node token is `%d`\n", node->token);
+-    printf("  list: node children size `%i`\n", node->size);
++    printf("  list: node children size `%zu`\n", node->size);
+     if (node->size) {
+         for (size_t i = 0; i < node->size; i++) {
+-            printf("  list: node [%d] is char `%c`(%zu)\n",
++            printf("  list: node [%zu] is char `%c`(%d)\n",
+                    i,
+                    node->children[i]->to->glyph,
+                    node->children[i]->to->glyph
+@@ -337,6 +339,7 @@
+         memcpy(substr, s + 1, strlen(s) - 1);
+         return matchTok(substr, n);
+     }
++    return M_NONE;
+ }
+ 
+ enum MarkerType matchGlyph(int32_t s, const Node* root, ADOCScanner* scanner)
+@@ -361,6 +364,7 @@
+         }
+     }
+ 
++    return M_NONE;
+ }
+ 
+ 

@@ -10,21 +10,13 @@ void *tree_sitter_dotenv_external_scanner_create(void) {
     return NULL;
 }
 
-void tree_sitter_dotenv_external_scanner_destroy(void *payload) {
-    (void)payload;
-}
+void tree_sitter_dotenv_external_scanner_destroy(void *payload) {}
 
 unsigned tree_sitter_dotenv_external_scanner_serialize(void *payload, char *buffer) {
-      (void)buffer;
-      (void)payload;
-      return 0;
+    return 0;
 }
 
-void tree_sitter_dotenv_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
-    (void)buffer;
-    (void)length;
-    (void)payload;
-}
+void tree_sitter_dotenv_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {}
 
 void static advanceWS(TSLexer *lexer) {
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
@@ -33,7 +25,6 @@ void static advanceWS(TSLexer *lexer) {
 }
 
 bool tree_sitter_dotenv_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
-  (void)payload;
 
     if (valid_symbols[END_OF_ASSIGNMENT]) {
         advanceWS(lexer);

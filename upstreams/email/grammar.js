@@ -10,7 +10,7 @@
 const SPECIAL = /[()<>@,;:\\".\[\]]/
 const CTL = /[\x00-\x1f\x7f]/
 
-module.exports = grammar({
+export default grammar({
   name: 'mail',
   extras: (_$) => [' '],
 

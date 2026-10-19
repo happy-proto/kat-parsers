@@ -22,7 +22,6 @@ outputs = [
 repository = "https://github.com/kaermorchen/tree-sitter-twig"
 revision = "dac11024e40536d05c958d920139c310cbe86625"
 reference = "HEAD"
-patches = ["patches/twig-snapshot.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

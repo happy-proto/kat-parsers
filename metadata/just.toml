@@ -22,7 +22,6 @@ outputs = [
 repository = "https://github.com/IndianBoy42/tree-sitter-just"
 revision = "d9da862c156020c1a83d3c6ccdda32be6d8a5d4a"
 reference = "HEAD"
-patches = ["patches/just-snapshot.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

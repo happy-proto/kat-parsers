@@ -787,6 +787,7 @@ Local generated artifacts:
 
 Imported source assets:
 - `upstreams/hcl/grammar.js`
+- `upstreams/hcl/make_grammar.js`
 - `upstreams/hcl/scanner.c`
 
 Original provenance carried over from `kat`:
@@ -794,7 +795,7 @@ Block 1:
 Source: [tree-sitter-grammars/tree-sitter-hcl](https://github.com/tree-sitter-grammars/tree-sitter-hcl)
   Revision: `fad991865fee927dd1de5e172fb3f08ac674d914`
   License: Apache-2.0
-  Notes: repository-local adapted copy of the upstream HCL grammar/scanner, kept as a dedicated runtime for `.hcl` and `.nomad` files.
+  Notes: the upstream modular grammar is retained directly, with a minimal scanner serialization-boundary adaptation for `.hcl` and `.nomad` files. Source and patch mappings are recorded in `metadata/hcl.toml`.
 
 Block 2:
 Sources:

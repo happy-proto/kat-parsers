@@ -160,6 +160,40 @@ static void shift(ADOCScanner* scanner, int32_t value)
     items[0] = value;
 }
 
+static void see(ADOCScanner* scanner)
+{
+    int32_t* items = scanner->lookbehind->stack;
+    printf(
+        "[0]..[11] of `stack` | %c‧%c‧%c‧%c‧%c‧%c‧%c‧%c‧%c‧%c‧%c‧%c\n"
+        "                     | %d‧%d‧%d‧%d‧%d‧%d‧%d‧%d‧%d‧%d‧%d‧%d\n\n",
+        items[0],
+        items[1],
+        items[2],
+        items[3],
+        items[4],
+        items[5],
+        items[6],
+        items[7],
+        items[8],
+        items[9],
+        items[10],
+        items[11],
+
+        items[0],
+        items[1],
+        items[2],
+        items[3],
+        items[4],
+        items[5],
+        items[6],
+        items[7],
+        items[8],
+        items[9],
+        items[10],
+        items[11]
+    );
+}
+
 static bool match_before(ADOCScanner* scanner, char* value, size_t length, bool (*func_ptr)(int32_t*, size_t) )
 {
     bool match = true;
@@ -300,9 +334,12 @@ enum MarkerType matchTok(char* s, const Node* root)
         return M_NONE;
     }
 
-    void* substr = calloc(20, sizeof(char));
-    memcpy(substr, s + 1, strlen(s) - 1);
-    return matchTok(substr, n);
+    if (n) {
+        void* substr = calloc(20, sizeof(char));
+        memcpy(substr, s + 1, strlen(s) - 1);
+        return matchTok(substr, n);
+    }
+    return M_NONE;
 }
 
 enum MarkerType matchGlyph(int32_t s, const Node* root, ADOCScanner* scanner)
@@ -328,7 +365,6 @@ enum MarkerType matchGlyph(int32_t s, const Node* root, ADOCScanner* scanner)
     }
 
     return M_NONE;
-
 }
 
 
@@ -347,6 +383,10 @@ bool m_newline_or_space(int32_t* value, size_t position)
 {
     return is_newline(*(value + position)) || is_space(*(value + position));
 }
+bool m_any(int32_t* value, size_t position)
+{
+    return true;
+}
 bool m_emptyline(int32_t* value, size_t position)
 {
     return is_newline(*(value + position)) &&
@@ -360,6 +400,7 @@ static bool adoc_scanner_scan(ADOCScanner* scanner)
     bool (*match_newline)(int32_t*, size_t) = &m_newline;
     bool (*match_space)(int32_t*, size_t) = &m_space;
     bool (*match_newline_or_space)(int32_t*, size_t) = &m_newline_or_space;
+    bool (*match_any)(int32_t*, size_t) = &m_any;
     bool (*match_emptyline)(int32_t*, size_t) = &m_emptyline;
 
     if (

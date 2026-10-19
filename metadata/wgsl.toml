@@ -22,7 +22,7 @@ outputs = [
 repository = "https://github.com/mehmetoguzderin/tree-sitter-wgsl"
 revision = "27ae4db1458d5ea7555300c9e93c6273723d420c"
 reference = "HEAD"
-patches = ["patches/wgsl-snapshot.patch"]
+patches = ["patches/wgsl-valid-symbols.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

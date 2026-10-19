@@ -22,7 +22,7 @@ outputs = [
 repository = "https://github.com/MatthewFluet/tree-sitter-sml"
 revision = "fd4b4955bb998262840ab8119885b3edf20ea75a"
 reference = "HEAD"
-patches = ["patches/sml-snapshot.patch"]
+patches = ["patches/sml-msvc-compat.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

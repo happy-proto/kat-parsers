@@ -4,6 +4,6 @@
  * @license MIT
  */
 
-const defineGrammar = require("./common/define-grammar");
+const defineGrammar = require('./common/define-grammar');
 
-module.exports = defineGrammar("csv", ",");
+module.exports = defineGrammar('csv', ',');

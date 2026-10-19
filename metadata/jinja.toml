@@ -27,7 +27,7 @@ outputs = [
 repository = "https://github.com/cathaysia/tree-sitter-jinja"
 revision = "7e254abb76618227806f6881525980231faa1610"
 reference = "HEAD"
-patches = ["patches/jinja-snapshot.patch"]
+patches = ["patches/jinja-scanner-and-paths.patch"]
 
 [sync.files]
 "base_grammar.js" = "grammar.js"

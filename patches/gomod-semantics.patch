@@ -1,0 +1,62 @@
+diff --git a/grammar.js b/grammar.js
+index 055b868..3d186ed 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -11,13 +11,11 @@ module.exports = grammar({
+       choice(
+         $.module_directive,
+         $.go_directive,
+-        $.tool_directive,
+         $.toolchain_directive,
+         $.require_directive,
+         $.exclude_directive,
+         $.replace_directive,
+         $.retract_directive,
+-        $.ignore_directive,
+       ),
+ 
+     _string_literal: ($) =>
+@@ -48,14 +46,13 @@ module.exports = grammar({
+         ),
+       ),
+ 
+-    _identifier: ($) => token(/[^\s,\[\]/][^\s,\[\]]+/),
++    _identifier: ($) => token(/[^\s,\[\]]+/),
+ 
+     _string_or_ident: ($) => choice($._string_literal, $._identifier),
+ 
+     module_path: ($) => $._string_or_ident,
+     go_version: ($) => $._string_or_ident,
+     version: ($) => $._string_or_ident,
+-    tool: ($) => $._string_or_ident,
+ 
+     module_directive: ($) =>
+       seq(
+@@ -114,9 +111,6 @@ module.exports = grammar({
+         ),
+       ),
+ 
+-    tool_directive: ($) =>
+-      seq("tool", choice($.tool, seq("(", "\n", repeat($.tool), ")", "\n"))),
+-
+     file_path: ($) => $._identifier,
+ 
+     retract_directive: ($) =>
+@@ -134,17 +128,6 @@ module.exports = grammar({
+         "\n",
+       ),
+ 
+-    ignore_directive: ($) =>
+-      seq(
+-        "ignore",
+-        choice(
+-          seq("(", "\n", repeat($.ignore_spec), ")", "\n"),
+-          $.ignore_spec,
+-        ),
+-      ),
+-
+-    ignore_spec: ($) => seq($.file_path, "\n"),
+-
+     comment: ($) => seq("//", /.*/),
+   },
+ });

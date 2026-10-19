@@ -1,8 +1,7 @@
-/*
- * Adapted from shunsambongi/tree-sitter-gitignore.
- * Source: https://github.com/shunsambongi/tree-sitter-gitignore
- * License: MIT
- */
+// rules taken from:
+// * https://git-scm.com/docs/gitignore#_pattern_format
+// * https://linuxize.com/post/gitignore-ignoring-files-in-git/
+// * https://github.com/git/git/blob/master/wildmatch.c
 
 const NAMED_CHARACTER_CLASSES = [
   "alnum",
@@ -22,7 +21,6 @@ const NAMED_CHARACTER_CLASSES = [
 module.exports = grammar({
   name: "ignore",
   extras: $ => [],
-
   rules: {
     document: $ => repeat($._line),
 

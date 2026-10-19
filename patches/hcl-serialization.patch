@@ -1,0 +1,11 @@
+--- a/scanner.c
++++ b/scanner.c
+@@ -131,7 +131,7 @@
+     size += sizeof(uint32_t);
+     for (uint32_t i = 0; i < scanner->context_stack.len; i++) {
+         Context *context = &scanner->context_stack.data[i];
+-        if (size + sizeof(ContextType) + sizeof(uint32_t) + context->heredoc_identifier.len >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
++        if (size + sizeof(ContextType) + sizeof(uint32_t) + context->heredoc_identifier.len > TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+             return 0;
+         }
+         if (context->heredoc_identifier.len > CHAR_MAX) {

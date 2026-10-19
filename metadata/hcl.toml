@@ -1,10 +1,11 @@
 language = "hcl"
 crate = "tree-sitter-kat-parsers"
 reason_category = "仓库内有本地 grammar 或 scanner 改造，短期内不适合直接切回上游 crate"
-reason = """本地 grammar/scanner 做过适配，用来承接 `.hcl` 和 `.nomad` 这类文件的独立 runtime。"""
+reason = """沿用上游模块化 grammar，并保留 scanner 序列化缓冲区恰好写满时的边界处理。"""
 
 [copied]
 files = [
+  "make_grammar.js",
   "grammar.js",
   "scanner.c",
 ]
@@ -23,8 +24,9 @@ outputs = [
 repository = "https://github.com/tree-sitter-grammars/tree-sitter-hcl"
 revision = "fad991865fee927dd1de5e172fb3f08ac674d914"
 reference = "HEAD"
-patches = ["patches/hcl-snapshot.patch"]
+patches = ["patches/hcl-serialization.patch"]
 
 [sync.files]
+"make_grammar.js" = "make_grammar.js"
 "grammar.js" = "grammar.js"
 "scanner.c" = "src/scanner.c"

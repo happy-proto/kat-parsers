@@ -22,7 +22,6 @@ outputs = [
 repository = "https://github.com/bajrangCoder/tree-sitter-sass"
 revision = "fb280c41b070657e4ff4d4e5e6eea6cb19efd9b8"
 reference = "HEAD"
-patches = ["patches/sass-snapshot.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

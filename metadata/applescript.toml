@@ -22,7 +22,6 @@ outputs = [
 repository = "https://github.com/waddie/tree-sitter-applescript"
 revision = "adff3f4de87033350050232c8dd23947c7b34850"
 reference = "HEAD"
-patches = ["patches/applescript-snapshot.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

@@ -22,7 +22,7 @@ outputs = [
 repository = "https://github.com/latex-lsp/tree-sitter-latex"
 revision = "7e0ecdc02926c7b9b2e0c76003d4fe7b0944f957"
 reference = "HEAD"
-patches = ["patches/latex-snapshot.patch"]
+patches = ["patches/latex-word-token.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

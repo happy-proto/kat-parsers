@@ -22,7 +22,6 @@ outputs = [
 repository = "https://github.com/ram02z/tree-sitter-fish"
 revision = "fa2143f5d66a9eb6c007ba9173525ea7aaafe788"
 reference = "HEAD"
-patches = ["patches/fish-snapshot.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

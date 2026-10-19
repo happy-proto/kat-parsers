@@ -1,0 +1,13 @@
+diff --git a/grammar.js b/grammar.js
+index 4ee6c2a..364fa3e 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -19,7 +19,7 @@ const NAMED_CHARACTER_CLASSES = [
+ ].map(name => seq("[:", field("name", name), ":]"));
+ 
+ module.exports = grammar({
+-  name: "gitignore",
++  name: "ignore",
+   extras: $ => [],
+   rules: {
+     document: $ => repeat($._line),

@@ -20,7 +20,6 @@ outputs = [
 repository = "https://github.com/the-mikedavis/tree-sitter-git-config"
 revision = "0fbc9f99d5a28865f9de8427fb0672d66f9d83a5"
 reference = "HEAD"
-patches = ["patches/git_config-snapshot.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"
