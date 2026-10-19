@@ -48,10 +48,10 @@ just check
 - `just test`：普通测试入口，不需要安装 Ghostty，也不下载或运行 Ghostty
 - `GHOSTTY_BIN=/path/to/ghostty just ghostty-check`：手动运行官方 Ghostty 配置解析对照测试；默认由独立 macOS CI 执行，详见 [Ghostty grammar 与验证](docs/ghostty.md)
 
-`kat` 侧可直接按 git dependency 引用统一 crate：
+`kat` 侧可直接按 git dependency 引用统一 crate。具体 Git revision 由消费者的 `Cargo.lock` 固定；需要自动跟踪更新时，不要在依赖声明中设置 `rev`：
 
 ```toml
-tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", rev = "<commit>", package = "tree-sitter-kat-parsers" }
+tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", package = "tree-sitter-kat-parsers" }
 ```
 
 ## 维护边界

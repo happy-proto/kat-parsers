@@ -2,6 +2,8 @@
 
 Kat 和 Sidediff 通过 `Cargo.lock` 固定直接与间接 Git 依赖的 revision。Cargo 不会读取依赖仓库自己的 lockfile，因此上游 Git crate 的 lockfile 更新不会自动传播到应用仓库；当前 [Dependabot Cargo 实现](https://github.com/dependabot/dependabot-core/blob/main/cargo/lib/dependabot/cargo/update_checker.rb) 也不支持更新间接 Git 依赖。
 
+需要自动跟踪上游的 Git 依赖应使用默认分支，或显式指定 `branch`，不要设置 `rev`。固定 SHA 的 `rev` 表示显式固定版本；Cargo 更新和本工作流都会遵循这一约束，不会绕过它，推进版本需要显式修改 manifest 中的 `rev`。
+
 本仓库提供可复用的 [sync-git-dependencies.yml](../.github/workflows/sync-git-dependencies.yml)。它读取调用仓库的 `Cargo.lock` 依赖图，用 `cargo metadata --locked` 收集所有来源为 Git 的 package ID，再在一次 `cargo update <package-id>...` 中选择它们。命令直接传入 metadata 提供的完整 package ID，包含来源 URL、名称和版本，可区分同名依赖。间接 Git 依赖会从 Cargo metadata 结果中一并选择，调用方不需要在 `Cargo.toml` 直接声明它们。命令不使用 `--recursive`，不会主动升级无关的 registry 依赖。
 
 调用仓库可添加定时和手动触发的轻量 workflow：
