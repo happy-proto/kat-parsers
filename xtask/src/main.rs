@@ -3,8 +3,12 @@ mod packing;
 
 use std::ffi::OsStr;
 use std::fs;
+use std::num::NonZeroUsize;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::thread;
 
 use anstyle::{AnsiColor, Style};
 use anyhow::{Context, Result, bail};
@@ -47,6 +51,39 @@ struct GrammarSpec {
     constant_prefix: String,
 }
 
+struct SharedHeaders {
+    directory: PathBuf,
+    lock: Mutex<()>,
+}
+
+impl SharedHeaders {
+    fn new(directory: PathBuf) -> Self {
+        Self {
+            directory,
+            lock: Mutex::new(()),
+        }
+    }
+
+    fn output_hash(&self, vendor_dir: &Path) -> Result<Option<String>> {
+        let _guard = self.lock.lock().expect("shared header lock poisoned");
+        generated_output_hash(vendor_dir, &self.directory)
+    }
+
+    fn sync_from(&self, source: &Path) -> Result<()> {
+        let _guard = self.lock.lock().expect("shared header lock poisoned");
+        for header in SHARED_HEADERS {
+            copy_file(&source.join(header), &self.directory.join(header))?;
+        }
+        Ok(())
+    }
+}
+
+fn default_generation_jobs() -> NonZeroUsize {
+    thread::available_parallelism()
+        .unwrap_or(NonZeroUsize::MIN)
+        .min(NonZeroUsize::new(4).unwrap())
+}
+
 #[derive(Parser)]
 #[command(name = "xtask")]
 /// Project maintenance tasks for kat-parsers.
@@ -76,6 +113,9 @@ enum Commands {
         /// Regenerate all parser artifacts even when their inputs and outputs are unchanged.
         #[arg(long)]
         force: bool,
+        /// Maximum number of grammars generated concurrently (at most four by default).
+        #[arg(short, long, default_value_t = default_generation_jobs())]
+        jobs: NonZeroUsize,
     },
 }
 
@@ -89,11 +129,20 @@ fn main() -> Result<()> {
             check,
             locked,
         } => upstreams::sync(&repo_root, language.as_deref(), check, locked),
-        Commands::Generate { language, force } => generate(&repo_root, language.as_deref(), force),
+        Commands::Generate {
+            language,
+            force,
+            jobs,
+        } => generate(&repo_root, language.as_deref(), force, jobs),
     }
 }
 
-fn generate(repo_root: &Path, language: Option<&str>, force: bool) -> Result<()> {
+fn generate(
+    repo_root: &Path,
+    language: Option<&str>,
+    force: bool,
+    jobs: NonZeroUsize,
+) -> Result<()> {
     let specs = grammar_specs(repo_root)?;
     let selected: Vec<&GrammarSpec> = match language {
         Some(name) => specs
@@ -137,14 +186,33 @@ fn generate(repo_root: &Path, language: Option<&str>, force: bool) -> Result<()>
         write_language_crate_scaffolding(spec, &mut rust_sources)?;
     }
 
-    for spec in selected {
-        generate_one(
-            spec,
-            &cli_version,
-            force,
-            &repo_root.join("crates/kat-parser-common/include/tree_sitter"),
-        )?;
-    }
+    let headers =
+        SharedHeaders::new(repo_root.join("crates/kat-parser-common/include/tree_sitter"));
+    let next = AtomicUsize::new(0);
+    thread::scope(|scope| -> Result<()> {
+        let workers = (0..jobs.get().min(selected.len()))
+            .map(|_| {
+                scope.spawn(|| -> Result<()> {
+                    while let Some(spec) = selected.get(next.fetch_add(1, Ordering::Relaxed)) {
+                        if let Err(error) = generate_one(spec, &cli_version, force, &headers)
+                            .with_context(|| {
+                                format!("failed to generate {}", spec.metadata.language)
+                            })
+                        {
+                            // Let in-flight grammars finish, but stop scheduling new work.
+                            next.store(selected.len(), Ordering::Relaxed);
+                            return Err(error);
+                        }
+                    }
+                    Ok(())
+                })
+            })
+            .collect::<Vec<_>>();
+        for worker in workers {
+            worker.join().expect("grammar generation worker panicked")?;
+        }
+        Ok(())
+    })?;
 
     for spec in &specs {
         if spec.vendor_dir.join("parser.c").is_file() {
@@ -161,7 +229,7 @@ fn generate_one(
     spec: &GrammarSpec,
     cli_version: &str,
     force: bool,
-    shared_include_dir: &Path,
+    headers: &SharedHeaders,
 ) -> Result<()> {
     let upstream_dir = &spec.upstream_dir;
     let vendor_dir = &spec.vendor_dir;
@@ -178,7 +246,7 @@ fn generate_one(
 
     let input_hash = compute_parser_input_hash(spec, cli_version)?;
     if !force
-        && let Some(output_hash) = generated_output_hash(vendor_dir, shared_include_dir)?
+        && let Some(output_hash) = headers.output_hash(vendor_dir)?
         && stamp_matches(&stamp_file, &format!("{input_hash}\n{output_hash}"))
     {
         print_skip(spec, "Parser artifacts are up to date");
@@ -219,12 +287,7 @@ fn generate_one(
     headers::normalize_array_header(&workspace_dir.join("src/tree_sitter/array.h"))?;
     // Use the generator's public scanner headers, not runtime-private headers
     // or historical copies bundled with individual upstream grammars.
-    for header in SHARED_HEADERS {
-        copy_file(
-            &workspace_dir.join("src/tree_sitter").join(header),
-            &shared_include_dir.join(header),
-        )?;
-    }
+    headers.sync_from(&workspace_dir.join("src/tree_sitter"))?;
     packing::pack(
         &workspace_dir.join("src/parser.c"),
         &workspace_dir.join("src"),
@@ -235,7 +298,8 @@ fn generate_one(
             &vendor_dir.join(file),
         )?;
     }
-    let output_hash = generated_output_hash(vendor_dir, shared_include_dir)?
+    let output_hash = headers
+        .output_hash(vendor_dir)?
         .context("missing generated artifacts")?;
     write_file(&stamp_file, &format!("{input_hash}\n{output_hash}\n"))?;
 
@@ -980,21 +1044,23 @@ mod tests {
         Ok(())
     }
 
-    fn fixture(root: &Path) -> Result<GrammarSpec> {
-        let upstream_dir = root.join("upstreams/fixture");
+    fn fixture(root: &Path, language: &str) -> Result<GrammarSpec> {
+        let upstream_dir = root.join("upstreams").join(language);
         write_file(
             &upstream_dir.join("grammar.js"),
-            "module.exports = grammar({name: 'fixture', rules: {source: $ => require('../shared/token.js')}});",
+            &format!(
+                "module.exports = grammar({{name: '{language}', rules: {{source: $ => require('../shared/token.js')}}}});"
+            ),
         )?;
         write_file(
             &root.join("upstreams/shared/token.js"),
             "module.exports = 'a';",
         )?;
         write_file(&upstream_dir.join("scanner.c"), "/* initial scanner */")?;
-        let crate_dir = root.join("crates/tree-sitter-kat-fixture");
+        let crate_dir = root.join(format!("crates/tree-sitter-kat-{language}"));
         Ok(GrammarSpec {
             metadata: GrammarMetadata {
-                language: "fixture".to_owned(),
+                language: language.to_owned(),
                 grammar_file: None,
                 generator_support_files: vec!["../shared/token.js".to_owned()],
                 copied: CopiedFiles {
@@ -1002,11 +1068,11 @@ mod tests {
                 },
             },
             upstream_dir,
-            vendor_dir: crate_dir.join("vendor/fixture"),
+            vendor_dir: crate_dir.join("vendor").join(language),
             crate_dir,
-            package_name: "tree-sitter-kat-fixture".to_owned(),
-            crate_ident: "tree_sitter_kat_fixture".to_owned(),
-            constant_prefix: "FIXTURE".to_owned(),
+            package_name: format!("tree-sitter-kat-{language}"),
+            crate_ident: format!("tree_sitter_kat_{language}"),
+            constant_prefix: language.to_uppercase(),
         })
     }
 
@@ -1014,12 +1080,13 @@ mod tests {
     #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
     fn generation_tracks_imports_and_repairs_missing_or_modified_outputs() -> Result<()> {
         let dir = TempDir::new()?;
-        let spec = fixture(dir.path())?;
+        let spec = fixture(dir.path(), "fixture")?;
         let cli_version = tree_sitter_version()?;
         let shared_include_dir = dir
             .path()
             .join("crates/kat-parser-common/include/tree_sitter");
-        let run = |force| generate_one(&spec, &cli_version, force, &shared_include_dir);
+        let headers = SharedHeaders::new(shared_include_dir.clone());
+        let run = |force| generate_one(&spec, &cli_version, force, &headers);
         run(false)?;
         let original_grammar = fs::read(spec.vendor_dir.join("grammar.json"))?;
         let parser = fs::read_to_string(spec.vendor_dir.join("parser.c"))?;
@@ -1103,7 +1170,7 @@ mod tests {
             &dir.path().join("metadata/fixture.toml"),
             "language = 'fixture'\ngenerator_support_files = ['../shared/token.js']\n[copied]\nfiles = ['grammar.js', 'scanner.c']\n",
         )?;
-        generate(dir.path(), None, false)?;
+        generate(dir.path(), None, false, NonZeroUsize::MIN)?;
         let paths = [
             dir.path().join("crates/kat-parser-common/src/lib.rs"),
             dir.path().join("crates/tree-sitter-kat-parsers/src/lib.rs"),
@@ -1118,7 +1185,7 @@ mod tests {
             .collect::<std::io::Result<Vec<_>>>()?;
         // Even a forced, byte-identical regeneration must preserve timestamps,
         // including Rust sources whose templates need formatting.
-        generate(dir.path(), None, true)?;
+        generate(dir.path(), None, true, NonZeroUsize::MIN)?;
         let after = paths
             .iter()
             .map(|path| fs::metadata(path)?.modified())
@@ -1128,9 +1195,75 @@ mod tests {
     }
 
     #[test]
+    fn generation_requires_nonzero_concurrency() {
+        assert!(Cli::try_parse_from(["xtask", "generate", "--jobs", "0"]).is_err());
+    }
+
+    #[test]
+    #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
+    fn parallel_generation_preserves_artifacts_and_propagates_errors() -> Result<()> {
+        fn snapshot(
+            root: &Path,
+        ) -> Result<std::collections::BTreeMap<PathBuf, (Vec<u8>, std::time::SystemTime)>> {
+            let mut files = std::collections::BTreeMap::new();
+            for entry in fs::read_dir(root)? {
+                let path = entry?.path();
+                if path.is_dir() {
+                    files.extend(snapshot(&path)?);
+                } else {
+                    files.insert(
+                        path.clone(),
+                        (fs::read(&path)?, fs::metadata(&path)?.modified()?),
+                    );
+                }
+            }
+            Ok(files)
+        }
+
+        let dir = TempDir::new()?;
+        for language in ["alpha", "beta"] {
+            fixture(dir.path(), language)?;
+            write_file(
+                &dir.path().join(format!("metadata/{language}.toml")),
+                &format!(
+                    "language = '{language}'\ngenerator_support_files = ['../shared/token.js']\n[copied]\nfiles = ['grammar.js', 'scanner.c']\n"
+                ),
+            )?;
+        }
+        let parallel = NonZeroUsize::new(4).unwrap();
+        generate(dir.path(), None, true, NonZeroUsize::MIN)?;
+        let crates = dir.path().join("crates");
+        let serial = snapshot(&crates)?;
+        generate(dir.path(), None, true, parallel)?;
+        assert_eq!(
+            serial,
+            snapshot(&crates)?,
+            "parallel generation changed bytes or modification times"
+        );
+
+        let headers = crates.join("kat-parser-common/include/tree_sitter");
+        fs::remove_file(headers.join("parser.h"))?;
+        write_file(&headers.join("array.h"), "corrupt shared header")?;
+        generate(dir.path(), None, true, parallel)?;
+        let repaired = snapshot(&crates)?;
+        assert_eq!(serial.len(), repaired.len());
+        for (path, (expected, _)) in &serial {
+            assert_eq!(expected, &repaired[path].0, "{}", path.display());
+        }
+        // Repaired headers and cache stamps must also work on the cached path.
+        generate(dir.path(), None, false, parallel)?;
+        assert_eq!(repaired, snapshot(&crates)?);
+
+        fs::remove_file(dir.path().join("upstreams/beta/grammar.js"))?;
+        let error = generate(dir.path(), None, true, parallel).unwrap_err();
+        assert!(error.to_string().contains("beta"), "{error:#}");
+        Ok(())
+    }
+
+    #[test]
     fn cli_version_invalidates_the_generation_cache() -> Result<()> {
         let dir = TempDir::new()?;
-        let mut spec = fixture(dir.path())?;
+        let mut spec = fixture(dir.path(), "fixture")?;
         assert_ne!(
             compute_parser_input_hash(&spec, "tree-sitter 0.27.0")?,
             compute_parser_input_hash(&spec, "tree-sitter 0.27.1")?,
@@ -1148,18 +1281,18 @@ mod tests {
     #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
     fn expanded_json_is_a_self_contained_generation_input() -> Result<()> {
         let dir = TempDir::new()?;
-        let mut spec = fixture(dir.path())?;
+        let mut spec = fixture(dir.path(), "fixture")?;
         let version = tree_sitter_version()?;
         let include = dir
             .path()
             .join("crates/kat-parser-common/include/tree_sitter");
-        generate_one(&spec, &version, true, &include)?;
+        generate_one(&spec, &version, true, &SharedHeaders::new(include.clone()))?;
         let json = fs::read(spec.vendor_dir.join("grammar.json"))?;
         write_bytes(&spec.upstream_dir.join("grammar.json"), &json)?;
         spec.metadata.grammar_file = Some("grammar.json".to_owned());
         spec.metadata.generator_support_files.clear();
         spec.metadata.copied.files = vec!["grammar.json".to_owned(), "scanner.c".to_owned()];
-        generate_one(&spec, &version, true, &include)?;
+        generate_one(&spec, &version, true, &SharedHeaders::new(include.clone()))?;
         assert_eq!(fs::read(spec.vendor_dir.join("grammar.json"))?, json);
         assert!(
             fs::read_to_string(spec.vendor_dir.join("parser.c"))?

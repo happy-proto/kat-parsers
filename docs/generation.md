@@ -16,6 +16,12 @@
 - JavaScript runtime 是执行 grammar 源码的程序。统一选择 Node.js，因为 Less/SCSS 复用的 CSS grammar 使用 ES module；CLI 内置 QuickJS 的 `require` loader 无法加载该模块。不增加逐语言 runtime 选择或自动降级，也不为使用 QuickJS 改写上游 grammar。
 - Node.js 和 CLI 只参与维护时生成。消费方仍通过 `build.rs` 编译已提交的 C/C++，不需要安装它们。
 
+## 有界并行生成
+
+grammar 的临时工作目录和 vendored 产物互相独立，生成器使用固定数量的 worker 动态领取任务。默认并发数为可用 CPU 数，最多四个；可通过 `cargo run -p xtask -- generate --jobs 1` 串行运行，或使用 `--jobs N` 显式设置正整数上限。并发数同时约束 Tree-sitter、C 表导出和压缩，避免一次启动所有 grammar。
+
+共享 scanner 头文件的同步与产物摘要读取使用同一把锁，避免摘要读到未写完的文件；耗时的生成、编译和压缩不持锁。crate scaffolding 和汇总导出仍在 worker 运行前后串行维护。任一 grammar 失败后停止分派新任务，等待已启动任务结束并返回包含语言名称的错误。
+
 ## 缓存和构建失效
 
 `.parser-inputs` 保存两行 BLAKE3 摘要：完整生成输入，以及三个生成产物和共享头文件。输入包括 CLI 版本、ABI、JS runtime、所有声明的 JS/JSON 文件，以及跨目录的 `generator_support_files`。文件路径也参与摘要，避免不同模块布局意外复用缓存。
@@ -30,7 +36,7 @@ scanner 等 support files 独立同步：修改 scanner 不需要重算 parser �
 
 ## 验证
 
-普通 `just check` 执行格式、Clippy 和 workspace 测试，包括 Crystal 插值/heredoc 与 dotenv assignment 边界。需要外部 CLI 的生成契约测试集中在 Generated Check，运行 `cargo test -p xtask -- --include-ignored`，覆盖跨目录 import、scanner 独立同步、缺失或损坏产物和共享头文件恢复、无配置 ABI 15、优化后的 C/C++ array 操作，以及相同产物的修改时间保持。
+普通 `just check` 执行格式、Clippy 和 workspace 测试，包括 Crystal 插值/heredoc 与 dotenv assignment 边界。需要外部 CLI 的生成契约测试集中在 Generated Check，运行 `cargo test -p xtask -- --include-ignored`，覆盖串并行产物与修改时间一致性、并行头文件恢复和错误传播、跨目录 import、scanner 独立同步、缺失或损坏产物和共享头文件恢复、无配置 ABI 15、优化后的 C/C++ array 操作，以及相同产物的修改时间保持。
 
 Generated Check 随后强制重生成所有 grammar，再执行 `git diff --exit-code`。这个独立检查保留，即使本地使用缓存，也不会把缓存当作生成正确性的证明。
 
