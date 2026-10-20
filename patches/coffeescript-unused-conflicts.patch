@@ -1,0 +1,43 @@
+diff --git a/grammar.js b/grammar.js
+index 2db62bd..362032b 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -11,37 +11,22 @@ module.exports = grammar({
+ 
+   conflicts: $ => [
+     [$.return_statement],
+-    [$.expression, $.function_call],
+     [$.function_definition, $.expression],
+-    [$.block],
+     [$.expression, $.pattern],
+     [$.array, $.array_pattern],
+     [$.object, $.object_pattern],
+     [$.yield_statement],
+     [$.unless_statement],
+-    [$.function_definition, $.expression, $.function_call],
+-    [$.parameter, $.expression],
+     [$.jsx_element],
+     [$.super_expression],
+     [$.switch_statement],
+-    [$.method_definition],
+     [$.try_statement],
+-    [$.do_block],
+-    [$.expression_statement],
+-    [$.export_statement, $.expression_statement],
+     [$.export_statement, $.function_definition],
+     [$.method_definition, $.expression],
+     [$.binary_expression, $.existential_member_expression, $.existential_function_call],
+-    [$.method_definition, $.class_property_block],
+     [$.method_definition, $.class_property_block, $.expression],
+-    [$.class_property_block, $.expression],
+-    [$.class_property_method, $.class_property_assignment],
+-    [$.class_property_block, $.class_property_method],
+-    [$.class_property_block, $.class_property_assignment],
+     [$.function_definition, $.function_expression],
+-    [$.parameters, $.function_call],
+-    [$.function_expression, $.class_property_method],
+-    [$.parameter, $.expression]
++    [$.function_expression, $.class_property_method]
+   ],
+ 
+   extras: $ => [
