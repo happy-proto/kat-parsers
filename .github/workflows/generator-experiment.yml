@@ -1,0 +1,92 @@
+name: Generator experiments
+
+on:
+  pull_request:
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - backend: library
+            opt: 1
+          - backend: library
+            opt: 2
+          - backend: binary
+            opt: 2
+          - backend: binary
+            opt: 3
+    name: generator-experiment (${{ matrix.backend }}, opt=${{ matrix.opt }})
+    env:
+      CARGO_PROFILE_DEV_OPT_LEVEL: ${{ matrix.opt }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm install -g tree-sitter-cli@0.27.1
+      - name: Prepare external compressor experiment
+        if: matrix.backend == 'binary'
+        run: |
+          zstd --version
+          cargo remove -p xtask zstd
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          source = Path('xtask/src/packing.rs')
+          original = 'let packed = zstd::bulk::compress(&raw, 19)?;'
+          replacement = '''let output = Command::new("zstd")
+              .args(["--quiet", "-19", "--single-thread", "--no-check", "--stdout"])
+              .arg(work.path().join("compact.bin"))
+              .output()?;
+          if !output.status.success() {
+              bail!("zstd failed: {}", String::from_utf8_lossy(&output.stderr));
+          }
+          let packed = output.stdout;'''
+          assert original in source.read_text()
+          source.write_text(source.read_text().replace(original, replacement))
+          source = Path('xtask/src/main.rs')
+          original = 'zstd::zstd_safe::version_string().as_bytes()'
+          assert original in source.read_text()
+          source.write_text(source.read_text().replace(original, 'b"external-compressor-experiment"'))
+          saved = Path('/tmp/kat-original-tables')
+          saved.mkdir()
+          pattern = r'(static const unsigned char ts_compact_zstd\[\] = \{).*?(\n\};)'
+          for parser in Path('crates').glob('tree-sitter-kat-*/vendor/*/parser.c'):
+              text = parser.read_text()
+              match = re.search(pattern, text, re.S)
+              assert match, parser
+              packed = bytes(int(v, 16) for v in re.findall(r'0x([0-9a-f]+)', match[0]))
+              raw = subprocess.run(['zstd', '-q', '-d', '-c'], input=packed, capture_output=True, check=True).stdout
+              (saved / (parser.parent.name + '.bin')).write_bytes(raw)
+              (saved / (parser.parent.name + '.c')).write_text(re.sub(pattern, r'\1\2', text, flags=re.S))
+          PY
+      - run: cargo run --locked -p xtask -- sync --locked --check
+      - run: cargo test --locked -p xtask -- --include-ignored
+      - run: cargo run --locked -p xtask -- generate --force
+      - run: git diff --exit-code
+        if: matrix.backend == 'library'
+      - name: Verify external compression preserves every native table
+        if: matrix.backend == 'binary'
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          saved = Path('/tmp/kat-original-tables')
+          pattern = r'(static const unsigned char ts_compact_zstd\[\] = \{).*?(\n\};)'
+          count = 0
+          for parser in Path('crates').glob('tree-sitter-kat-*/vendor/*/parser.c'):
+              text = parser.read_text()
+              match = re.search(pattern, text, re.S)
+              assert match, parser
+              packed = bytes(int(v, 16) for v in re.findall(r'0x([0-9a-f]+)', match[0]))
+              raw = subprocess.run(['zstd', '-q', '-d', '-c'], input=packed, capture_output=True, check=True).stdout
+              assert raw == (saved / (parser.parent.name + '.bin')).read_bytes(), parser
+              assert re.sub(pattern, r'\1\2', text, flags=re.S) == (saved / (parser.parent.name + '.c')).read_text(), parser
+              count += 1
+          assert count == 132, count
+          print(f'All {count} native tables and parser functions are unchanged')
+          PY
+          cargo test --locked -p parser-conformance
