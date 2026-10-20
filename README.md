@@ -4,72 +4,71 @@
 [![dependency status](https://deps.rs/repo/github/happy-proto/kat-parsers/status.svg)](https://deps.rs/repo/github/happy-proto/kat-parsers)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/happy-proto/kat-parsers/blob/master/LICENSE)
 
-`kat-parsers` 提供 [`kat`](https://github.com/happy-proto/kat)、sidediff 和其它 Tree-sitter 消费者共用的预生成 parser crate，以及自动按需解压的共享运行时。
+`kat-parsers` 为 [`kat`](https://github.com/happy-proto/kat)、[sidediff](https://github.com/happy-proto/sidediff) 和其它 Tree-sitter 消费者提供统一的预生成 parser、压缩状态表与共享解压运行时。
 
-这个仓库只负责两件事：
+本仓库集中维护语法输入、scanner、许可证及来源锁定，生成并提交可直接编译的产物，同时提供批量上游同步和消费者 Git 依赖更新工作流。解析仍由 Tree-sitter 执行；高亮 query、语言检测和应用集成由消费者维护。
 
-- 保存上游 grammar 的最小源码快照，以及依据正式语法独立实现的自维护 grammar
-- 通过 `tree-sitter` CLI 预先生成并提交 `kat` 可直接通过 `git` 依赖使用的 Rust parser crate
+## 消费者接入
 
-它不负责 `kat` 主仓库里的高亮 query、detector 或语言级集成逻辑。普通消费者只需 Rust 和 C/C++ 编译环境；下列 Node.js、CLI 与维护命令仅用于更新语法和重新生成产物。
-
-## 当前布局
-
-- `upstreams/<lang>/`：grammar 源码资产；自维护语言会在 metadata 中明确标记
-- `metadata/<lang>.toml`：来源、保留原因与生成约定
-- `crates/tree-sitter-kat-<lang>/vendor/<lang>/`：每种语言独立的预生成 parser crate 和已提交产物
-- `crates/tree-sitter-kat-parsers/`：聚合 re-export crate，供 `kat` 继续通过单一依赖面接入全部 parser
-- `crates/kat-parser-common/`：各语言 crate 共享的 `build.rs` 支撑逻辑和通用 `tree_sitter/*.h` 头文件
-- `crates/kat-parser-runtime/`：共享 Zstd 解压运行时，语言首次加载时自动解压
-- `crates/parser-conformance/`：原生表与压缩表的解析对照测试，不属于消费链路
-- `xtask/`：生成、紧凑化、压缩与校验逻辑
-- `docs/vendor-grammar-reasons.md`：这些 grammar 过去为什么长期留在 `kat` 主仓库里 vendored 的原因清单
-
-## 使用方式
-
-本地要求：
-
-- Rust toolchain
-- `tree-sitter` CLI 0.27.1 在 `PATH` 中（与 Generated Check 使用同一版本）
-- Node.js 24 或更新版本，用来执行 grammar 的 JavaScript 源码
-- `just`
-
-常用命令：
-
-```bash
-just generate
-just check-generated
-just check
-```
-
-- `just generate`：同步 vendored support files；仅在完整 grammar 输入、CLI 版本、生成参数或产物内容变化时，通过一次 CLI 调用生成 `grammar.json` / `node-types.json` / `parser.c`，统一使用 ABI 15。相同内容不会重新写入文件
-- `just check-generated`：重跑一次生成，然后用 `git diff --exit-code` 确认各语言 crate 里提交的 `parser.c` / `grammar.json` 等产物是最新的
-- `just check`：执行 `cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings` 和 `cargo test --workspace`
-- `just test`：普通测试入口，不需要安装 Ghostty，也不下载或运行 Ghostty
-- `GHOSTTY_BIN=/path/to/ghostty just ghostty-check`：手动运行官方 Ghostty 配置解析对照测试；默认由独立 macOS CI 执行，详见 [Ghostty grammar 与验证](docs/ghostty.md)
-
-`kat` 侧可直接按 git dependency 引用统一 crate。具体 Git revision 由消费者的 `Cargo.lock` 固定；需要自动跟踪更新时，不要在依赖声明中设置 `rev`：
+通过 Git 依赖使用聚合 crate：
 
 ```toml
-tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers", package = "tree-sitter-kat-parsers" }
+[dependencies]
+tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers" }
 ```
 
-## 维护边界
+普通消费者只需 Rust 和 C/C++ 编译环境。生成的 C、JSON 和共享头文件已提交到 Git，各语言的 `build.rs` 直接编译这些产物；消费方不需要 Node.js、Tree-sitter CLI 或额外的压缩构建步骤。
 
-- 上游 grammar 的来源与 revision 见 `THIRD_PARTY.md`；为什么这些 grammar 被外置到本仓库，见 `docs/vendor-grammar-reasons.md`
-- `tree-sitter` CLI 负责预先生成 `grammar.json` / `node-types.json` / `parser.c`
-- 使用 Tree-sitter 0.27 原生的无配置 ABI 15 生成能力，不合成 `tree-sitter.json`
-- parser 生成发生在 `just` / GitHub Actions 中，而不是 `build.rs`
-- 每个语言 crate 的 `build.rs` 只负责编译已经提交到仓库里的 C / C++ 产物；共享逻辑统一收口到 `kat-parser-common`
-- Mermaid 使用 Merman 0.3.0 的模块化 grammar 与 scanner，按固定上游 revision 同步；接入原因与生成边界见 [`docs/vendor-grammar-reasons.md`](docs/vendor-grammar-reasons.md)。
-- 依赖状态由 deps.rs 展示，Cargo 与 GitHub Actions 的自动更新策略统一维护在 [`.github/dependabot.yml`](.github/dependabot.yml)。
+压缩的是状态表，parser 函数和 scanner 仍正常编译进二进制。生成阶段仅在有体积收益时采用 Zstd；对应语言首次加载时，通过 `kat-parser-runtime` 和每语言的 `OnceLock` 解压一次，恢复的表保留到进程退出，后续解析直接使用原生表。
 
-生成器使用预编译 CLI，而不是将生成库编进 `xtask`：这样既省去本地和 CI 编译生成器的时间，又保留优化后生成器的执行效率。缓存、构建边界和验证方法见 [生成与构建](docs/generation.md)。
+具体 Git revision 由最终应用提交的 `Cargo.lock` 固定，依赖库自己的 lockfile 不会被下游继承。需要自动跟踪更新时，不要在依赖声明中设置 `rev`；消费方可接入 [Git 依赖同步工作流](docs/git-dependencies.md)，统一更新直接与间接 Git 锁定。
 
-批量检查、同步所有上游和定时更新分支的约定见 [批量维护上游语法](docs/upstreams.md)。`just sync` 完成源码同步、重新生成与检查；`just check-upstream-sources` 验证锁定来源和本地补丁可重放。
+## 维护与生成
 
-消费方可直接引用 [Git 依赖同步工作流](docs/git-dependencies.md)，统一更新直接与间接 Git 锁定，无需复制脚本或额外声明间接依赖。
+仓库维护需要 Rust、C/C++ 编译环境、Git 和 `just`。`just check`、`just test` 与来源检查不需要 Node.js 或 Tree-sitter CLI；涉及重新生成时，额外需要 Node.js 24 和 `tree-sitter` CLI 0.27.1（与 Generated Check 一致）：
 
-## TODO
+```bash
+npm install -g tree-sitter-cli@0.27.1
+```
 
-- CoffeeScript 在生成时仍会出现 `unnecessary conflicts` warning；当前不影响生成和使用，先记录为已知情况，后续如开始深度维护该 grammar，再评估是否清理上游 `grammar.js` 中的陈旧 `conflicts` 声明
+| 命令 | 用途 |
+| --- | --- |
+| `just check-upstreams` | 检查所有远程来源是否有更新；发现更新时返回非零，不写工作区 |
+| `just check-upstream-sources` | 按锁定 revision 重放来源和补丁，验证已保存输入没有漂移 |
+| `just sync` | 批量更新来源和锁定 revision，重新生成产物并运行仓库检查 |
+| `just generate` | 从当前保存的输入增量生成、校验并压缩产物，不拉取上游更新 |
+| `just check-generated` | 增量生成后执行 `git diff --exit-code`，需从干净工作区运行 |
+| `just check` | 执行格式、Clippy 和普通 workspace 测试 |
+| `just test` | 仅运行普通 workspace 测试 |
+
+来源同步会更新声明的快照，请从干净工作区开始；需要保留的本地语义、路径或安全修复应记录为最小补丁，不能只修改快照文件。具体约定见 [批量维护上游语法](docs/upstreams.md)。
+
+生成流程使用官方预编译 CLI 和 ABI 15；`xtask` 负责输入准备、缓存、状态表转换与压缩。相同内容保留原修改时间，避免触发无效重编译。源码、补丁和生成参数变化后的产物需要一并提交。缓存和运行时边界见 [生成与构建](docs/generation.md)。
+
+## CI 与更新机制
+
+普通 CI 在 Linux、macOS 和 Windows 上运行格式、Clippy 和 workspace 测试。独立的 Generated Check 会重放锁定来源，运行生成契约测试，再执行 `cargo run -p xtask -- generate --force` 和 `git diff --exit-code`；它强制重新生成全部产物，与本地增量检查互补。
+
+Ghostty 官方解析器对照由独立 macOS CI 执行。普通测试不下载或运行 Ghostty；需要本地对照时使用 `GHOSTTY_BIN=/path/to/ghostty just ghostty-check`，详见 [Ghostty grammar 与验证](docs/ghostty.md)。
+
+| 更新对象 | 维护入口 |
+| --- | --- |
+| 本仓库的 Cargo 依赖和 GitHub Actions | [Dependabot](.github/dependabot.yml) |
+| 上游 grammar、scanner 和许可证 | [每周同步工作流](.github/workflows/sync-upstreams.yml)，来源与补丁由 `metadata/` 声明 |
+| 消费者的直接、间接 Git 锁定 | [可复用工作流](.github/workflows/sync-git-dependencies.yml)，由消费者配置定时或手动调用 |
+
+语法同步与消费者 Git 依赖更新会推送更新分支并显式调度 CI。组织策略禁止 Actions 创建 PR，因此工作流在执行摘要中提供 Compare 入口，由维护者创建和审阅更新 PR。上游源码与生成产物合入后，消费者再更新自己的锁文件。
+
+## 仓库布局与审查
+
+- `upstreams/<lang>/`、`metadata/<lang>.toml`、`patches/`：语法输入、来源 revision、资产映射与最小必要补丁；自维护语言在 metadata 中明确标记。
+- `crates/tree-sitter-kat-<lang>/`：各语言的 Rust 入口、生成的 C/JSON，以及 scanner 等构建资产。
+- `crates/tree-sitter-kat-parsers/`：聚合入口，供消费者通过单一依赖面使用托管语言。
+- `crates/kat-parser-common/`：共享 C/C++ 构建支撑与 Tree-sitter 头文件。
+- `crates/kat-parser-runtime/`：共享状态表解压实现，由语言入口自动调用。
+- `crates/parser-conformance/`、`crates/ghostty-conformance/`：解析对照测试，不属于消费者依赖链路。
+- `xtask/`：来源同步、生成、压缩与校验逻辑。
+
+生成的 `parser.c`、`grammar.json`、`node-types.json` 和缓存摘要使用 `linguist-generated` 标记，GitHub 默认折叠其 diff，审查时仍可展开。上游 grammar、scanner 和补丁保持正常展示；第三方源码保留上游格式与模块结构。
+
+来源与许可证见 [THIRD_PARTY.md](THIRD_PARTY.md) 和 `metadata/`；语言迁移的历史原因见 [grammar 维护理由](docs/vendor-grammar-reasons.md)。
