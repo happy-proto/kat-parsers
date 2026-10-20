@@ -27,4 +27,3 @@ jobs:
       - run: cargo test -p xtask -- --include-ignored
       - run: cargo run -p xtask -- generate --force
       - run: git diff --exit-code
-
