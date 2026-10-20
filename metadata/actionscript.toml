@@ -15,3 +15,11 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/jcs090218/tree-sitter-actionscript"
+revision = "12fc0c4c822c6edd924c13b328a93fe69454b299"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"

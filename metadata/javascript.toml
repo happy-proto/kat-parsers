@@ -1,0 +1,23 @@
+language = "javascript"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/tree-sitter/tree-sitter-javascript"
+upstream_commit = "44c892e0be055ac465d5eeddae6d3e194424e7de"
+upstream_version = "0.25.0"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "scanner.c", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate javascript"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]
+
+[sync]
+repository = "https://github.com/tree-sitter/tree-sitter-javascript.git"
+revision = "44c892e0be055ac465d5eeddae6d3e194424e7de"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"

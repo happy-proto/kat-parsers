@@ -2,7 +2,15 @@
 
 本文档记录这次从 `kat` 外置到 `kat-parsers` 的 grammar 来源，以及它们此前为什么长期留在 `kat` 主仓库里作为 vendored grammar。
 
-现在这些 parser 源已经迁到 `kat-parsers` 的独立语言 crate，由这个仓库统一生成并提交 `parser.c` 等产物；共享 `build.rs` 逻辑和通用 Tree-sitter 头文件则收口在 `kat-parser-common`。对应的保留原因仍然值得保留，方便后续继续判断哪些 grammar 可以回切上游 crate、哪些仍需要本地包装层或特殊 support file。
+现在全部 parser 源统一维护在 `kat-parsers` 的独立语言 crate，由本仓库生成紧凑表和 Zstd 产物，并提供共享解压运行时。下列分类保留历史引入背景；当前不再按大小或公开 crate 是否可用决定分散依赖来源。批量同步、固定 revision 和本地补丁的约定见 [批量维护上游语法](upstreams.md)。
+
+## 上游 parser crate 迁入统一生成仓库
+
+- `ada`、`bash`、`batch`、`c`、`c_sharp`、`cel`、`cfml`、`clojure`、`cmake`、`cpp`、`css`、`d`、`dart`、`diff`、`elixir`、`elm`、`embedded_template`、`erlang`、`fortran`、`fsharp`、`go`、`groovy`、`html`、`ini`、`java`、`javascript`、`jsdoc`、`json`、`kotlin`、`lua`、`make`、`systemverilog`、`verilog`：此前由 Kat 直接依赖上游 parser crate；现在保留固定上游 revision 的 grammar 输入，由 `kat-parsers` 统一生成并通过聚合 crate 提供 parser。具体来源和许可证见 [`../THIRD_PARTY.md`](../THIRD_PARTY.md) 及对应 `metadata/*.toml`。
+- `fsharp_signature`：与 `fsharp` 一起从同一上游 crate 迁入。signature grammar 的共享 F# grammar 作为单独输入同步；两个 scanner 的 include 路径通过仓库内 patch 适配 vendor 目录布局。
+- `css`：继续为 LESS/SCSS 提供生成期 grammar support，同时记录上游 crate 来源；scanner 的参数消音改动由可重放 patch 保留。
+- `diff`：crate 原 manifest 指向的 GitHub 仓库已删除，来源改从保留同一 revision 的 `tree-sitter-grammars/tree-sitter-diff` 获取。
+- `groovy`：上游 revision 没有独立 LICENSE 文件；保留 Cargo manifest 的 MIT 声明作为许可证来源记录。
 
 ## 没有可用的 crates.io grammar crate
 
@@ -118,15 +126,15 @@
 - `jq`
   原因：当前 crates.io 上常用的 `tree-sitter-jq` 走 GPL 许可证链路；仓库里改用 BSD 3-Clause 上游并保留 vendored parser 源。
 
-## 例外：parser 已迁移，但仍保留 vendored support asset
+## CSS 的共享生成输入
 
 - `css`
-  原因：虽然 CSS runtime 已迁到 crate-backed，但 `grammars/less/grammar.js` 和 `grammars/scss/grammar.js` 仍会在生成期直接 `require("../css/grammar.js")`，所以仓库里继续保留 `grammars/css/grammar.js` 这份最小 support asset。
+  CSS parser 和 Less/SCSS 共同使用 `upstreams/css/grammar.js`。共享输入在 metadata 中明确声明，统一随 CSS 来源更新，不额外复制第二套 grammar。
 
 ## 后续迁移原则
 
-- 默认优先迁移那些没有本地改造、crate API 与当前 `tree-sitter` 主版本兼容、且不会引入额外许可证问题的 grammar。
-- 一旦某个保留原因消失，例如上游 crate 升级到当前 `tree-sitter` 主版本，或仓库不再依赖某份 vendored support file，就应优先重新评估迁移。
+- 新增语言使用独立 parser crate 和统一生成、压缩、解压流程；上游来源、精确 revision、许可证及本地适配必须可重放。
+- 上游源码更新集中通过批量同步流程提出；kat 和其它应用仅更新统一 Git 依赖，不另维护压缩或语法源码同步脚本。
 
 ## Jam build language
 

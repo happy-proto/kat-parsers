@@ -1,0 +1,20 @@
+--- a/grammar.js
++++ b/grammar.js
+@@ -1,4 +1,4 @@
+-const gram = require('../grammar.js');
++const gram = require('./base_grammar.js');
+ 
+ module.exports = grammar({
+   name: 'jinja',
+--- a/scanner.c
++++ b/scanner.c
+@@ -213,7 +213,8 @@
+ }
+ 
+ void tree_sitter_jinja_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
+-    if(buffer == NULL) {
++    if(buffer == NULL || length != sizeof(Scanner)) {
++        memset(payload, 0, sizeof(Scanner));
+         return;
+     }
+     memcpy(payload, buffer, sizeof(Scanner));

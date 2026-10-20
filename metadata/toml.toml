@@ -1,0 +1,37 @@
+language = "toml"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 toml grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/tree-sitter-grammars/tree-sitter-toml"
+upstream_commit = "64b56832c2cffe41758f28e05c756a3a98d16f41"
+upstream_version = "0.7.0"
+upstream_crate = "tree-sitter-toml-ng"
+license = "MIT"
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-toml.git"
+revision = "64b56832c2cffe41758f28e05c756a3a98d16f41"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate toml"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "toml"

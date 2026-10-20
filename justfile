@@ -6,6 +6,17 @@ default:
 generate:
     cargo run -p xtask -- generate
 
+check-upstreams:
+    cargo run --locked -p xtask -- sync --check
+
+check-upstream-sources:
+    cargo run --locked -p xtask -- sync --locked --check
+
+sync:
+    cargo run --locked -p xtask -- sync
+    cargo run --locked -p xtask -- generate
+    just check
+
 check-generated:
     cargo run -p xtask -- generate
     git diff --exit-code

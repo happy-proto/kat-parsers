@@ -22,3 +22,15 @@ outputs = [
   "tree_sitter_html/scanner.cc",
   "tree_sitter_html/tag.h",
 ]
+
+[sync]
+repository = "https://github.com/ikatyang/tree-sitter-vue"
+revision = "91fe2754796cd8fba5f229505a23fa08f3546c06"
+reference = "HEAD"
+patches = ["patches/vue-html-scanner-symbols.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.cc" = "src/scanner.cc"
+"tree_sitter_html/scanner.cc" = "src/tree_sitter_html/scanner.cc"
+"tree_sitter_html/tag.h" = "src/tree_sitter_html/tag.h"

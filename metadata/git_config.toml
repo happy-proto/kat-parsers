@@ -15,3 +15,11 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/the-mikedavis/tree-sitter-git-config"
+revision = "0fbc9f99d5a28865f9de8427fb0672d66f9d83a5"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"

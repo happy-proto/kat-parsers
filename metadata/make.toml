@@ -1,0 +1,22 @@
+language = "make"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/tree-sitter-grammars/tree-sitter-make"
+upstream_commit = "5e9e8f8ff3387b0edcaa90f46ddf3629f4cfeb1d"
+upstream_version = "1.1.1"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate make"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-make.git"
+revision = "5e9e8f8ff3387b0edcaa90f46ddf3629f4cfeb1d"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

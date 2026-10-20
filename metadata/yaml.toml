@@ -1,0 +1,44 @@
+language = "yaml"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 yaml grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/tree-sitter-grammars/tree-sitter-yaml"
+upstream_commit = "7708026449bed86239b1cd5bce6e3c34dbca6415"
+upstream_version = "0.7.2"
+upstream_crate = "tree-sitter-yaml"
+license = "MIT"
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-yaml.git"
+revision = "7708026449bed86239b1cd5bce6e3c34dbca6415"
+reference = "HEAD"
+patches = ["patches/yaml-schema-path.patch"]
+
+[sync.files]
+"schema/schema.legacy.c" = "src/schema.legacy.c"
+"schema/schema.json.c" = "src/schema.json.c"
+"schema/schema.core.c" = "src/schema.core.c"
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"
+
+[copied]
+files = [
+  "schema/schema.legacy.c",
+  "schema/schema.json.c",
+  "schema/schema.core.c",
+  "grammar.js",
+  "scanner.c",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate yaml"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "yaml"

@@ -17,3 +17,12 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/IndianBoy42/tree-sitter-just"
+revision = "d9da862c156020c1a83d3c6ccdda32be6d8a5d4a"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"

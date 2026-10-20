@@ -21,3 +21,13 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+revision = "a0a00f817d02412bd92c54d316f164d827b57b5c"
+reference = "HEAD"
+patches = ["patches/markdown-inline-path.patch"]
+
+[sync.files]
+"grammar.js" = "tree-sitter-markdown-inline/grammar.js"
+"scanner.c" = "tree-sitter-markdown-inline/src/scanner.c"

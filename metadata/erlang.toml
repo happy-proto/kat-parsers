@@ -1,0 +1,23 @@
+language = "erlang"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/WhatsApp/tree-sitter-erlang"
+upstream_commit = "0386a11c835950f5e1ebfbcbf49863d8495de4e0"
+upstream_version = "0.21.0"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "scanner.c", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate erlang"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]
+
+[sync]
+repository = "https://github.com/WhatsApp/tree-sitter-erlang.git"
+revision = "0386a11c835950f5e1ebfbcbf49863d8495de4e0"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"

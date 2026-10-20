@@ -1,9 +1,3 @@
-/*
- * Adapted from IndianBoy42/tree-sitter-just.
- * Source: https://github.com/IndianBoy42/tree-sitter-just
- * License: Apache-2.0
- */
-
 #include "tree_sitter/parser.h"
 
 #include <ctype.h>

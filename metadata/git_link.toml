@@ -15,3 +15,6 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+local = true

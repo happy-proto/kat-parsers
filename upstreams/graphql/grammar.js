@@ -1,8 +1,4 @@
-// Adapted from tree-sitter-graphql.
-// Source: https://github.com/joowani/tree-sitter-graphql
-// License: MIT
-
-module.exports = grammar({
+export default grammar({
   name: "graphql",
 
   extras: ($) => [/[\s\uFEFF\u0009\u0020\u000A\u000D]/, $.comma, $.comment],
@@ -128,8 +124,10 @@ module.exports = grammar({
           seq("extend", "input", $.name, optional($.directives))
         )
       ),
-    input_fields_definition: ($) => seq("{", repeat1($.input_value_definition), "}"),
-    enum_values_definition: ($) => seq("{", repeat1($.enum_value_definition), "}"),
+    input_fields_definition: ($) =>
+      seq("{", repeat1($.input_value_definition), "}"),
+    enum_values_definition: ($) =>
+      seq("{", repeat1($.enum_value_definition), "}"),
     enum_value_definition: ($) =>
       seq(optional($.description), $.enum_value, optional($.directives)),
     implements_interfaces: ($) =>
@@ -147,7 +145,8 @@ module.exports = grammar({
         $.type,
         optional($.directives)
       ),
-    arguments_definition: ($) => seq("(", repeat1($.input_value_definition), ")"),
+    arguments_definition: ($) =>
+      seq("(", repeat1($.input_value_definition), ")"),
     input_value_definition: ($) =>
       seq(
         optional($.description),
@@ -163,7 +162,8 @@ module.exports = grammar({
         seq($.union_member_types, "|", $.named_type),
         seq("=", optional("|"), $.named_type)
       ),
-    root_operation_type_definition: ($) => seq($.operation_type, ":", $.named_type),
+    root_operation_type_definition: ($) =>
+      seq($.operation_type, ":", $.named_type),
     operation_definition: ($) =>
       choice(
         $.selection_set,
@@ -186,7 +186,9 @@ module.exports = grammar({
         $.input_object_type_definition
       ),
     scalar_type_definition: ($) =>
-      prec.right(seq(optional($.description), "scalar", $.name, optional($.directives))),
+      prec.right(
+        seq(optional($.description), "scalar", $.name, optional($.directives))
+      ),
     object_type_definition: ($) =>
       prec.right(
         seq(
@@ -309,7 +311,12 @@ module.exports = grammar({
       ),
     fragment_name: ($) => $.name,
     inline_fragment: ($) =>
-      seq("...", optional($.type_condition), optional($.directives), $.selection_set),
+      seq(
+        "...",
+        optional($.type_condition),
+        optional($.directives),
+        $.selection_set
+      ),
     type_condition: ($) => seq("on", $.named_type),
     directives: ($) => repeat1($.directive),
     directive: ($) => seq("@", $.name, optional($.arguments)),

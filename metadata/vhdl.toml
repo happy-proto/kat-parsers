@@ -1,0 +1,49 @@
+language = "vhdl"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 vhdl grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/jpt13653903/tree-sitter-vhdl"
+upstream_commit = "889c521757471093ce5ac83502ca8a89e516404e"
+upstream_version = "1.4.0"
+upstream_crate = "tree-sitter-vhdl"
+license = "MIT"
+
+[sync]
+repository = "https://github.com/jpt13653903/tree-sitter-vhdl.git"
+revision = "889c521757471093ce5ac83502ca8a89e516404e"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"debug_macros.h" = "src/debug_macros.h"
+"TokenType.h" = "src/TokenType.h"
+"TokenTree.h" = "src/TokenTree.h"
+"TokenType.inc" = "src/TokenType.inc"
+"TokenTree.inc" = "src/TokenTree.inc"
+"token_tree_match.inc" = "src/token_tree_match.inc"
+"License.md" = "License.md"
+
+[copied]
+files = [
+  "grammar.js",
+  "scanner.c",
+  "debug_macros.h",
+  "TokenType.h",
+  "TokenTree.h",
+  "TokenType.inc",
+  "TokenTree.inc",
+  "token_tree_match.inc",
+  "License.md",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate vhdl"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "vhdl"

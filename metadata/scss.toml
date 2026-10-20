@@ -21,3 +21,13 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-scss"
+revision = "2ef6d42e3ad7a8208900f9346f4529806ae0f9f9"
+reference = "HEAD"
+patches = ["patches/scss-css-path.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"

@@ -14,3 +14,6 @@ files = ["grammar.js", "scanner.c"]
 [generated]
 command = "cargo run -p xtask -- generate ghostty"
 outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]
+
+[sync]
+local = true

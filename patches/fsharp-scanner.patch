@@ -1,0 +1,8 @@
+diff --git a/scanner.c b/scanner.c
+index e0555ca..a0271ed 100644
+--- a/scanner.c
++++ b/scanner.c
+@@ -1,2 +1,2 @@
+-#include "../../common/scanner.h"
++#include "common/scanner.h"
+ 

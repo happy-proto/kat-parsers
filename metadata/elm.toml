@@ -1,0 +1,23 @@
+language = "elm"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/elm-tooling/tree-sitter-elm"
+upstream_commit = "34815684e37cf299477e86a7d1e10d3ecb5486f9"
+upstream_version = "5.9.4"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "scanner.c", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate elm"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]
+
+[sync]
+repository = "https://github.com/elm-tooling/tree-sitter-elm.git"
+revision = "34815684e37cf299477e86a7d1e10d3ecb5486f9"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE.md"

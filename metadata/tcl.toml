@@ -17,3 +17,12 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/tree-sitter-grammars/tree-sitter-tcl"
+revision = "8f11ac7206a54ed11210491cee1e0657e2962c47"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"

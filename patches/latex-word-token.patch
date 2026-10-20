@@ -1,0 +1,10 @@
+--- a/grammar.js
++++ b/grammar.js
+@@ -54,7 +54,6 @@
+     $._trivia_raw_env_sagesilent,
+     $._trivia_raw_env_sageblock,
+   ],
+-  word: $ => $.command_name,
+   rules: {
+     source_file: $ => repeat($._root_content),
+ 

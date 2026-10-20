@@ -16,3 +16,12 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/joowani/tree-sitter-graphql"
+revision = "b1d368c339806d971818a4ca2099763a6c561f56"
+reference = "HEAD"
+patches = ["patches/graphql-string-value.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"

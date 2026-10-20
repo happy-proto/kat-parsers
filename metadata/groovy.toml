@@ -1,0 +1,24 @@
+language = "groovy"
+grammar_file = "grammar.json"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/amaanq/tree-sitter-groovy"
+upstream_commit = "70efb0b9b50f95bcbd89dcfd42b275e0304e10cf"
+upstream_version = "0.1.2"
+license = "MIT"
+reason = "上游 revision 未提供独立 LICENSE 文件；保留该 revision 的 Cargo.toml，记录其 SPDX license 声明。"
+
+[copied]
+files = ["grammar.json", "license-metadata.toml"]
+
+[generated]
+command = "cargo run -p xtask -- generate groovy"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/amaanq/tree-sitter-groovy.git"
+revision = "70efb0b9b50f95bcbd89dcfd42b275e0304e10cf"
+reference = "HEAD"
+
+[sync.files]
+"grammar.json" = "src/grammar.json"
+"license-metadata.toml" = "Cargo.toml"

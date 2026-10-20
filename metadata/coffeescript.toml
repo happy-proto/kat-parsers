@@ -20,3 +20,13 @@ outputs = [
   "grammar.json",
   "node-types.json",
 ]
+
+[sync]
+repository = "https://github.com/svkozak/tree-sitter-coffeescript"
+revision = "3bb4dbd68ca926c76b3baadb529da4de3726ea37"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"src/scanner.c" = "src/scanner.c"
+"LICENSE.txt" = "LICENSE.txt"

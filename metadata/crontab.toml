@@ -15,3 +15,11 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/slqy123/tree-sitter-crontab"
+revision = "70b5628278756c3dc429fac6545fe7b2e8c553a0"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"

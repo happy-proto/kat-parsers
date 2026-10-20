@@ -17,3 +17,12 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/pnx/tree-sitter-dotenv"
+revision = "f3b1f1f20d255082f2fd4761f6961ab5cf01d4f4"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"

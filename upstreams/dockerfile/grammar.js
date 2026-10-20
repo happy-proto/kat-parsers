@@ -1,7 +1,3 @@
-// Adapted from camdencheek/tree-sitter-dockerfile.
-// Source: https://github.com/camdencheek/tree-sitter-dockerfile
-// License: MIT
-
 module.exports = grammar({
   name: "dockerfile",
 
@@ -51,7 +47,12 @@ module.exports = grammar({
     run_instruction: ($) =>
       seq(
         alias(/[rR][uU][nN]/, "RUN"),
-        repeat(choice($.param, $.mount_param)),
+        repeat(
+          choice(
+            $.param,
+            $.mount_param
+          )
+        ),
         choice($.command_json_string_array, $.shell_command),
         repeat($.heredoc_block)
       ),
@@ -81,7 +82,9 @@ module.exports = grammar({
       seq(
         alias(/[aA][dD][dD]/, "ADD"),
         repeat($.param),
-        repeat1(seq(alias($.path_with_heredoc, $.path), $._non_newline_whitespace)),
+        repeat1(
+          seq(alias($.path_with_heredoc, $.path), $._non_newline_whitespace)
+        ),
         alias($.path_with_heredoc, $.path),
         repeat($.heredoc_block)
       ),
@@ -90,7 +93,9 @@ module.exports = grammar({
       seq(
         alias(/[cC][oO][pP][yY]/, "COPY"),
         repeat($.param),
-        repeat1(seq(alias($.path_with_heredoc, $.path), $._non_newline_whitespace)),
+        repeat1(
+          seq(alias($.path_with_heredoc, $.path), $._non_newline_whitespace)
+        ),
         alias($.path_with_heredoc, $.path),
         repeat($.heredoc_block)
       ),
@@ -117,7 +122,8 @@ module.exports = grammar({
         optional(
           seq(
             token.immediate(":"),
-            field("group", alias($._immediate_user_name_or_group, $.unquoted_string))
+            field("group",
+                  alias($._immediate_user_name_or_group, $.unquoted_string))
           )
         )
       ),
@@ -128,6 +134,7 @@ module.exports = grammar({
         repeat($._immediate_user_name_or_group_fragment)
       ),
 
+    // same as _user_name_or_group but sticks to previous token
     _immediate_user_name_or_group: ($) =>
       repeat1($._immediate_user_name_or_group_fragment),
 
@@ -147,10 +154,12 @@ module.exports = grammar({
         optional(
           seq(
             token.immediate("="),
-            field(
-              "default",
-              choice($.double_quoted_string, $.single_quoted_string, $.unquoted_string)
-            )
+            field("default",
+                  choice(
+                    $.double_quoted_string,
+                    $.single_quoted_string,
+                    $.unquoted_string
+                  ))
           )
         )
       ),
@@ -159,7 +168,10 @@ module.exports = grammar({
       seq(alias(/[oO][nN][bB][uU][iI][lL][dD]/, "ONBUILD"), $._instruction),
 
     stopsignal_instruction: ($) =>
-      seq(alias(/[sS][tT][oO][pP][sS][iI][gG][nN][aA][lL]/, "STOPSIGNAL"), $._stopsignal_value),
+      seq(
+        alias(/[sS][tT][oO][pP][sS][iI][gG][nN][aA][lL]/, "STOPSIGNAL"),
+        $._stopsignal_value
+      ),
 
     _stopsignal_value: ($) =>
       seq(
@@ -177,13 +189,27 @@ module.exports = grammar({
       seq(alias(/[sS][hH][eE][lL][lL]/, "SHELL"), $.command_json_string_array),
 
     maintainer_instruction: () =>
-      seq(alias(/[mM][aA][iI][nN][tT][aA][iI][nN][eE][rR]/, "MAINTAINER"), /.*/),
+      seq(
+        alias(/[mM][aA][iI][nN][tT][aA][iI][nN][eE][rR]/, "MAINTAINER"),
+        /.*/
+      ),
 
     cross_build_instruction: () =>
-      seq(alias(/[cC][rR][oO][sS][sS]_[bB][uU][iI][lL][dD][a-zA-Z_]*/, "CROSS_BUILD"), /.*/),
+      seq(
+        alias(
+          /[cC][rR][oO][sS][sS]_[bB][uU][iI][lL][dD][a-zA-Z_]*/,
+          "CROSS_BUILD"
+        ),
+        /.*/
+      ),
 
     heredoc_block: ($) =>
       seq(
+        // A heredoc block starts with a line break after the instruction it
+        // belongs to. The herdoc_nl token is a special token that only matches
+        // \n if there's at least one open heredoc to avoid conflicts.
+        // We also alias this token to hide it from the output like all other
+        // whitespace.
         alias($.heredoc_nl, "_heredoc_nl"),
         repeat(seq($.heredoc_line, "\n")),
         $.heredoc_end
@@ -191,7 +217,11 @@ module.exports = grammar({
 
     path: ($) =>
       seq(
-        choice(/[^-\s\$<]/, /<[^<]/, $.expansion),
+        choice(
+          /[^-\s\$<]/, // cannot start with a '-' to avoid conflicts with params
+          /<[^<]/, // cannot start with a '<<' to avoid conflicts with heredocs (a single < is fine, though)
+          $.expansion
+        ),
         repeat(choice(token.immediate(/[^\s\$]+/), $._immediate_expansion))
       ),
 
@@ -199,16 +229,24 @@ module.exports = grammar({
       choice(
         $.heredoc_marker,
         seq(
-          choice(/[^-\s\$<]/, /<[^-\s\$<]/, $.expansion),
+          choice(
+            /[^-\s\$<]/, // cannot start with a '-' to avoid conflicts with params
+            /<[^-\s\$<]/,
+            $.expansion
+          ),
           repeat(choice(token.immediate(/[^\s\$]+/), $._immediate_expansion))
         )
       ),
 
-    expansion: ($) => seq("$", $._expansion_body),
-    _immediate_expansion: ($) => alias($._imm_expansion, $.expansion),
-    _imm_expansion: ($) => seq(token.immediate("$"), $._expansion_body),
+    expansion: $ =>
+      seq("$", $._expansion_body),
 
-    _expansion_body: ($) =>
+    // we have 2 rules b/c aliases don't work as expected on seq() directly
+    _immediate_expansion: $ => alias($._imm_expansion, $.expansion),
+    _imm_expansion: $ =>
+      seq(token.immediate("$"), $._expansion_body),
+
+    _expansion_body: $ =>
       choice(
         $.variable,
         seq(
@@ -225,10 +263,12 @@ module.exports = grammar({
         field("name", $._env_key),
         token.immediate("="),
         optional(
-          field(
-            "value",
-            choice($.double_quoted_string, $.single_quoted_string, $.unquoted_string)
-          )
+          field("value",
+                choice(
+                  $.double_quoted_string,
+                  $.single_quoted_string,
+                  $.unquoted_string
+                ))
         )
       ),
 
@@ -236,37 +276,42 @@ module.exports = grammar({
       seq(
         field("name", $._env_key),
         token.immediate(/\s+/),
-        field(
-          "value",
-          choice($.double_quoted_string, $.single_quoted_string, $.unquoted_string)
-        )
+        field("value",
+              choice(
+                $.double_quoted_string,
+                $.single_quoted_string,
+                $.unquoted_string
+              ))
       ),
 
-    _env_key: ($) => alias(/[a-zA-Z_][a-zA-Z0-9_]*/, $.unquoted_string),
+    _env_key: ($) =>
+      alias(/[a-zA-Z_][a-zA-Z0-9_]*/, $.unquoted_string),
 
     expose_port: () => seq(/\d+(-\d+)?/, optional(choice("/tcp", "/udp"))),
 
     label_pair: ($) =>
       seq(
-        field(
-          "key",
-          choice(
-            alias(/[-a-zA-Z0-9\._]+/, $.unquoted_string),
-            $.double_quoted_string,
-            $.single_quoted_string
-          )
-        ),
+        field("key", choice(
+          alias(/[-a-zA-Z0-9\._]+/, $.unquoted_string),
+          $.double_quoted_string,
+          $.single_quoted_string
+        )),
         token.immediate("="),
-        field(
-          "value",
-          choice($.double_quoted_string, $.single_quoted_string, $.unquoted_string)
-        )
+        field("value",
+              choice(
+                $.double_quoted_string,
+                $.single_quoted_string,
+                $.unquoted_string
+              ))
       ),
 
     image_spec: ($) =>
       seq(
         field("name", $.image_name),
-        seq(field("tag", optional($.image_tag)), field("digest", optional($.image_digest)))
+        seq(
+          field("tag", optional($.image_tag)),
+          field("digest", optional($.image_digest))
+        )
       ),
 
     image_name: ($) =>
@@ -287,6 +332,7 @@ module.exports = grammar({
         repeat1(choice(token.immediate(/[a-zA-Z0-9:]+/), $._immediate_expansion))
       ),
 
+    // Generic parsing of options passed right after an instruction name.
     param: ($) =>
       seq(
         "--",
@@ -374,35 +420,58 @@ module.exports = grammar({
     _mount_param_text_value: ($) =>
       repeat1(choice(token.immediate(/[^\s=,\$]+/), $._immediate_expansion)),
 
-    image_alias: ($) =>
-      seq(
-        choice(/[-a-zA-Z0-9_]+/, $.expansion),
-        repeat(choice(token.immediate(/[-a-zA-Z0-9_]+/), $._immediate_expansion))
-      ),
+    image_alias: ($) => seq(
+      choice(/[-a-zA-Z0-9_]+/, $.expansion),
+      repeat(choice(token.immediate(/[-a-zA-Z0-9_]+/), $._immediate_expansion))
+    ),
 
     shell_command: ($) =>
       seq(
         $.shell_fragment,
-        repeat(seq(alias($.required_line_continuation, $.line_continuation), $.shell_fragment))
-      ),
-
-    shell_fragment: ($) =>
-      repeat1(
-        choice(
-          seq($.heredoc_marker, /[ \t]*/),
-          /[,=-]/,
-          /[^\\\[\n#\s,=-][^\\\n<]*/,
-          /\\[^\n,=-]/,
-          /<[^<]/,
+        repeat(
+          seq(
+            alias($.required_line_continuation, $.line_continuation),
+            $.shell_fragment
+          )
         )
       ),
+
+    shell_fragment: ($) => repeat1(
+      choice(
+        // A shell fragment is broken into the same tokens as other
+        // constructs because the lexer prefers the longer tokens
+        // when it has a choice. The example below shows the tokenization
+        // of the --mount parameter.
+        //
+        //   RUN --mount=foo=bar,baz=42 ls --all
+        //       ^^     ^   ^   ^   ^
+        //         ^^^^^ ^^^ ^^^ ^^^ ^^
+        //       |--------param-------|
+        //                              |--shell_command--|
+        //
+        seq($.heredoc_marker, /[ \t]*/),
+        /[,=-]/,
+        /[^\\\[\n#\s,=-][^\\\n<]*/,
+        /\\[^\n,=-]/,
+        /<[^<]/,
+      )
+    ),
 
     line_continuation: () => /\\[ \t]*\n/,
     required_line_continuation: () => "\\\n",
 
     json_string_array: ($) =>
-      seq("[", optional(seq($.json_string, repeat(seq(",", $.json_string)))), "]"),
+      seq(
+        "[",
+        optional(
+          seq($.json_string, repeat(seq(",", $.json_string)))
+        ),
+        "]"
+      ),
 
+    // Note that JSON strings are different from the other double-quoted
+    // strings. They don't support $-expansions.
+    // Convenient reference: https://www.json.org/
     command_json_string_array: ($) =>
       seq(
         "[",
@@ -415,16 +484,20 @@ module.exports = grammar({
         "]"
       ),
 
-    json_string: ($) =>
-      seq(
-        '"',
-        repeat(
-          choice(token.immediate(/[^"\\]+/), alias($.json_escape_sequence, $.escape_sequence))
-        ),
-        '"'
+    json_string: ($) => seq(
+      '"',
+      repeat(
+        choice(
+          token.immediate(/[^"\\]+/),
+          alias($.json_escape_sequence, $.escape_sequence)
+        )
       ),
+      '"'
+    ),
 
-    json_escape_sequence: () => token.immediate(/\\(?:["\\/bfnrt]|u[0-9A-Fa-f]{4})/),
+    json_escape_sequence: () => token.immediate(
+      /\\(?:["\\/bfnrt]|u[0-9A-Fa-f]{4})/
+    ),
 
     double_quoted_string: ($) =>
       seq(
@@ -440,6 +513,7 @@ module.exports = grammar({
         '"'
       ),
 
+    // same as double_quoted_string but without $-expansions:
     single_quoted_string: ($) =>
       seq(
         "'",
@@ -455,12 +529,30 @@ module.exports = grammar({
 
     unquoted_string: ($) =>
       repeat1(
-        choice(token.immediate(/[^\s\n\"'\\\$]+/), token.immediate("\\ "), $._immediate_expansion)
+        choice(
+          token.immediate(/[^\s\n\"'\\\$]+/),
+          token.immediate("\\ "),
+          $._immediate_expansion
+        )
       ),
 
-    double_quoted_escape_sequence: () => token.immediate(choice("\\\\", "\\\"")),
-    single_quoted_escape_sequence: () => token.immediate(choice("\\\\", "\\'")),
+    double_quoted_escape_sequence: () => token.immediate(
+      choice(
+        "\\\\",
+        "\\\""
+      )
+    ),
+
+    single_quoted_escape_sequence: () => token.immediate(
+      choice(
+        "\\\\",
+        "\\'"
+      )
+    ),
+
     _non_newline_whitespace: () => token.immediate(/[\t ]+/),
+
     comment: () => /#.*/,
+
   },
 });

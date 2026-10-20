@@ -1,0 +1,22 @@
+language = "ini"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/justinmk/tree-sitter-ini"
+upstream_commit = "d1f6ae18e86de3c21bb6ab634ff9ab549ceb1249"
+upstream_version = "1.4.0"
+license = "Apache-2.0"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate ini"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/justinmk/tree-sitter-ini.git"
+revision = "d1f6ae18e86de3c21bb6ab634ff9ab549ceb1249"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

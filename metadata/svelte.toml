@@ -27,3 +27,17 @@ outputs = [
   "uthash.h",
   "vc_vector.h",
 ]
+
+[sync]
+repository = "https://github.com/Himujjal/tree-sitter-svelte"
+revision = "60ea1d673a1a3eeeb597e098d9ada9ed0c79ef4b"
+reference = "HEAD"
+
+[sync.files]
+"allocator.h" = "src/allocator.h"
+"ekstring.h" = "src/ekstring.h"
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"tag.h" = "src/tag.h"
+"uthash.h" = "src/uthash.h"
+"vc_vector.h" = "src/vc_vector.h"

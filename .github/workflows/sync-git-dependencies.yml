@@ -1,0 +1,86 @@
+name: Sync Git dependencies
+
+on:
+  workflow_call:
+    inputs:
+      ci_workflow:
+        description: Workflow file to dispatch after updating Cargo.lock
+        required: false
+        type: string
+        default: ci.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: sync-git-dependencies-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Update locked Git dependencies
+        env:
+          CI_WORKFLOW: ${{ inputs.ci_workflow }}
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          branch=chore/sync-git-dependencies
+          existing=false
+          if [[ -z "${DEFAULT_BRANCH}" || -z "${CI_WORKFLOW}" ]]; then
+            echo "仓库默认分支或 CI workflow 文件名为空" >&2
+            exit 1
+          fi
+
+          if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+            existing=true
+            git fetch origin "${branch}"
+            git switch -c "${branch}" FETCH_HEAD
+            previous=$(git rev-parse HEAD)
+            git -c user.name=github-actions -c user.email=41898282+github-actions[bot]@users.noreply.github.com merge --no-edit "origin/${DEFAULT_BRANCH}"
+          else
+            git switch -c "${branch}"
+            previous=$(git rev-parse HEAD)
+          fi
+
+          metadata_file="${RUNNER_TEMP}/cargo-metadata.json"
+          cargo metadata --locked --format-version 1 > "${metadata_file}"
+          mapfile -t git_packages < <(
+            jq -r '.packages[] | select((.source // "") | startswith("git+")) | .id' "${metadata_file}" | sort -u
+          )
+          if ((${#git_packages[@]} > 0)); then
+            cargo update "${git_packages[@]}"
+          else
+            echo "Cargo.lock 中没有 Git 依赖，跳过 cargo update。"
+          fi
+          cargo metadata --locked --format-version 1 > /dev/null
+
+          lock_changes=$(git status --porcelain -- Cargo.lock)
+          if [[ -z "${lock_changes}" && "$(git rev-parse HEAD)" == "${previous}" ]]; then
+            echo "Cargo.lock 与默认分支均无变化，无需推送。" >> "${GITHUB_STEP_SUMMARY}"
+            if [[ "${existing}" == false ]]; then
+              exit 0
+            fi
+          else
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            if [[ -n "${lock_changes}" ]]; then
+              git add Cargo.lock
+              git commit -m "chore(deps): update Git dependency lockfile"
+            fi
+            git push origin "${branch}"
+          fi
+
+          title=$(node -p 'encodeURIComponent("chore(deps): 更新 Git 依赖锁定")')
+          compare="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${DEFAULT_BRANCH}...${branch}?expand=1&title=${title}"
+          echo "Git 依赖更新分支：[${branch}](${compare})；可从该 Compare 页面创建更新 PR。" >> "${GITHUB_STEP_SUMMARY}"
+          # 已有分支没有新改动时也重试调度，恢复上次推送后中断的 CI。
+          gh workflow run "${CI_WORKFLOW}" --ref "${branch}"
+          echo "更新分支的 CI 已调度；请检查实际运行结果。" >> "${GITHUB_STEP_SUMMARY}"

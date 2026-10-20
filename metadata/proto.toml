@@ -16,3 +16,12 @@ outputs = [
   "node-types.json",
   "parser.c",
 ]
+
+[sync]
+repository = "https://github.com/mitchellh/tree-sitter-proto"
+revision = "42d82fa18f8afe59b5fc0b16c207ee4f84cb185f"
+reference = "HEAD"
+patches = ["patches/proto-declarations.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"

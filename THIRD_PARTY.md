@@ -48,6 +48,42 @@ The recorded upstream revisions identify the source of each snapshot. Local scan
 - Provenance: Tree-sitter CLI 0.27.1's generated public scanner headers, from `tree-sitter/tree-sitter` at tag `v0.27.1` (MIT).
 - Notes: the generator synchronizes these headers from CLI output. All language crates use the shared copies; no grammar-specific copies or runtime-private headers are imported.
 
+## Additional upstream parser crates migrated from kat
+
+Source paths and complete sync mappings are recorded in the linked metadata files. Each revision is the exact source revision used by kat's resolved parser dependency.
+
+| Language | Upstream revision | License | Source metadata |
+| --- | --- | --- | --- |
+| `ada` | [briot/tree-sitter-ada](https://github.com/briot/tree-sitter-ada/tree/dd5fa4cdb3aba91abc687aa68fb1431396fce6a6) `dd5fa4cdb3aba91abc687aa68fb1431396fce6a6` | MIT | [`metadata/ada.toml`](metadata/ada.toml) |
+| `bash` | [tree-sitter-bash](https://github.com/tree-sitter/tree-sitter-bash/tree/a06c2e4415e9bc0346c6b86d401879ffb44058f7) `a06c2e4415e9bc0346c6b86d401879ffb44058f7` | MIT | [`metadata/bash.toml`](metadata/bash.toml) |
+| `batch` | [wharflab/tree-sitter-batch](https://github.com/wharflab/tree-sitter-batch/tree/b5ebbfd167ee4bf8b8ff39d883f9db031a6898f4) `b5ebbfd167ee4bf8b8ff39d883f9db031a6898f4` | MIT | [`metadata/batch.toml`](metadata/batch.toml) |
+| `c` | [tree-sitter-c](https://github.com/tree-sitter/tree-sitter-c/tree/b780e47fc780ddc8da13afa35a3f4ed5c157823d) `b780e47fc780ddc8da13afa35a3f4ed5c157823d` | MIT | [`metadata/c.toml`](metadata/c.toml) |
+| `c_sharp` | [tree-sitter-c-sharp](https://github.com/tree-sitter/tree-sitter-c-sharp/tree/cac6d5fb595f5811a076336682d5d595ac1c9e85) `cac6d5fb595f5811a076336682d5d595ac1c9e85` | MIT | [`metadata/c_sharp.toml`](metadata/c_sharp.toml) |
+| `cel` | [bufbuild/tree-sitter-cel](https://github.com/bufbuild/tree-sitter-cel/tree/fd2e8efaa07e71e46dcc1d5c4c85556a742d8c36) `fd2e8efaa07e71e46dcc1d5c4c85556a742d8c36` | Apache-2.0 | [`metadata/cel.toml`](metadata/cel.toml) |
+| `cfml` | [cfmleditor/tree-sitter-cfml](https://github.com/cfmleditor/tree-sitter-cfml/tree/ffdd4d763b037a1ecbc1635ee1b5510a9f3425df) `ffdd4d763b037a1ecbc1635ee1b5510a9f3425df` | MIT | [`metadata/cfml.toml`](metadata/cfml.toml) |
+| `clojure` | [grammar-orchard/tree-sitter-clojure-orchard](https://codeberg.org/grammar-orchard/tree-sitter-clojure-orchard/src/commit/0ae6bf0e1a3c6db2556adbb3b915ea5e410daae0) `0ae6bf0e1a3c6db2556adbb3b915ea5e410daae0` | CC0-1.0 | [`metadata/clojure.toml`](metadata/clojure.toml) |
+| `cmake` | [uyha/tree-sitter-cmake](https://github.com/uyha/tree-sitter-cmake/tree/e997bd0b275ca525ce9befecedf5299031183661) `e997bd0b275ca525ce9befecedf5299031183661` | MIT | [`metadata/cmake.toml`](metadata/cmake.toml) |
+| `cpp` | [tree-sitter-cpp](https://github.com/tree-sitter/tree-sitter-cpp/tree/f41e1a044c8a84ea9fa8577fdd2eab92ec96de02) `f41e1a044c8a84ea9fa8577fdd2eab92ec96de02` | MIT | [`metadata/cpp.toml`](metadata/cpp.toml) |
+| `css` | [tree-sitter-css](https://github.com/tree-sitter/tree-sitter-css/tree/dda5cfc5722c429eaba1c910ca32c2c0c5bb1a3f) `dda5cfc5722c429eaba1c910ca32c2c0c5bb1a3f` | MIT | [`metadata/css.toml`](metadata/css.toml) |
+| `d` | [gdamore/tree-sitter-d](https://github.com/gdamore/tree-sitter-d/tree/45e5f1e9d6de2c68591bc8e5ec662cf18e950b4a) `45e5f1e9d6de2c68591bc8e5ec662cf18e950b4a` | MIT | [`metadata/d.toml`](metadata/d.toml) |
+| `dart` | [nielsenko/tree-sitter-dart](https://github.com/nielsenko/tree-sitter-dart/tree/b57d734c84f510bbd524097902cab671e4dbfca9) `b57d734c84f510bbd524097902cab671e4dbfca9` | MIT | [`metadata/dart.toml`](metadata/dart.toml) |
+| `diff` | [tree-sitter-grammars/tree-sitter-diff](https://github.com/tree-sitter-grammars/tree-sitter-diff/tree/4867e8470e1b0ad7364c4e3ffab762c361bbb635) `4867e8470e1b0ad7364c4e3ffab762c361bbb635` | MIT | [`metadata/diff.toml`](metadata/diff.toml) |
+| `elixir` | [elixir-lang/tree-sitter-elixir](https://github.com/elixir-lang/tree-sitter-elixir/tree/e2d9e6e0e76b0c436fa48a0b8c32a031d0cbdf49) `e2d9e6e0e76b0c436fa48a0b8c32a031d0cbdf49` | Apache-2.0 | [`metadata/elixir.toml`](metadata/elixir.toml) |
+| `elm` | [elm-tooling/tree-sitter-elm](https://github.com/elm-tooling/tree-sitter-elm/tree/34815684e37cf299477e86a7d1e10d3ecb5486f9) `34815684e37cf299477e86a7d1e10d3ecb5486f9` | MIT | [`metadata/elm.toml`](metadata/elm.toml) |
+| `embedded_template` | [tree-sitter-embedded-template](https://github.com/tree-sitter/tree-sitter-embedded-template/tree/c70c1de07dedd532089c0c90835c8ed9fa694f5c) `c70c1de07dedd532089c0c90835c8ed9fa694f5c` | MIT | [`metadata/embedded_template.toml`](metadata/embedded_template.toml) |
+| `erlang` | [WhatsApp/tree-sitter-erlang](https://github.com/WhatsApp/tree-sitter-erlang/tree/0386a11c835950f5e1ebfbcbf49863d8495de4e0) `0386a11c835950f5e1ebfbcbf49863d8495de4e0` | MIT | [`metadata/erlang.toml`](metadata/erlang.toml) |
+| `go` | [tree-sitter-go](https://github.com/tree-sitter/tree-sitter-go/tree/1547678a9da59885853f5f5cc8a99cc203fa2e2c) `1547678a9da59885853f5f5cc8a99cc203fa2e2c` | MIT | [`metadata/go.toml`](metadata/go.toml) |
+| `groovy` | [amaanq/tree-sitter-groovy](https://github.com/amaanq/tree-sitter-groovy/tree/70efb0b9b50f95bcbd89dcfd42b275e0304e10cf) `70efb0b9b50f95bcbd89dcfd42b275e0304e10cf` | MIT, declared by upstream Cargo manifest | [`metadata/groovy.toml`](metadata/groovy.toml) |
+| `html` | [tree-sitter-html](https://github.com/tree-sitter/tree-sitter-html/tree/5a5ca8551a179998360b4a4ca2c0f366a35acc03) `5a5ca8551a179998360b4a4ca2c0f366a35acc03` | MIT | [`metadata/html.toml`](metadata/html.toml) |
+| `ini` | [justinmk/tree-sitter-ini](https://github.com/justinmk/tree-sitter-ini/tree/d1f6ae18e86de3c21bb6ab634ff9ab549ceb1249) `d1f6ae18e86de3c21bb6ab634ff9ab549ceb1249` | Apache-2.0 | [`metadata/ini.toml`](metadata/ini.toml) |
+| `java` | [tree-sitter-java](https://github.com/tree-sitter/tree-sitter-java/tree/94703d5a6bed02b98e438d7cad1136c01a60ba2c) `94703d5a6bed02b98e438d7cad1136c01a60ba2c` | MIT | [`metadata/java.toml`](metadata/java.toml) |
+| `javascript` | [tree-sitter-javascript](https://github.com/tree-sitter/tree-sitter-javascript/tree/44c892e0be055ac465d5eeddae6d3e194424e7de) `44c892e0be055ac465d5eeddae6d3e194424e7de` | MIT | [`metadata/javascript.toml`](metadata/javascript.toml) |
+| `jsdoc` | [tree-sitter-jsdoc](https://github.com/tree-sitter/tree-sitter-jsdoc/tree/658d18dcdddb75c760363faa4963427a7c6b52db) `658d18dcdddb75c760363faa4963427a7c6b52db` | MIT | [`metadata/jsdoc.toml`](metadata/jsdoc.toml) |
+| `json` | [tree-sitter-json](https://github.com/tree-sitter/tree-sitter-json/tree/ee35a6ebefcef0c5c416c0d1ccec7370cfca5a24) `ee35a6ebefcef0c5c416c0d1ccec7370cfca5a24` | MIT | [`metadata/json.toml`](metadata/json.toml) |
+| `kotlin` | [tree-sitter-grammars/tree-sitter-kotlin](https://github.com/tree-sitter-grammars/tree-sitter-kotlin/tree/77dd60ea0a9003ce062c9728a513ffe1aaff8c82) `77dd60ea0a9003ce062c9728a513ffe1aaff8c82` | MIT | [`metadata/kotlin.toml`](metadata/kotlin.toml) |
+| `lua` | [tree-sitter-grammars/tree-sitter-lua](https://github.com/tree-sitter-grammars/tree-sitter-lua/tree/10fe0054734eec83049514ea2e718b2a56acd0c9) `10fe0054734eec83049514ea2e718b2a56acd0c9` | MIT | [`metadata/lua.toml`](metadata/lua.toml) |
+| `make` | [tree-sitter-grammars/tree-sitter-make](https://github.com/tree-sitter-grammars/tree-sitter-make/tree/5e9e8f8ff3387b0edcaa90f46ddf3629f4cfeb1d) `5e9e8f8ff3387b0edcaa90f46ddf3629f4cfeb1d` | MIT | [`metadata/make.toml`](metadata/make.toml) |
+
 ## CoffeeScript
 
 - Upstream repository: `https://github.com/svkozak/tree-sitter-coffeescript`
@@ -513,6 +549,22 @@ Local generated artifacts:
 - `crates/tree-sitter-kat-fortran-namelist/vendor/fortran_namelist/node-types.json`
 - `crates/tree-sitter-kat-fortran-namelist/vendor/fortran_namelist/parser.c`
 
+## fortran
+
+- Upstream: [stadelmanma/tree-sitter-fortran](https://github.com/stadelmanma/tree-sitter-fortran), package version `0.6.0`
+- Revision: `48593829df8a929bfe58528eedcf405171921005`
+- License: MIT; the upstream license is retained under `upstreams/fortran/LICENSE`.
+- Imported inputs: upstream `grammar.js` and `src/scanner.c` (stored as `grammar.js` and `scanner.c`).
+- Generated assets: `crates/tree-sitter-kat-fortran/vendor/fortran/{.parser-inputs,grammar.json,node-types.json,parser.c,scanner.c}`. Tree-sitter public headers come from the shared `kat-parser-common` crate.
+
+## fsharp and fsharp_signature
+
+- Upstream: [ionide/tree-sitter-fsharp](https://github.com/ionide/tree-sitter-fsharp), package version `0.3.12`
+- Revision: `aefd0c8741bdf3aeb827a228aa4a996a6536697e`
+- License: MIT; upstream license copies are retained under both `upstreams/fsharp/` and `upstreams/fsharp_signature/`.
+- Imported inputs: each language's upstream `grammar.js` and `src/scanner.c`, plus `common/scanner.h`. The signature grammar imports `../fsharp/grammar.js` during generation. Scanner include paths use `common/scanner.h` to match the repository's flattened vendor layout; grammar rules are unchanged.
+- Generated assets: `crates/tree-sitter-kat-fsharp/vendor/fsharp/` and `crates/tree-sitter-kat-fsharp-signature/vendor/fsharp_signature/`, each with `.parser-inputs`, `grammar.json`, `node-types.json`, `parser.c` and `scanner.c`. Tree-sitter public headers come from the shared `kat-parser-common` crate.
+
 ## fstab
 
 Imported source assets:
@@ -735,6 +787,7 @@ Local generated artifacts:
 
 Imported source assets:
 - `upstreams/hcl/grammar.js`
+- `upstreams/hcl/make_grammar.js`
 - `upstreams/hcl/scanner.c`
 
 Original provenance carried over from `kat`:
@@ -742,7 +795,7 @@ Block 1:
 Source: [tree-sitter-grammars/tree-sitter-hcl](https://github.com/tree-sitter-grammars/tree-sitter-hcl)
   Revision: `fad991865fee927dd1de5e172fb3f08ac674d914`
   License: Apache-2.0
-  Notes: repository-local adapted copy of the upstream HCL grammar/scanner, kept as a dedicated runtime for `.hcl` and `.nomad` files.
+  Notes: the upstream modular grammar is retained directly, with a minimal scanner serialization-boundary adaptation for `.hcl` and `.nomad` files. Source and patch mappings are recorded in `metadata/hcl.toml`.
 
 Block 2:
 Sources:
@@ -1147,6 +1200,22 @@ Local generated artifacts:
 - `crates/tree-sitter-kat-stylus/vendor/stylus/node-types.json`
 - `crates/tree-sitter-kat-stylus/vendor/stylus/parser.c`
 
+## systemverilog
+
+- Upstream: [gmlarumbe/tree-sitter-systemverilog](https://github.com/gmlarumbe/tree-sitter-systemverilog), package version `0.4.1`
+- Revision: `3390da8c76a976b6f47d19667accc43e81a1483b`
+- License: MIT; upstream license is retained under `upstreams/systemverilog/LICENSE`.
+- Imported input: upstream `grammar.js`.
+- Generated assets: `crates/tree-sitter-kat-systemverilog/vendor/systemverilog/{.parser-inputs,grammar.json,node-types.json,parser.c}`.
+
+## verilog
+
+- Upstream: [tree-sitter/tree-sitter-verilog](https://github.com/tree-sitter/tree-sitter-verilog), package version `1.0.3`
+- Revision: `521b535e41a5acd2c6539a922d4649bbe8275110`
+- License: MIT; upstream license is retained under `upstreams/verilog/LICENSE`.
+- Imported input: upstream `grammar.js`.
+- Generated assets: `crates/tree-sitter-kat-verilog/vendor/verilog/{.parser-inputs,grammar.json,node-types.json,parser.c}`.
+
 ## svelte
 
 Imported source assets:
@@ -1411,3 +1480,37 @@ Local generated artifacts:
 - `crates/tree-sitter-kat-wgsl/vendor/wgsl/node-types.json`
 - `crates/tree-sitter-kat-wgsl/vendor/wgsl/parser.c`
 - `crates/tree-sitter-kat-wgsl/vendor/wgsl/scanner.c`
+
+
+## 统一接入的外部语法（N–Z）
+
+以下最小源码快照保持 kat 锁定依赖的语法版本。精确来源、复制映射和可重放补丁见各语言 metadata；更新通过统一同步与生成流程完成。
+
+| 语言 | 迁移基线 crate 与版本 | 上游仓库 | Revision | 许可证 |
+| --- | --- | --- | --- | --- |
+| nginx | `tree-sitter-nginx` 1.0.1 | [opa-oz/tree-sitter-nginx](https://github.com/opa-oz/tree-sitter-nginx) | `47ade644d754cce57974aac44d2c9450e823d4f4` | MIT |
+| nix | `tree-sitter-nix` 0.3.0 | [nix-community/tree-sitter-nix](https://github.com/nix-community/tree-sitter-nix) | `ea1d87f7996be1329ef6555dcacfa63a69bd55c6` | MIT |
+| php | `tree-sitter-php` 0.25.1 | [tree-sitter/tree-sitter-php](https://github.com/tree-sitter/tree-sitter-php) | `58d5643086ae60e93a3746cca648363ee97c8761` | MIT |
+| pkl | `tree-sitter-pkl` 0.21.0 | [apple/tree-sitter-pkl](https://github.com/apple/tree-sitter-pkl) | `c837eff683d62f3cb5e6309b44c257640f202d4b` | Apache-2.0 |
+| PowerShell | `tree-sitter-powershell` 0.26.4 | [airbus-cert/tree-sitter-powershell](https://github.com/airbus-cert/tree-sitter-powershell) | `d398441825243b00e317e87e1829b9d6a3e54ce0` | MIT |
+| properties | `tree-sitter-properties` 0.3.0 | [tree-sitter-grammars/tree-sitter-properties](https://github.com/tree-sitter-grammars/tree-sitter-properties) | `579b62f5ad8d96c2bb331f07d1408c92767531d9` | MIT |
+| python | `tree-sitter-python` 0.25.0 | [tree-sitter/tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python) | `293fdc02038ee2bf0e2e206711b69c90ac0d413f` | MIT |
+| regex | `tree-sitter-regex` 0.25.0 | [tree-sitter/tree-sitter-regex](https://github.com/tree-sitter/tree-sitter-regex) | `b2ac15e27fce703d2f37a79ccd94a5c0cbe9720b` | MIT |
+| ruby | `tree-sitter-ruby` 0.23.1 | [tree-sitter/tree-sitter-ruby](https://github.com/tree-sitter/tree-sitter-ruby) | `71bd32fb7607035768799732addba884a37a6210` | MIT |
+| rust | `tree-sitter-rust` 0.24.2 | [tree-sitter/tree-sitter-rust](https://github.com/tree-sitter/tree-sitter-rust) | `77a3747266f4d621d0757825e6b11edcbf991ca5` （发布包原 SHA `e2bee853694a1d3e0f6ef308fe3674542fec95d7` 已不可获取；复制资产与此官方 revision 逐字节一致） | MIT |
+| scala | `tree-sitter-scala` 0.26.2 | [tree-sitter/tree-sitter-scala](https://github.com/tree-sitter/tree-sitter-scala) | `b931fcc338390925eb893d70ad070033f5856ccf` | MIT |
+| sql | `tree-sitter-sequel` 0.3.11 | [derekstride/tree-sitter-sql](https://github.com/derekstride/tree-sitter-sql) | `7b51ecda191d36b92f5a90a8d1bc3faef1c7b8b8` | MIT |
+| solidity | `tree-sitter-solidity` 1.2.13 | [JoranHonig/tree-sitter-solidity](https://github.com/JoranHonig/tree-sitter-solidity) | `4e938a46c7030dd001bc99e1ac0f0c750ac98254` | MIT |
+| swift | `tree-sitter-swift` 0.7.4 | [alex-pinkus/tree-sitter-swift](https://github.com/alex-pinkus/tree-sitter-swift) | `171fa3bc343233fe07f5e17205aaada33d778825` | MIT |
+| toml | `tree-sitter-toml-ng` 0.7.0 | [tree-sitter-grammars/tree-sitter-toml](https://github.com/tree-sitter-grammars/tree-sitter-toml) | `64b56832c2cffe41758f28e05c756a3a98d16f41` | MIT |
+| typescript | `tree-sitter-typescript` 0.23.2 | [tree-sitter/tree-sitter-typescript](https://github.com/tree-sitter/tree-sitter-typescript) | `f975a621f4e7f532fe322e13c4f79495e0a7b2e7` | MIT |
+| tsx | `tree-sitter-typescript` 0.23.2 | [tree-sitter/tree-sitter-typescript](https://github.com/tree-sitter/tree-sitter-typescript) | `f975a621f4e7f532fe322e13c4f79495e0a7b2e7` | MIT |
+| varlink | `tree-sitter-varlink` 0.6.1 | [bachorp/tree-sitter-varlink](https://github.com/bachorp/tree-sitter-varlink) | `49c5cd8922f2707711d0ea127f1c5f4583bda493` | MIT |
+| vhdl | `tree-sitter-vhdl` 1.4.0 | [jpt13653903/tree-sitter-vhdl](https://github.com/jpt13653903/tree-sitter-vhdl) | `889c521757471093ce5ac83502ca8a89e516404e` | MIT |
+| vim | `tree-sitter-vim` 0.4.0 | [tree-sitter-grammars/tree-sitter-vim](https://github.com/tree-sitter-grammars/tree-sitter-vim) | `052279cd5e1d73b075640c64cef97e7bdcd32611` | MIT |
+| xml | `tree-sitter-xml` 0.7.0 | [tree-sitter-grammars/tree-sitter-xml](https://github.com/tree-sitter-grammars/tree-sitter-xml) | `4b64dd3a03ec002258d6268d712fd93716d6ab57` | MIT |
+| yaml | `tree-sitter-yaml` 0.7.2 | [tree-sitter-grammars/tree-sitter-yaml](https://github.com/tree-sitter-grammars/tree-sitter-yaml) | `7708026449bed86239b1cd5bce6e3c34dbca6415` | MIT |
+| zig | `tree-sitter-zig` 1.1.2 | [tree-sitter-grammars/tree-sitter-zig](https://github.com/tree-sitter-grammars/tree-sitter-zig) | `b670c8df85a1568f498aa5c8cae42f51a90473c0` | MIT |
+| zsh | `tree-sitter-zsh` 0.63.4 | [georgeharker/tree-sitter-zsh](https://github.com/georgeharker/tree-sitter-zsh) | `7a593401efb5418ffdedbe3c0e4c61c6d240166d` | MIT |
+
+PHP 只引入 kat 使用的 `php` 语法，不引入独立的 `php_only`。TypeScript 与 TSX 使用锁定版本自带的展开 `grammar.json`，避免引入与该版本不匹配的 JavaScript grammar。PHP/XML 等相对路径适配明确记录在 `patches/` 中。

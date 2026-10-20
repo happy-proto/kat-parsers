@@ -1,7 +1,9 @@
+/// <reference types="tree-sitter-cli/dsl" />
+
 const PREC = {
   IMMEDIATE_CHILD: 1,
 
-  // Prefer a string over a comment.
+  // Prefer a string over a comment
   COMMENT: 1,
   STRING: 2,
 
@@ -10,10 +12,13 @@ const PREC = {
 
 const IDENTIFIER = /[a-zA-Z0-9.\-_$]+/;
 
-module.exports = grammar({
+export default grammar({
   name: "query",
 
-  extras: ($) => [$.comment, /\s+/],
+  extras: $ => [
+    $.comment,
+    /\s+/,
+  ],
 
   rules: {
     program: ($) => repeat($._definition),
@@ -59,15 +64,15 @@ module.exports = grammar({
         ),
       ),
 
-    quantifier: () => choice("*", "+", "?"),
+    quantifier: _ => choice("*", "+", "?"),
 
     identifier: () => IDENTIFIER,
     _immediate_identifier: ($) => alias(token.immediate(IDENTIFIER), $.identifier),
-    _node_identifier: ($) => choice($.identifier, prec(PREC.WILDCARD_NODE, "_")),
-    capture: ($) => seq("@", field("name", $._immediate_identifier)),
+    _node_identifier: $ => choice($.identifier, prec(PREC.WILDCARD_NODE, "_")),
+    capture: $ => seq("@", field("name", $._immediate_identifier)),
     string: ($) => $._string,
     parameters: ($) => repeat1(choice($.capture, $.string, $._node_identifier)),
-    comment: () => token(prec(PREC.COMMENT, seq(";", /.*/))),
+    comment: _ => token(prec(PREC.COMMENT, seq(";", /.*/))),
     list: ($) => seq("[", repeat($._definition), "]", quantifier($), captures($)),
 
     grouping: ($) =>
@@ -101,10 +106,10 @@ module.exports = grammar({
         captures($),
       ),
 
-    _field_name: ($) => seq($.identifier, ":"),
+    _field_name: $ => seq($.identifier, ":"),
     field_definition: ($) => seq(field("name", $._field_name), $._definition),
 
-    negated_field: ($) => seq("!", $.identifier),
+    negated_field: $ => seq("!", $.identifier),
 
     predicate: ($) =>
       seq(
@@ -116,8 +121,8 @@ module.exports = grammar({
         field("parameters", $.parameters),
         ")",
       ),
-    predicate_type: () => token.immediate(choice("?", "!")),
-  },
+    predicate_type: _ => token.immediate(choice("?", "!")),
+  }
 });
 
 function captures($) {
@@ -129,5 +134,8 @@ function quantifier($) {
 }
 
 function immediate_child(expression) {
-  return prec.left(PREC.IMMEDIATE_CHILD, seq(expression, ".", expression));
+  return prec.left(
+    PREC.IMMEDIATE_CHILD,
+    seq(expression, ".", expression),
+  );
 }

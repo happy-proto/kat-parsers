@@ -17,6 +17,7 @@ tree-sitter = "0.27.1"
 
 [dependencies]
 tree-sitter-language = "0.1.7"
+kat-parser-runtime = { path = "../kat-parser-runtime" }
 
 [build-dependencies]
 kat-parser-common = { path = "../kat-parser-common" }

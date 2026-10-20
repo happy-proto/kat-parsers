@@ -1,0 +1,13 @@
+diff --git a/grammar.js b/grammar.js
+index 059d738..e322fc3 100644
+--- a/grammar.js
++++ b/grammar.js
+@@ -11,7 +11,7 @@
+ /// <reference types="tree-sitter-cli/dsl" />
+ // @ts-check
+ 
+-module.exports = grammar(require("../fsharp/grammar"), {
++module.exports = grammar(require("./common/fsharp-grammar"), {
+   name: "fsharp_signature",
+ 
+   conflicts: ($) => [

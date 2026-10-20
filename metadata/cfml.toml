@@ -1,0 +1,26 @@
+language = "cfml"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/cfmleditor/tree-sitter-cfml"
+upstream_commit = "ffdd4d763b037a1ecbc1635ee1b5510a9f3425df"
+upstream_version = "0.26.43"
+license = "MIT"
+[copied]
+files = ["grammar.js", "scanner.c", "common/define-grammar.js", "common/scanner.h", "common/tag.h", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate cfml"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]
+
+[sync]
+repository = "https://github.com/cfmleditor/tree-sitter-cfml.git"
+revision = "ffdd4d763b037a1ecbc1635ee1b5510a9f3425df"
+reference = "HEAD"
+patches = ["patches/cfml-scanner.patch"]
+
+[sync.files]
+"grammar.js" = "cfml/grammar.js"
+"scanner.c" = "cfml/src/scanner.c"
+"common/define-grammar.js" = "common/define-grammar.js"
+"common/scanner.h" = "common/scanner.h"
+"common/tag.h" = "common/tag.h"
+"LICENSE" = "LICENSE"

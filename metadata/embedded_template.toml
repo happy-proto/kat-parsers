@@ -1,0 +1,22 @@
+language = "embedded_template"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/tree-sitter/tree-sitter-embedded-template"
+upstream_commit = "c70c1de07dedd532089c0c90835c8ed9fa694f5c"
+upstream_version = "0.25.0"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate embedded_template"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+repository = "https://github.com/tree-sitter/tree-sitter-embedded-template.git"
+revision = "c70c1de07dedd532089c0c90835c8ed9fa694f5c"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"LICENSE" = "LICENSE"

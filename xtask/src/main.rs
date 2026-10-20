@@ -1,3 +1,6 @@
+mod headers;
+mod packing;
+
 use std::ffi::OsStr;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -8,6 +11,8 @@ use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use serde::Deserialize;
 use tempfile::TempDir;
+
+mod upstreams;
 
 const PARSER_STAMP_FILE: &str = ".parser-inputs";
 const TREE_SITTER_ABI_VERSION: &str = "15";
@@ -20,6 +25,8 @@ const COMMON_CRATE_NAME: &str = "kat-parser-common";
 #[derive(Debug, Deserialize)]
 struct GrammarMetadata {
     language: String,
+    #[serde(default)]
+    grammar_file: Option<String>,
     #[serde(default)]
     generator_support_files: Vec<String>,
     copied: CopiedFiles,
@@ -50,6 +57,17 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// 批量同步上游 grammar、scanner 和许可证，并固定实际 Git revision。
+    Sync {
+        #[arg(value_name = "LANGUAGE")]
+        language: Option<String>,
+        /// 只检查更新，不修改工作区。
+        #[arg(long)]
+        check: bool,
+        /// 重放已锁定的 revision，不追踪远端新提交。
+        #[arg(long)]
+        locked: bool,
+    },
     /// Regenerate vendored parser artifacts.
     Generate {
         /// Only regenerate the named grammar; defaults to all registered grammars when omitted.
@@ -66,6 +84,11 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
+        Commands::Sync {
+            language,
+            check,
+            locked,
+        } => upstreams::sync(&repo_root, language.as_deref(), check, locked),
         Commands::Generate { language, force } => generate(&repo_root, language.as_deref(), force),
     }
 }
@@ -177,7 +200,23 @@ fn generate_one(
     }
     // Since 0.27, ABI 15 requires no synthetic tree-sitter.json. A single
     // invocation produces all three artifacts.
-    run_tree_sitter_generate_parser(&workspace_dir)?;
+    let grammar_file = spec
+        .metadata
+        .grammar_file
+        .as_deref()
+        .unwrap_or("grammar.js");
+    if !generator_input_files(spec).contains(&grammar_file) {
+        bail!("grammar entrypoint {grammar_file} must be declared in copied.files");
+    }
+    run_tree_sitter_generate_parser(&workspace_dir, grammar_file)?;
+    if grammar_file.ends_with(".json") {
+        // CLI 读取展开 JSON 时只生成 C 和 node-types，保留输入作为公开 GRAMMAR。
+        copy_file(
+            &workspace_dir.join(grammar_file),
+            &workspace_dir.join("src/grammar.json"),
+        )?;
+    }
+    headers::normalize_array_header(&workspace_dir.join("src/tree_sitter/array.h"))?;
     // Use the generator's public scanner headers, not runtime-private headers
     // or historical copies bundled with individual upstream grammars.
     for header in SHARED_HEADERS {
@@ -186,6 +225,10 @@ fn generate_one(
             &shared_include_dir.join(header),
         )?;
     }
+    packing::pack(
+        &workspace_dir.join("src/parser.c"),
+        &workspace_dir.join("src"),
+    )?;
     for file in GENERATED_FILES {
         copy_file(
             &workspace_dir.join("src").join(file),
@@ -333,6 +376,7 @@ tree-sitter = "0.27.1"
 
 [dependencies]
 tree-sitter-language = "0.1.7"
+kat-parser-runtime = {{ path = "../kat-parser-runtime" }}
 
 [build-dependencies]
 kat-parser-common = {{ path = "../kat-parser-common" }}
@@ -356,14 +400,31 @@ fn write_language_crate_lib(
 }
 
 fn language_crate_lib_rs(spec: &GrammarSpec, symbol_name: &str) -> String {
+    let binding = if symbol_name.ends_with("_compressed") {
+        format!(
+            r#"unsafe extern "C" {{
+    fn {symbol_name}(decode: unsafe extern "C" fn(*const u8, usize, usize, usize) -> *const u8) -> *const ();
+}}
+unsafe extern "C" fn language() -> *const () {{
+    static LANGUAGE_POINTER: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+    *LANGUAGE_POINTER.get_or_init(|| unsafe {{ {symbol_name}(kat_parser_runtime::decode) as usize }}) as *const ()
+}}
+pub const LANGUAGE: LanguageFn = unsafe {{ LanguageFn::from_raw(language) }};
+"#
+        )
+    } else {
+        format!(
+            r#"unsafe extern "C" {{
+    fn {symbol_name}() -> *const ();
+}}
+pub const LANGUAGE: LanguageFn = unsafe {{ LanguageFn::from_raw({symbol_name}) }};
+"#
+        )
+    };
     format!(
         r#"use tree_sitter_language::LanguageFn;
 
-unsafe extern "C" {{
-    fn {symbol_name}() -> *const ();
-}}
-
-pub const LANGUAGE: LanguageFn = unsafe {{ LanguageFn::from_raw({symbol_name}) }};
+{binding}
 pub const GRAMMAR: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/vendor/{language}/grammar.json"
@@ -389,7 +450,7 @@ mod tests {{
 }}
 "#,
         language = spec.metadata.language,
-        symbol_name = symbol_name
+        binding = binding
     )
 }
 
@@ -441,6 +502,14 @@ fn aggregate_lib_rs(specs: &[GrammarSpec]) -> String {
             const_prefix = spec.constant_prefix
         ));
     }
+    output.push_str("#[cfg(test)]\nmod tests {\n    #[test]\n    fn all_language_getters_link_and_initialize() {\n        for (name, getter) in [\n");
+    for spec in specs {
+        output.push_str(&format!(
+            "            (\"{}\", super::{}_LANGUAGE.into_raw()),\n",
+            spec.metadata.language, spec.constant_prefix
+        ));
+    }
+    output.push_str("        ] {\n            assert!(!unsafe { getter() }.is_null(), \"{name}\");\n        }\n    }\n}\n");
     output.trim_end().to_owned() + "\n"
 }
 
@@ -535,7 +604,7 @@ fn file_extension(path: &str) -> Option<&str> {
 }
 
 fn is_generator_extension(extension: &str) -> bool {
-    matches!(extension, "js" | "json")
+    matches!(extension, "js" | "json" | "mjs" | "cjs")
 }
 
 fn is_license_file(path: &str) -> bool {
@@ -582,6 +651,32 @@ fn tree_sitter_version() -> Result<String> {
 
 fn compute_parser_input_hash(spec: &GrammarSpec, cli_version: &str) -> Result<String> {
     let mut hasher = blake3::Hasher::new();
+    hash_bytes(
+        &mut hasher,
+        b"grammar-file",
+        spec.metadata
+            .grammar_file
+            .as_deref()
+            .unwrap_or("grammar.js")
+            .as_bytes(),
+    );
+    hash_bytes(
+        &mut hasher,
+        b"zstd-version",
+        zstd::zstd_safe::version_string().as_bytes(),
+    );
+    hash_bytes(&mut hasher, b"packer-version", packing::VERSION.as_bytes());
+    hash_bytes(&mut hasher, b"packer-source", include_bytes!("packing.rs"));
+    hash_bytes(
+        &mut hasher,
+        b"scanner-headers",
+        include_bytes!("headers.rs"),
+    );
+    hash_bytes(
+        &mut hasher,
+        b"packer-exporter",
+        packing::EXPORTER.as_bytes(),
+    );
     hash_bytes(&mut hasher, b"tree-sitter-cli", cli_version.as_bytes());
     hash_bytes(
         &mut hasher,
@@ -654,13 +749,14 @@ fn stamp_matches(path: &Path, expected: &str) -> bool {
         .unwrap_or(false)
 }
 
-fn run_tree_sitter_generate_parser(temp_root: &Path) -> Result<()> {
+fn run_tree_sitter_generate_parser(temp_root: &Path, grammar_file: &str) -> Result<()> {
     // Keep the generator out of xtask's dependency graph: a prebuilt, optimized
     // CLI avoids choosing between compiling the generator quickly and running
     // it quickly. Node handles both CommonJS and the CSS ES module imported by
     // Less/SCSS; QuickJS's require loader cannot load that module.
     let status = Command::new("tree-sitter")
         .arg("generate")
+        .arg(grammar_file)
         .arg("--abi")
         .arg(TREE_SITTER_ABI_VERSION)
         .arg("--js-runtime")
@@ -899,6 +995,7 @@ mod tests {
         Ok(GrammarSpec {
             metadata: GrammarMetadata {
                 language: "fixture".to_owned(),
+                grammar_file: None,
                 generator_support_files: vec!["../shared/token.js".to_owned()],
                 copied: CopiedFiles {
                     files: vec!["grammar.js".to_owned(), "scanner.c".to_owned()],
@@ -1033,10 +1130,40 @@ mod tests {
     #[test]
     fn cli_version_invalidates_the_generation_cache() -> Result<()> {
         let dir = TempDir::new()?;
-        let spec = fixture(dir.path())?;
+        let mut spec = fixture(dir.path())?;
         assert_ne!(
             compute_parser_input_hash(&spec, "tree-sitter 0.27.0")?,
             compute_parser_input_hash(&spec, "tree-sitter 0.27.1")?,
+        );
+        let before = compute_parser_input_hash(&spec, "tree-sitter 0.27.1")?;
+        spec.metadata.grammar_file = Some("grammar.json".to_owned());
+        assert_ne!(
+            before,
+            compute_parser_input_hash(&spec, "tree-sitter 0.27.1")?
+        );
+        Ok(())
+    }
+
+    #[test]
+    #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
+    fn expanded_json_is_a_self_contained_generation_input() -> Result<()> {
+        let dir = TempDir::new()?;
+        let mut spec = fixture(dir.path())?;
+        let version = tree_sitter_version()?;
+        let include = dir
+            .path()
+            .join("crates/kat-parser-common/include/tree_sitter");
+        generate_one(&spec, &version, true, &include)?;
+        let json = fs::read(spec.vendor_dir.join("grammar.json"))?;
+        write_bytes(&spec.upstream_dir.join("grammar.json"), &json)?;
+        spec.metadata.grammar_file = Some("grammar.json".to_owned());
+        spec.metadata.generator_support_files.clear();
+        spec.metadata.copied.files = vec!["grammar.json".to_owned(), "scanner.c".to_owned()];
+        generate_one(&spec, &version, true, &include)?;
+        assert_eq!(fs::read(spec.vendor_dir.join("grammar.json"))?, json);
+        assert!(
+            fs::read_to_string(spec.vendor_dir.join("parser.c"))?
+                .contains("#define LANGUAGE_VERSION 15")
         );
         Ok(())
     }

@@ -1,0 +1,19 @@
+--- a/scanner.cc
++++ b/scanner.cc
+@@ -1,6 +1,16 @@
+ #include <tree_sitter/parser.h>
+ 
++#define tree_sitter_html_external_scanner_create tree_sitter_vue_html_external_scanner_create
++#define tree_sitter_html_external_scanner_destroy tree_sitter_vue_html_external_scanner_destroy
++#define tree_sitter_html_external_scanner_scan tree_sitter_vue_html_external_scanner_scan
++#define tree_sitter_html_external_scanner_serialize tree_sitter_vue_html_external_scanner_serialize
++#define tree_sitter_html_external_scanner_deserialize tree_sitter_vue_html_external_scanner_deserialize
+ #include "./tree_sitter_html/scanner.cc"
++#undef tree_sitter_html_external_scanner_create
++#undef tree_sitter_html_external_scanner_destroy
++#undef tree_sitter_html_external_scanner_scan
++#undef tree_sitter_html_external_scanner_serialize
++#undef tree_sitter_html_external_scanner_deserialize
+ 
+ extern "C" {
+ 

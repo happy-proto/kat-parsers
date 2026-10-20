@@ -1,0 +1,43 @@
+language = "php"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 parser 依赖统一迁入 kat-parsers"
+reason = "保留锁定版本的上游 php grammar、scanner 与必要支持文件，并纳入统一 parser crate，避免 Kat 单独维护第三方 Rust parser 依赖。"
+upstream_repo = "https://github.com/tree-sitter/tree-sitter-php"
+upstream_commit = "58d5643086ae60e93a3746cca648363ee97c8761"
+upstream_version = "0.25.1"
+upstream_path = "php"
+upstream_crate = "tree-sitter-php"
+license = "MIT"
+
+[sync]
+repository = "https://github.com/tree-sitter/tree-sitter-php.git"
+revision = "58d5643086ae60e93a3746cca648363ee97c8761"
+reference = "HEAD"
+patches = ["patches/php/paths.patch"]
+
+[sync.files]
+"grammar.js" = "php/grammar.js"
+"common/define-grammar.js" = "common/define-grammar.js"
+"scanner.c" = "php/src/scanner.c"
+"scanner.h" = "common/scanner.h"
+"LICENSE" = "LICENSE"
+
+[copied]
+files = [
+  "grammar.js",
+  "common/define-grammar.js",
+  "scanner.c",
+  "scanner.h",
+  "LICENSE",
+]
+
+[generated]
+command = "cargo run -p xtask -- generate php"
+outputs = [
+  ".parser-inputs",
+  "grammar.json",
+  "node-types.json",
+  "parser.c",
+  "scanner.c",
+]
+language = "php"

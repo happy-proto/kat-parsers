@@ -8,7 +8,7 @@
 
 #define LANGUAGE_VERSION 15
 #define STATE_COUNT 15
-#define LARGE_STATE_COUNT 4
+#define LARGE_STATE_COUNT 2
 #define SYMBOL_COUNT 15
 #define ALIAS_COUNT 0
 #define TOKEN_COUNT 9
@@ -318,113 +318,27 @@ static const TSLexerMode ts_lex_modes[STATE_COUNT] = {
 };
 
 static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
-  [STATE(0)] = {
-    [ts_builtin_sym_end] = ACTIONS(1),
-    [anon_sym_COLON] = ACTIONS(1),
-    [anon_sym_EQ] = ACTIONS(1),
-    [anon_sym_SLASH_SLASH] = ACTIONS(1),
-    [anon_sym_POUND] = ACTIONS(1),
-    [sym_name] = ACTIONS(1),
-    [sym_cache_type] = ACTIONS(1),
-    [sym__newline] = ACTIONS(1),
-  },
-  [STATE(1)] = {
-    [sym_source_file] = STATE(9),
-    [sym_entry] = STATE(2),
-    [sym_comment] = STATE(2),
-    [sym__blank_line] = STATE(2),
-    [aux_sym_source_file_repeat1] = STATE(2),
-    [ts_builtin_sym_end] = ACTIONS(3),
-    [anon_sym_SLASH_SLASH] = ACTIONS(5),
-    [anon_sym_POUND] = ACTIONS(7),
-    [sym_name] = ACTIONS(9),
-    [sym__newline] = ACTIONS(11),
-  },
-  [STATE(2)] = {
-    [sym_entry] = STATE(3),
-    [sym_comment] = STATE(3),
-    [sym__blank_line] = STATE(3),
-    [aux_sym_source_file_repeat1] = STATE(3),
-    [ts_builtin_sym_end] = ACTIONS(13),
-    [anon_sym_SLASH_SLASH] = ACTIONS(5),
-    [anon_sym_POUND] = ACTIONS(7),
-    [sym_name] = ACTIONS(9),
-    [sym__newline] = ACTIONS(15),
-  },
-  [STATE(3)] = {
-    [sym_entry] = STATE(3),
-    [sym_comment] = STATE(3),
-    [sym__blank_line] = STATE(3),
-    [aux_sym_source_file_repeat1] = STATE(3),
-    [ts_builtin_sym_end] = ACTIONS(17),
-    [anon_sym_SLASH_SLASH] = ACTIONS(19),
-    [anon_sym_POUND] = ACTIONS(22),
-    [sym_name] = ACTIONS(25),
-    [sym__newline] = ACTIONS(28),
-  },
+{
+  0x1, 0x1, 0x1, 0x1, 0x1, 0x0, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+},
+{
+  0x3, 0x0, 0x0, 0x5, 0x7, 0x0, 0x9, 0x0, 0xb, 0x9, 0x2, 0x2, 0x0, 0x2, 0x2,
+},
 };
 
-static const uint16_t ts_small_parse_table[] = {
-  [0] = 2,
-    ACTIONS(33), 2,
-      anon_sym_SLASH_SLASH,
-      sym_name,
-    ACTIONS(31), 3,
-      ts_builtin_sym_end,
-      anon_sym_POUND,
-      sym__newline,
-  [10] = 2,
-    ACTIONS(37), 2,
-      anon_sym_SLASH_SLASH,
-      sym_name,
-    ACTIONS(35), 3,
-      ts_builtin_sym_end,
-      anon_sym_POUND,
-      sym__newline,
-  [20] = 2,
-    ACTIONS(39), 1,
-      aux_sym_comment_token1,
-    STATE(14), 1,
-      sym_value,
-  [27] = 1,
-    ACTIONS(41), 1,
-      aux_sym_comment_token1,
-  [31] = 1,
-    ACTIONS(43), 1,
-      anon_sym_COLON,
-  [35] = 1,
-    ACTIONS(45), 1,
-      ts_builtin_sym_end,
-  [39] = 1,
-    ACTIONS(47), 1,
-      sym__newline,
-  [43] = 1,
-    ACTIONS(49), 1,
-      sym_cache_type,
-  [47] = 1,
-    ACTIONS(51), 1,
-      anon_sym_EQ,
-  [51] = 1,
-    ACTIONS(53), 1,
-      sym__newline,
-  [55] = 1,
-    ACTIONS(55), 1,
-      sym__newline,
+static const unsigned char ts_compact_zstd[] = {
+  0x28, 0xb5, 0x2f, 0xfd, 0x60, 0x4, 0x0, 0xe5, 0x3, 0x0, 0xa2, 0xd, 0x1b, 0x19, 0x20, 0x77,
+  0x5a, 0x3, 0x30, 0x32, 0x19, 0xc, 0x31, 0x20, 0x3b, 0xf0, 0x8a, 0xe, 0xe4, 0x83, 0xf8, 0xf5,
+  0x7f, 0xeb, 0x25, 0xbd, 0x89, 0x4c, 0x1, 0xf, 0x1d, 0xf4, 0xcf, 0x3d, 0xef, 0x9c, 0xf3, 0xcd,
+  0x35, 0xcf, 0xfc, 0xf2, 0xc8, 0xf, 0xff, 0xea, 0xc5, 0x58, 0xde, 0xe8, 0xad, 0xbc, 0xd4, 0x4b,
+  0x79, 0xab, 0x77, 0xf2, 0x7e, 0x25, 0xef, 0xbd, 0x90, 0x77, 0x7a, 0x1f, 0xef, 0xe0, 0xbd, 0x4e,
+  0xaf, 0x83, 0xd1, 0x18, 0xad, 0x4a, 0x67, 0x15, 0x5b, 0x36, 0xba, 0x18, 0x25, 0xb6, 0x17, 0x51,
+  0x7a, 0xf, 0xd9, 0x6b, 0xf8, 0x2d, 0x6c, 0xaf, 0x56, 0xc1, 0x40, 0x29, 0x5b, 0xbd, 0x84, 0x5f,
+  0x6b, 0x7b, 0x1, 0xa5, 0x97, 0xca, 0xde, 0x69, 0xb, 0x4, 0x0, 0xbf, 0x33, 0x3, 0x30, 0xec,
+  0xcd, 0x4c, 0x1c, 0x6f, 0x56, 0x51,
 };
 
-static const uint32_t ts_small_parse_table_map[] = {
-  [SMALL_STATE(4)] = 0,
-  [SMALL_STATE(5)] = 10,
-  [SMALL_STATE(6)] = 20,
-  [SMALL_STATE(7)] = 27,
-  [SMALL_STATE(8)] = 31,
-  [SMALL_STATE(9)] = 35,
-  [SMALL_STATE(10)] = 39,
-  [SMALL_STATE(11)] = 43,
-  [SMALL_STATE(12)] = 47,
-  [SMALL_STATE(13)] = 51,
-  [SMALL_STATE(14)] = 55,
-};
+
 
 static const TSParseActionEntry ts_parse_actions[] = {
   [0] = {.entry = {.count = 0, .reusable = false}},
@@ -467,8 +381,9 @@ extern "C" {
 #define TS_PUBLIC __attribute__((visibility("default")))
 #endif
 
-TS_PUBLIC const TSLanguage *tree_sitter_cmakecache(void) {
-  static const TSLanguage language = {
+/* KAT_COMPRESSED_TABLE_V1: LE uint16 data, aligned LE uint32 map. */
+TS_PUBLIC const TSLanguage *tree_sitter_cmakecache_compressed(const unsigned char *(*decode)(const unsigned char *, size_t, size_t, size_t)) {
+  static TSLanguage language = {
     .abi_version = LANGUAGE_VERSION,
     .symbol_count = SYMBOL_COUNT,
     .alias_count = ALIAS_COUNT,
@@ -481,8 +396,8 @@ TS_PUBLIC const TSLanguage *tree_sitter_cmakecache(void) {
     .field_count = FIELD_COUNT,
     .max_alias_sequence_length = MAX_ALIAS_SEQUENCE_LENGTH,
     .parse_table = &ts_parse_table[0][0],
-    .small_parse_table = ts_small_parse_table,
-    .small_parse_table_map = ts_small_parse_table_map,
+    .small_parse_table = NULL,
+    .small_parse_table_map = NULL,
     .parse_actions = ts_parse_actions,
     .symbol_names = ts_symbol_names,
     .field_names = ts_field_names,
@@ -503,6 +418,9 @@ TS_PUBLIC const TSLanguage *tree_sitter_cmakecache(void) {
       .patch_version = 0,
     },
   };
+  const unsigned char *data = decode(ts_compact_zstd, sizeof(ts_compact_zstd), 260, 208);
+  language.small_parse_table = (const uint16_t *)data;
+  language.small_parse_table_map = (const uint32_t *)(data + 208);
   return &language;
 }
 #ifdef __cplusplus

@@ -18,3 +18,13 @@ outputs = [
   "parser.c",
   "scanner.c",
 ]
+
+[sync]
+repository = "https://github.com/camdencheek/tree-sitter-dockerfile"
+revision = "971acdd908568b4531b0ba28a445bf0bb720aba5"
+reference = "HEAD"
+patches = ["patches/dockerfile-json-nodes.patch"]
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
