@@ -1,1 +1,5 @@
-crates/tree-sitter-kat-*/vendor/** linguist-generated=true
+# 只折叠生成产物，保留 grammar、scanner 和补丁的正常 diff。
+crates/tree-sitter-kat-*/vendor/**/parser.c linguist-generated=true
+crates/tree-sitter-kat-*/vendor/**/grammar.json linguist-generated=true
+crates/tree-sitter-kat-*/vendor/**/node-types.json linguist-generated=true
+crates/tree-sitter-kat-*/vendor/**/.parser-inputs linguist-generated=true
