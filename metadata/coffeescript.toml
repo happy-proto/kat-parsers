@@ -25,6 +25,8 @@ outputs = [
 repository = "https://github.com/svkozak/tree-sitter-coffeescript"
 revision = "3bb4dbd68ca926c76b3baadb529da4de3726ea37"
 reference = "HEAD"
+# 清理 CLI 0.27.1 确认冗余的冲突声明；parser 和 node-types 保持不变。
+patches = ["patches/coffeescript-unused-conflicts.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"
