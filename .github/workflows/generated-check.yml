@@ -25,3 +25,28 @@ jobs:
       - run: cargo test -p xtask -- --include-ignored
       - run: cargo run -p xtask -- generate --force
       - run: git diff --exit-code
+
+  profile-experiment:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: optimized-zstd
+            opt-level: 0
+          - name: optimized-all
+            opt-level: 3
+    name: profile-experiment (${{ matrix.name }})
+    env:
+      CARGO_PROFILE_DEV_OPT_LEVEL: ${{ matrix.opt-level }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm install -g tree-sitter-cli@0.27.1
+      - run: tree-sitter --version
+      - run: cargo --config 'profile.dev.package.zstd-sys.opt-level=3' run -p xtask -- sync --locked --check
+      - run: cargo --config 'profile.dev.package.zstd-sys.opt-level=3' test -p xtask -- --include-ignored
+      - run: cargo --config 'profile.dev.package.zstd-sys.opt-level=3' run -p xtask -- generate --force
+      - run: git diff --exit-code
