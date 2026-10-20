@@ -15,6 +15,7 @@ jobs:
   generated-check:
     runs-on: ubuntu-latest
     env:
+      # Optimize xtask and its dependencies for CPU-heavy table packing.
       CARGO_PROFILE_DEV_OPT_LEVEL: 3
     steps:
       - uses: actions/checkout@v7
