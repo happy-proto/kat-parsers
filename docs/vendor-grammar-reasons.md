@@ -14,6 +14,8 @@
 
 ## 没有可用的 crates.io grammar crate
 
+- `csh`：现有社区 tcsh grammar 仅覆盖占位词与字符串，无法用于真实激活脚本。依据 tcsh 官方手册独立维护 MIT grammar，提供 C shell/tcsh 源码高亮；覆盖边界见 [`../metadata/csh.toml`](../metadata/csh.toml) 与 [`../THIRD_PARTY.md`](../THIRD_PARTY.md)。
+
 - `graph_easy`：没有可直接使用的 parser，依据 Graph::Easy 常见 DSL 独立编写 MIT grammar。与 DOT 分离，支持节点、边标签、属性及分组等源码结构；行为参考与边界见 [`../metadata/graph_easy.toml`](../metadata/graph_easy.toml)。
 
 - `git_config`

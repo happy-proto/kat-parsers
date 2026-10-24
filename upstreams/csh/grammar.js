@@ -1,0 +1,57 @@
+// Independently authored from the tcsh manual for source highlighting.
+// C shell has its own control syntax and substitution rules; this is not Bash.
+module.exports = grammar({
+  name: 'csh',
+  extras: $ => [/[ \t\r]+/, /\\\r?\n/, $.comment],
+  rules: {
+    source_file: $ => repeat(choice($._separator, $._statement)),
+    comment: _ => token(seq('#', /[^\n]*/)),
+    _separator: _ => choice('\n', ';'),
+    _statement: $ => choice($.if_statement, $.foreach_statement,
+      $.while_statement, $.switch_statement, $.command_list),
+    _body: $ => repeat1(choice($._separator, $._statement)),
+    if_statement: $ => seq('if', $.condition, choice(
+      seq('then', $._separator, optional($._body),
+        repeat($.else_if_clause), optional($.else_clause), 'endif'),
+      $.command_list)),
+    else_if_clause: $ => prec.right(seq('else', 'if', $.condition, 'then', $._separator, optional($._body))),
+    else_clause: $ => prec.right(seq('else', $._separator, optional($._body))),
+    foreach_statement: $ => seq('foreach', field('variable', $.word),
+      $.list, $._separator, optional($._body), 'end'),
+    while_statement: $ => seq('while', $.condition, $._separator, optional($._body), 'end'),
+    switch_statement: $ => seq('switch', $.condition, $._separator,
+      repeat(choice($._separator, $.case_clause)), 'endsw'),
+    case_clause: $ => prec.right(seq(choice(seq('case', $.case_pattern), 'default:'),
+      $._separator, optional($._body))),
+    case_pattern: _ => token(prec(1, /([^:\s"'\\]|\\.|"[^"]*"|'[^']*')+:/)),
+    condition: $ => seq('(', repeat($.expression), ')'),
+    expression: $ => choice($._argument, $.condition, $.expression_operator),
+    expression_operator: _ => choice('==', '!=', '=~', '!~', '<=', '>=',
+      '&&', '||', '!', '<', '>', '+', '-', '*', '/', '%', '&', '|', '^', '~'),
+    command_list: $ => prec.right(seq($.command,
+      repeat(seq(choice('|', '|&', '&&', '||'), $.command)), optional('&'))),
+    command: $ => prec.right(seq(field('name', $._argument),
+      repeat(choice($._argument, $.list, $.redirection)))),
+    list: $ => seq('(', repeat($._argument), ')'),
+    redirection: $ => seq(choice('<', '<<', '>', '>!', '>&', '>&!',
+      '>>', '>>!', '>>&', '>>&!'), $._argument),
+    _argument: $ => choice($.word, $.number, $.variable,
+      $.double_quoted_string, $.single_quoted_string, $.command_substitution,
+      $.escape_sequence),
+    // Delimiters remain individual syntax tokens. Adjacent fragments are
+    // intentionally independent: shell words need not become semantic values.
+    word: _ => token(prec(-1, /[^\s;|&<>()"'`$\\#]+/)),
+    number: _ => token(prec(1, /[0-9]+/)),
+    variable: _ => token(/\$(\{[?#]?([A-Za-z_][A-Za-z0-9_]*|[0-9]+)(\[[^\]\n]*\])?(:[ghqrxteul]+)*\}|[?#]?([A-Za-z_][A-Za-z0-9_]*|[0-9]+)(\[[^\]\n]*\])?(:[ghqrxteul]+)*|[$!*<])/),
+    single_quoted_string: _ => token(seq("'", /([^'\\]|\\[\s\S])*/, "'")),
+    double_quoted_string: $ => seq('"', repeat(choice($.string_content,
+      $.variable, $.command_substitution, $.escape_sequence, '$')), '"'),
+    string_content: _ => token.immediate(prec(1, /[^"$`\\]+/)),
+    escape_sequence: _ => token(/\\[\s\S]/),
+    // Backticks are not recursively nested in csh; embedded backticks must be
+    // escaped. Keep the command text intact, with variable/escape captures.
+    command_substitution: $ => seq('`', repeat(choice($.substitution_content,
+      $.variable, $.escape_sequence, '$')), '`'),
+    substitution_content: _ => token.immediate(prec(1, /[^`$\\]+/)),
+  },
+});

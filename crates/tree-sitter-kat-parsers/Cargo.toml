@@ -37,6 +37,7 @@ tree-sitter-kat-cpp = { path = "../tree-sitter-kat-cpp" }
 tree-sitter-kat-cpuinfo = { path = "../tree-sitter-kat-cpuinfo" }
 tree-sitter-kat-crontab = { path = "../tree-sitter-kat-crontab" }
 tree-sitter-kat-crystal = { path = "../tree-sitter-kat-crystal" }
+tree-sitter-kat-csh = { path = "../tree-sitter-kat-csh" }
 tree-sitter-kat-css = { path = "../tree-sitter-kat-css" }
 tree-sitter-kat-csv = { path = "../tree-sitter-kat-csv" }
 tree-sitter-kat-d = { path = "../tree-sitter-kat-d" }

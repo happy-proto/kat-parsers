@@ -860,6 +860,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-csh"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "kat-parser-runtime",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-css"
 version = "0.1.0"
 dependencies = [
@@ -1488,6 +1498,7 @@ dependencies = [
  "tree-sitter-kat-cpuinfo",
  "tree-sitter-kat-crontab",
  "tree-sitter-kat-crystal",
+ "tree-sitter-kat-csh",
  "tree-sitter-kat-css",
  "tree-sitter-kat-csv",
  "tree-sitter-kat-d",
