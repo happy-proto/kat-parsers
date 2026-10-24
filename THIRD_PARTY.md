@@ -1,5 +1,12 @@
 # Third-Party Sources
 
+## C shell / tcsh（自维护）
+
+- `upstreams/csh/grammar.js` 为本仓库独立编写的 MIT 源码高亮 grammar。
+- 行为参考：[tcsh 官方手册](https://www.tcsh.org/tcsh.html/top.html) 及 [tcsh-org/tcsh](https://github.com/tcsh-org/tcsh) revision `b7db07931546178c4cb2542b5fc850c483628ed5` 的 `tcsh.man.in`。未复制或改编 tcsh 源码、手册正文或社区 grammar。
+- 生成的 ABI 15 产物位于 `crates/tree-sitter-kat-csh/vendor/csh/`。
+- 支持常用命令、引号、变量检查/计数/下标/路径修饰符、反引号替换、列表、重定向、条件、循环和 switch 结构；仅供源码高亮，不执行脚本，也不验证表达式的求值规则。反引号内部保留命令文本与变量/转义，不递归解释命令结构；here-document 正文、交互式 history 展开与 tcsh 扩展补全语法暂未结构化解析。
+
 ## Jam build language（自维护）
 
 - `upstreams/jam/grammar.js` and `scanner.c` are independently authored MIT code for source highlighting.

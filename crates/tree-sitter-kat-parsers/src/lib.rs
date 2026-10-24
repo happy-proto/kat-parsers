@@ -104,6 +104,10 @@ pub use tree_sitter_kat_crystal::{
     GRAMMAR as CRYSTAL_GRAMMAR, LANGUAGE as CRYSTAL_LANGUAGE, NODE_TYPES as CRYSTAL_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_csh::{
+    GRAMMAR as CSH_GRAMMAR, LANGUAGE as CSH_LANGUAGE, NODE_TYPES as CSH_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_css::{
     GRAMMAR as CSS_GRAMMAR, LANGUAGE as CSS_LANGUAGE, NODE_TYPES as CSS_NODE_TYPES,
 };
@@ -591,6 +595,7 @@ mod tests {
             ("cpuinfo", super::CPUINFO_LANGUAGE.into_raw()),
             ("crontab", super::CRONTAB_LANGUAGE.into_raw()),
             ("crystal", super::CRYSTAL_LANGUAGE.into_raw()),
+            ("csh", super::CSH_LANGUAGE.into_raw()),
             ("css", super::CSS_LANGUAGE.into_raw()),
             ("csv", super::CSV_LANGUAGE.into_raw()),
             ("d", super::D_LANGUAGE.into_raw()),
