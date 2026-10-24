@@ -1,12 +1,5 @@
 # Third-Party Sources
 
-## Nushell
-
-- Upstream: [nushell/tree-sitter-nu](https://github.com/nushell/tree-sitter-nu), revision `4f577aaa735154f934594b598a69ed7b1b707cf6`.
-- License: MIT; the upstream license is retained in `upstreams/nu/LICENSE`.
-- Imported inputs: `grammar.js` and `src/scanner.c`, without local syntax changes.
-- Generated ABI 15 assets live in `crates/tree-sitter-kat-nu/vendor/nu/`; Rust bindings and compact parser tables use the shared generator.
-
 ## Jam build language（自维护）
 
 - `upstreams/jam/grammar.js` and `scanner.c` are independently authored MIT code for source highlighting.
@@ -1521,3 +1514,10 @@ Local generated artifacts:
 | zsh | `tree-sitter-zsh` 0.63.4 | [georgeharker/tree-sitter-zsh](https://github.com/georgeharker/tree-sitter-zsh) | `7a593401efb5418ffdedbe3c0e4c61c6d240166d` | MIT |
 
 PHP 只引入 kat 使用的 `php` 语法，不引入独立的 `php_only`。TypeScript 与 TSX 使用锁定版本自带的展开 `grammar.json`，避免引入与该版本不匹配的 JavaScript grammar。PHP/XML 等相对路径适配明确记录在 `patches/` 中。
+
+## Nushell
+
+- Upstream: [nushell/tree-sitter-nu](https://github.com/nushell/tree-sitter-nu), revision `4f577aaa735154f934594b598a69ed7b1b707cf6`.
+- License: MIT; the upstream license is retained in `upstreams/nu/LICENSE`.
+- Imported inputs: `grammar.js` and `src/scanner.c`, without local syntax changes.
+- Generated ABI 15 assets live in `crates/tree-sitter-kat-nu/vendor/nu/`; Rust bindings and compact parser tables use the shared generator.
