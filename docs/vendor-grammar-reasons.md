@@ -35,6 +35,7 @@
 - `apache`
 - `sass`
 - `todotxt`
+- `nu`：从 Nushell 官方组织的 `tree-sitter-nu` 固定 revision 导入 grammar 与 scanner，通过现有聚合 crate 提供 Nushell parser；来源及许可证见 [`../metadata/nu.toml`](../metadata/nu.toml)。
 
 ## 上游 crate 的依赖约束与当前 runtime 不兼容
 

@@ -97,6 +97,7 @@ tree-sitter-kat-nasm = { path = "../tree-sitter-kat-nasm" }
 tree-sitter-kat-nginx = { path = "../tree-sitter-kat-nginx" }
 tree-sitter-kat-ninja = { path = "../tree-sitter-kat-ninja" }
 tree-sitter-kat-nix = { path = "../tree-sitter-kat-nix" }
+tree-sitter-kat-nu = { path = "../tree-sitter-kat-nu" }
 tree-sitter-kat-php = { path = "../tree-sitter-kat-php" }
 tree-sitter-kat-pkl = { path = "../tree-sitter-kat-pkl" }
 tree-sitter-kat-powershell = { path = "../tree-sitter-kat-powershell" }
