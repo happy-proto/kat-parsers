@@ -52,6 +52,15 @@ rehash
     let tree = parse(source);
     assert_eq!(count_kind(tree.root_node(), "if_statement"), 3);
     assert_eq!(count_kind(tree.root_node(), "else_clause"), 2);
+    for variable in ["$?prompt", "$PATH:q", "$VIRTUAL_ENV:t:q"] {
+        let offset = source.find(variable).unwrap();
+        let node = tree
+            .root_node()
+            .descendant_for_byte_range(offset, offset + variable.len())
+            .unwrap();
+        assert_eq!(node.kind(), "variable", "{variable}");
+        assert_eq!(node.byte_range(), offset..offset + variable.len());
+    }
 }
 
 #[test]
@@ -113,4 +122,26 @@ fn incomplete_input_keeps_earlier_command() {
         tree.root_node().named_child(0).unwrap().kind(),
         "command_list"
     );
+}
+
+#[test]
+fn control_words_as_command_arguments_do_not_end_blocks() {
+    let tree = parse("if (1) then\n  echo endif end else\nendif\n");
+    assert_eq!(count_kind(tree.root_node(), "if_statement"), 1);
+    let mut words = Vec::new();
+    fn visit(node: tree_sitter::Node<'_>, source: &str, words: &mut Vec<String>) {
+        if node.kind() == "word" {
+            words.push(source[node.byte_range()].to_owned());
+        }
+        let mut cursor = node.walk();
+        for child in node.children(&mut cursor) {
+            visit(child, source, words);
+        }
+    }
+    visit(
+        tree.root_node(),
+        "if (1) then\n  echo endif end else\nendif\n",
+        &mut words,
+    );
+    assert_eq!(words, ["echo", "endif", "end", "else"]);
 }

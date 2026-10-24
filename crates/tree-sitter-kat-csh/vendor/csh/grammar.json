@@ -3,20 +3,46 @@
   "name": "csh",
   "rules": {
     "source_file": {
-      "type": "REPEAT",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_separator"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_statement"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_separator"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_separator"
+                  }
+                ]
+              }
+            ]
           }
-        ]
-      }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_statement"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
     },
     "comment": {
       "type": "TOKEN",
@@ -82,8 +108,17 @@
             "name": "_separator"
           },
           {
-            "type": "SYMBOL",
-            "name": "_statement"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_statement"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_separator"
+              }
+            ]
           }
         ]
       }

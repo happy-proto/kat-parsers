@@ -4,12 +4,12 @@ module.exports = grammar({
   name: 'csh',
   extras: $ => [/[ \t\r]+/, /\\\r?\n/, $.comment],
   rules: {
-    source_file: $ => repeat(choice($._separator, $._statement)),
+    source_file: $ => seq(repeat(choice($._separator, seq($._statement, $._separator))), optional($._statement)),
     comment: _ => token(seq('#', /[^\n]*/)),
     _separator: _ => choice('\n', ';'),
     _statement: $ => choice($.if_statement, $.foreach_statement,
       $.while_statement, $.switch_statement, $.command_list),
-    _body: $ => repeat1(choice($._separator, $._statement)),
+    _body: $ => repeat1(choice($._separator, seq($._statement, $._separator))),
     if_statement: $ => seq('if', $.condition, choice(
       seq('then', $._separator, optional($._body),
         repeat($.else_if_clause), optional($.else_clause), 'endif'),
