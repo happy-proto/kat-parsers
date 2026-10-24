@@ -1,5 +1,12 @@
 # Third-Party Sources
 
+## Nushell
+
+- Upstream: [nushell/tree-sitter-nu](https://github.com/nushell/tree-sitter-nu), revision `4f577aaa735154f934594b598a69ed7b1b707cf6`.
+- License: MIT; the upstream license is retained in `upstreams/nu/LICENSE`.
+- Imported inputs: `grammar.js` and `src/scanner.c`, without local syntax changes.
+- Generated ABI 15 assets live in `crates/tree-sitter-kat-nu/vendor/nu/`; Rust bindings and compact parser tables use the shared generator.
+
 ## Jam build language（自维护）
 
 - `upstreams/jam/grammar.js` and `scanner.c` are independently authored MIT code for source highlighting.

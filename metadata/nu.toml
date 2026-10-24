@@ -1,0 +1,22 @@
+language = "nu"
+crate = "tree-sitter-kat-parsers"
+upstream_repo = "https://github.com/nushell/tree-sitter-nu"
+upstream_commit = "4f577aaa735154f934594b598a69ed7b1b707cf6"
+license = "MIT"
+
+[copied]
+files = ["grammar.js", "scanner.c", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate nu"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]
+
+[sync]
+repository = "https://github.com/nushell/tree-sitter-nu"
+revision = "4f577aaa735154f934594b598a69ed7b1b707cf6"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"

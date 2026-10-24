@@ -1460,6 +1460,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-nu"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "kat-parser-runtime",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-parsers"
 version = "0.1.0"
 dependencies = [
@@ -1548,6 +1558,7 @@ dependencies = [
  "tree-sitter-kat-nginx",
  "tree-sitter-kat-ninja",
  "tree-sitter-kat-nix",
+ "tree-sitter-kat-nu",
  "tree-sitter-kat-php",
  "tree-sitter-kat-pkl",
  "tree-sitter-kat-powershell",

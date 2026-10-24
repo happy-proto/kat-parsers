@@ -358,6 +358,10 @@ pub use tree_sitter_kat_nix::{
     GRAMMAR as NIX_GRAMMAR, LANGUAGE as NIX_LANGUAGE, NODE_TYPES as NIX_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_nu::{
+    GRAMMAR as NU_GRAMMAR, LANGUAGE as NU_LANGUAGE, NODE_TYPES as NU_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_php::{
     GRAMMAR as PHP_GRAMMAR, LANGUAGE as PHP_LANGUAGE, NODE_TYPES as PHP_NODE_TYPES,
 };
@@ -659,6 +663,7 @@ mod tests {
             ("nginx", super::NGINX_LANGUAGE.into_raw()),
             ("ninja", super::NINJA_LANGUAGE.into_raw()),
             ("nix", super::NIX_LANGUAGE.into_raw()),
+            ("nu", super::NU_LANGUAGE.into_raw()),
             ("php", super::PHP_LANGUAGE.into_raw()),
             ("pkl", super::PKL_LANGUAGE.into_raw()),
             ("powershell", super::POWERSHELL_LANGUAGE.into_raw()),

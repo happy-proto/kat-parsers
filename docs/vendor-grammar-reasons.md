@@ -14,6 +14,8 @@
 
 ## 没有可用的 crates.io grammar crate
 
+- `nu`：从 Nushell 官方组织的 `tree-sitter-nu` 固定 revision 导入 grammar 与 scanner，通过现有聚合 crate 提供 Nushell parser；来源及许可证见 [`../metadata/nu.toml`](../metadata/nu.toml)。
+
 - `graph_easy`：没有可直接使用的 parser，依据 Graph::Easy 常见 DSL 独立编写 MIT grammar。与 DOT 分离，支持节点、边标签、属性及分组等源码结构；行为参考与边界见 [`../metadata/graph_easy.toml`](../metadata/graph_easy.toml)。
 
 - `git_config`
