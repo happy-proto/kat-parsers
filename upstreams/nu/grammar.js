@@ -23,6 +23,7 @@ module.exports = grammar({
     $.raw_string_begin,
     $.raw_string_content,
     $.raw_string_end,
+    $._error_sentinel,
   ],
 
   conflicts: $ => [

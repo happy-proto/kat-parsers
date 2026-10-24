@@ -15,6 +15,7 @@ outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "sca
 repository = "https://github.com/nushell/tree-sitter-nu"
 revision = "4f577aaa735154f934594b598a69ed7b1b707cf6"
 reference = "HEAD"
+patches = ["patches/nu-scanner-error-sentinel.patch", "patches/nu-raw-string-delimiter.patch"]
 
 [sync.files]
 "grammar.js" = "grammar.js"

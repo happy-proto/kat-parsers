@@ -87,10 +87,13 @@ static bool scan_raw_string_begin(TSLexer *lexer, Scanner *s) {
 static bool scan_raw_string_content(TSLexer *lexer, Scanner *s) {
     while (!eof) {
         lexer->mark_end(lexer);
+        bool closing_quote = lexer->lookahead == '\'';
         adv;
-        uint8_t level = consume_chars(lexer, '#');
-        if (level == s->level) {
-            return true;
+        if (closing_quote) {
+            uint8_t level = consume_chars(lexer, '#');
+            if (level == s->level) {
+                return true;
+            }
         }
     }
 

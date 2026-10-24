@@ -17,3 +17,37 @@ fn parses_structured_pipelines_and_environment_overlays() {
         );
     }
 }
+
+#[test]
+fn recovers_after_incomplete_raw_strings() {
+    let mut parser = tree_sitter::Parser::new();
+    parser.set_language(&LANGUAGE.into()).unwrap();
+    for source in [
+        "let value = r#'unfinished",
+        "let value = r##'missing end'#\n",
+    ] {
+        let tree = parser.parse(source, None).unwrap();
+        assert!(tree.root_node().has_error(), "{source}");
+        let recovered = parser.parse("let value = r##'ready'##\n", None).unwrap();
+        assert!(
+            !recovered.root_node().has_error(),
+            "{}",
+            recovered.root_node().to_sexp()
+        );
+    }
+}
+
+#[test]
+fn raw_strings_keep_hashes_and_partial_closing_delimiters_as_content() {
+    let mut parser = tree_sitter::Parser::new();
+    parser.set_language(&LANGUAGE.into()).unwrap();
+    for literal in ["r#'a#b'#", "r##'a#b '# and c'##", "r#''#"] {
+        let source = format!("let value = {literal}\nprint $value\n");
+        let tree = parser.parse(&source, None).unwrap();
+        assert!(
+            !tree.root_node().has_error(),
+            "{source}\n{}",
+            tree.root_node().to_sexp()
+        );
+    }
+}

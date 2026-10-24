@@ -17751,6 +17751,10 @@
     {
       "type": "SYMBOL",
       "name": "raw_string_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_error_sentinel"
     }
   ],
   "inline": [

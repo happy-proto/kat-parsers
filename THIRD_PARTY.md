@@ -1519,5 +1519,5 @@ PHP 只引入 kat 使用的 `php` 语法，不引入独立的 `php_only`。TypeS
 
 - Upstream: [nushell/tree-sitter-nu](https://github.com/nushell/tree-sitter-nu), revision `4f577aaa735154f934594b598a69ed7b1b707cf6`.
 - License: MIT; the upstream license is retained in `upstreams/nu/LICENSE`.
-- Imported inputs: `grammar.js` and `src/scanner.c`, without local syntax changes.
+- Imported inputs: `grammar.js` and `src/scanner.c`. Replayable patches declare the scanner's existing fourth `ERROR_SENTINEL` token, keeping its error-recovery guard within the external-token array bounds, and require a quote before the matching hashes that close a raw string. The missing sentinel declaration caused raw-string parsing failures on Windows; the delimiter fix keeps ordinary content such as `a#b` inside the string.
 - Generated ABI 15 assets live in `crates/tree-sitter-kat-nu/vendor/nu/`; Rust bindings and compact parser tables use the shared generator.

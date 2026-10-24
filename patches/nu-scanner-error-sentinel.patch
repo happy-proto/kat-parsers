@@ -1,0 +1,11 @@
+diff --git a/grammar.js b/grammar.js
+--- a/grammar.js
++++ b/grammar.js
+@@ -23,6 +23,7 @@ module.exports = grammar({
+     $.raw_string_begin,
+     $.raw_string_content,
+     $.raw_string_end,
++    $._error_sentinel,
+   ],
+ 
+   conflicts: $ => [
