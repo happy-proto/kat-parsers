@@ -1528,3 +1528,11 @@ PHP 只引入 kat 使用的 `php` 语法，不引入独立的 `php_only`。TypeS
 - License: MIT; the upstream license is retained in `upstreams/nu/LICENSE`.
 - Imported inputs: `grammar.js` and `src/scanner.c`. Replayable patches declare the scanner's existing fourth `ERROR_SENTINEL` token, keeping its error-recovery guard within the external-token array bounds, and require a quote before the matching hashes that close a raw string. The missing sentinel declaration caused raw-string parsing failures on Windows; the delimiter fix keeps ordinary content such as `a#b` inside the string.
 - Generated ABI 15 assets live in `crates/tree-sitter-kat-nu/vendor/nu/`; Rust bindings and compact parser tables use the shared generator.
+
+## pgpass（自维护）
+
+- Source asset: `upstreams/pgpass/grammar.js`
+- Specification: [PostgreSQL 18 password file](https://www.postgresql.org/docs/18/libpq-pgpass.html)
+- License: MIT (project-authored); no PostgreSQL source or third-party grammar is copied or adapted.
+- Generated artifacts: `crates/tree-sitter-kat-pgpass/vendor/pgpass/`
+- Scope: five colon-separated fields, whole-field wildcards in the first four fields, backslash escapes, column-zero comments, CRLF and final lines without a newline. Spaces are field data. No connection matching, file permission checks or password decoding is performed.

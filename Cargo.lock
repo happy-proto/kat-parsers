@@ -1570,6 +1570,7 @@ dependencies = [
  "tree-sitter-kat-ninja",
  "tree-sitter-kat-nix",
  "tree-sitter-kat-nu",
+ "tree-sitter-kat-pgpass",
  "tree-sitter-kat-php",
  "tree-sitter-kat-pkl",
  "tree-sitter-kat-powershell",
@@ -1617,6 +1618,16 @@ dependencies = [
  "tree-sitter-kat-yaml",
  "tree-sitter-kat-zig",
  "tree-sitter-kat-zsh",
+]
+
+[[package]]
+name = "tree-sitter-kat-pgpass"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "kat-parser-runtime",
+ "tree-sitter",
+ "tree-sitter-language",
 ]
 
 [[package]]
