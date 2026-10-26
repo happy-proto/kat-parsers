@@ -1,5 +1,13 @@
 # Third-Party Sources
 
+## Caddyfile
+
+- Upstream: [caddyserver/tree-sitter-caddyfile](https://github.com/caddyserver/tree-sitter-caddyfile), revision `86e8f31101b5a2795b966d4c2e85bbe3c977f519`.
+- License: MIT; original license retained in `upstreams/caddyfile/LICENSE`.
+- `grammar.js` and `src/scanner.c` are imported unchanged; source mappings and revision are recorded in `metadata/caddyfile.toml` for reproducible synchronization.
+- ABI 15 parser and compressed tables are generated under `crates/tree-sitter-kat-caddyfile/vendor/caddyfile/`; the aggregate exports `CADDYFILE_LANGUAGE`. Queries and application detection belong to kat.
+
+
 ## C shell / tcsh（自维护）
 
 - `upstreams/csh/grammar.js` 为本仓库独立编写的 MIT 源码高亮 grammar。

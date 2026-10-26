@@ -750,6 +750,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-caddyfile"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "kat-parser-runtime",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-cel"
 version = "0.1.0"
 dependencies = [
@@ -1497,6 +1507,7 @@ dependencies = [
  "tree-sitter-kat-c",
  "tree-sitter-kat-c-sharp",
  "tree-sitter-kat-cabal",
+ "tree-sitter-kat-caddyfile",
  "tree-sitter-kat-cel",
  "tree-sitter-kat-cfml",
  "tree-sitter-kat-clojure",

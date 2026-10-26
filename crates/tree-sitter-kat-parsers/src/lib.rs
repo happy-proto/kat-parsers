@@ -57,6 +57,11 @@ pub use tree_sitter_kat_cabal::{
     GRAMMAR as CABAL_GRAMMAR, LANGUAGE as CABAL_LANGUAGE, NODE_TYPES as CABAL_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_caddyfile::{
+    GRAMMAR as CADDYFILE_GRAMMAR, LANGUAGE as CADDYFILE_LANGUAGE,
+    NODE_TYPES as CADDYFILE_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_cel::{
     GRAMMAR as CEL_GRAMMAR, LANGUAGE as CEL_LANGUAGE, NODE_TYPES as CEL_NODE_TYPES,
 };
@@ -588,6 +593,7 @@ mod tests {
             ("c", super::C_LANGUAGE.into_raw()),
             ("c_sharp", super::C_SHARP_LANGUAGE.into_raw()),
             ("cabal", super::CABAL_LANGUAGE.into_raw()),
+            ("caddyfile", super::CADDYFILE_LANGUAGE.into_raw()),
             ("cel", super::CEL_LANGUAGE.into_raw()),
             ("cfml", super::CFML_LANGUAGE.into_raw()),
             ("clojure", super::CLOJURE_LANGUAGE.into_raw()),
