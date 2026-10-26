@@ -1,0 +1,24 @@
+language = "caddyfile"
+crate = "tree-sitter-kat-parsers"
+reason_category = "上游 grammar 集成"
+reason = "采用 Caddy 官方组织维护的 Caddyfile grammar 和 heredoc scanner，通过统一预生成 parser 提供配置文件结构。"
+upstream_repo = "https://github.com/caddyserver/tree-sitter-caddyfile"
+upstream_commit = "86e8f31101b5a2795b966d4c2e85bbe3c977f519"
+license = "MIT"
+
+[sync]
+repository = "https://github.com/caddyserver/tree-sitter-caddyfile.git"
+revision = "86e8f31101b5a2795b966d4c2e85bbe3c977f519"
+reference = "HEAD"
+
+[sync.files]
+"grammar.js" = "grammar.js"
+"scanner.c" = "src/scanner.c"
+"LICENSE" = "LICENSE"
+
+[copied]
+files = ["grammar.js", "scanner.c", "LICENSE"]
+
+[generated]
+command = "cargo run -p xtask -- generate caddyfile"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c", "scanner.c"]

@@ -26,6 +26,7 @@ tree-sitter-kat-bibtex = { path = "../tree-sitter-kat-bibtex" }
 tree-sitter-kat-c = { path = "../tree-sitter-kat-c" }
 tree-sitter-kat-c-sharp = { path = "../tree-sitter-kat-c-sharp" }
 tree-sitter-kat-cabal = { path = "../tree-sitter-kat-cabal" }
+tree-sitter-kat-caddyfile = { path = "../tree-sitter-kat-caddyfile" }
 tree-sitter-kat-cel = { path = "../tree-sitter-kat-cel" }
 tree-sitter-kat-cfml = { path = "../tree-sitter-kat-cfml" }
 tree-sitter-kat-clojure = { path = "../tree-sitter-kat-clojure" }
