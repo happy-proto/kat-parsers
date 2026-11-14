@@ -19,9 +19,10 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-      - run: npm install -g tree-sitter-cli@0.27.1
-      - run: tree-sitter --version
-      - run: cargo run -p xtask -- sync --locked --check
-      - run: cargo test -p xtask -- --include-ignored
-      - run: cargo run -p xtask -- generate --force
+      - uses: pnpm/action-setup@v6
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tree-sitter --version
+      - run: pnpm exec cargo run -p xtask -- sync --locked --check
+      - run: pnpm exec cargo test -p xtask -- --include-ignored
+      - run: pnpm exec cargo run -p xtask -- generate --force
       - run: git diff --exit-code

@@ -4,13 +4,13 @@
 
 `xtask` 负责输入准备、缓存、产物同步和 Rust crate scaffolding；Tree-sitter CLI 负责 grammar 求值和 parser 生成。我们使用预编译且经过优化的 CLI，不将生成库嵌入 `xtask`。
 
-将生成器编进 `xtask` 会让两种速度目标耦合：低优化等级可以缩短本地或 CI 的编译时间，却牺牲生成器执行效率；高优化等级可以加快生成，却增加生成器本身的编译成本。预编译 CLI 将这两个成本分开，`xtask` 可以快速构建，生成器也可以保持优化后的执行速度。因此 Generated Check 使用 npm 安装官方预编译 CLI，而不是 `cargo install` 或通过 Rust 依赖构建生成器。
+将生成器编进 `xtask` 会让两种速度目标耦合：低优化等级可以缩短本地或 CI 的编译时间，却牺牲生成器执行效率；高优化等级可以加快生成，却增加生成器本身的编译成本。预编译 CLI 将这两个成本分开，`xtask` 可以快速构建，生成器也可以保持优化后的执行速度。因此 Generated Check 使用 pnpm 安装锁定的官方预编译 CLI，而不是 `cargo install` 或通过 Rust 依赖构建生成器。
 
 普通 `tree-sitter` Rust 库用于解析和加载测试，不负责从 `grammar.js` 生成 C parser。这种 runtime 依赖与生成器是两个不同的职责。
 
 ## Tree-sitter 0.27 的生成契约
 
-- 本地和 CI 使用同一固定版本 CLI，生成参数固定为 `--abi 15 --js-runtime node`，保留生成器默认的解析状态优化。
+- 本地和 CI 通过 `pnpm exec` 使用 `pnpm-lock.yaml` 锁定的同一 CLI，生成参数固定为 `--abi 15 --js-runtime node`，保留生成器默认的解析状态优化。
 - 不合成 `tree-sitter.json`。0.27 可以在没有配置文件时生成 ABI 15，语言版本元数据采用默认 `0.0.0`。这个版本是 grammar 元数据，不是 Tree-sitter runtime 版本。
 - 每个需要更新的 grammar 只调用一次 `generate`，同时产生 `grammar.json`、`node-types.json` 和 `parser.c`。
 - JavaScript runtime 是执行 grammar 源码的程序。统一选择 Node.js，因为 Less/SCSS 复用的 CSS grammar 使用 ES module；CLI 内置 QuickJS 的 `require` loader 无法加载该模块。不增加逐语言 runtime 选择或自动降级，也不为使用 QuickJS 改写上游 grammar。
@@ -30,13 +30,13 @@ grammar 的临时工作目录和 vendored 产物互相独立，生成器使用�
 
 scanner 等 support files 独立同步：修改 scanner 不需要重算 parser 状态表，但仍必须进入 vendored crate。`parser.h`、`alloc.h` 和 `array.h` 统一同步自 CLI 的生成结果，不复制 grammar 私有的旧版本，也不使用 runtime 内部头文件。新 grammar 的所有 JS/JSON import 都必须在 metadata 中声明；不依赖临时目录外的 npm 包或机器上的隐式文件。
 
-生成阶段对 CLI 0.27.1 的 `array_delete` 做一项共享兼容适配：参数只求值一次，支持 XML scanner 的 `array_delete(&array_pop(tags))`，避免重复出栈。释放和清零通过字节访问完成，不将不同 `Array(T)` 强转为另一种结构体类型，保留严格别名安全性。适配实现参与输入缓存；CLI 升级改变该宏结构时生成会报错，要求重新检查适配。生成契约测试在优化和严格别名检查下运行 C/C++ 副作用参数与嵌套数组删除回归，真实 XML 测试覆盖嵌套标签、自闭合标签和错误结束标签。
+生成阶段对 CLI 0.27.x 的 `array_delete` 做一项共享兼容适配：参数只求值一次，支持 XML scanner 的 `array_delete(&array_pop(tags))`，避免重复出栈。释放和清零通过字节访问完成，不将不同 `Array(T)` 强转为另一种结构体类型，保留严格别名安全性。适配实现参与输入缓存；CLI 升级改变该宏结构时生成会报错，要求重新检查适配。生成契约测试在优化和严格别名检查下运行 C/C++ 副作用参数与嵌套数组删除回归，真实 XML 测试覆盖嵌套标签、自闭合标签和错误结束标签。
 
 内容相同的文件保持原修改时间。Rust 模板先在临时目录中格式化，再与 checkout 比较，避免“写入未格式化模板、然后 rustfmt 改回”的无效重编译。C/C++ 构建只监听源文件和头文件，并包含共享头文件；grammar JSON 和生成缓存变化不会单独触发 C 重编译。
 
 ## 验证
 
-普通 `just check` 执行格式、Clippy 和 workspace 测试，包括 Crystal 插值/heredoc 与 dotenv assignment 边界。需要外部 CLI 的生成契约测试集中在 Generated Check，运行 `cargo test -p xtask -- --include-ignored`，覆盖串并行产物与修改时间一致性、并行头文件恢复和错误传播、跨目录 import、scanner 独立同步、缺失或损坏产物和共享头文件恢复、无配置 ABI 15、优化后的 C/C++ array 操作，以及相同产物的修改时间保持。
+普通 `just check` 执行格式、Clippy 和 workspace 测试，包括 Crystal 插值/heredoc 与 dotenv assignment 边界。需要外部 CLI 的生成契约测试集中在 Generated Check，运行 `pnpm exec cargo test -p xtask -- --include-ignored`，覆盖串并行产物与修改时间一致性、并行头文件恢复和错误传播、跨目录 import、scanner 独立同步、缺失或损坏产物和共享头文件恢复、无配置 ABI 15、优化后的 C/C++ array 操作，以及相同产物的修改时间保持。
 
 Generated Check 随后强制重生成所有 grammar，再执行 `git diff --exit-code`。这个独立检查保留，即使本地使用缓存，也不会把缓存当作生成正确性的证明。
 

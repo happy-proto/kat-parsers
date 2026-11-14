@@ -25,10 +25,10 @@ tree-sitter-kat-parsers = { git = "https://github.com/happy-proto/kat-parsers" }
 
 ## 维护与生成
 
-仓库维护需要 Rust、C/C++ 编译环境、Git 和 `just`。`just check`、`just test` 与来源检查不需要 Node.js 或 Tree-sitter CLI；涉及重新生成时，额外需要 Node.js 24 和 `tree-sitter` CLI 0.27.1（与 Generated Check 一致）：
+仓库维护需要 Rust、C/C++ 编译环境、Git 和 `just`。`just check`、`just test` 与来源检查不需要 Node.js 或 Tree-sitter CLI；涉及重新生成时，额外需要 Node.js 24 和 pnpm。Tree-sitter CLI 作为开发依赖由 `package.json` / `pnpm-lock.yaml` 锁定，本地与 Generated Check 共用：
 
 ```bash
-npm install -g tree-sitter-cli@0.27.1
+pnpm install --frozen-lockfile
 ```
 
 | 命令 | 用途 |
@@ -43,7 +43,7 @@ npm install -g tree-sitter-cli@0.27.1
 
 来源同步会更新声明的快照，请从干净工作区开始；需要保留的本地语义、路径或安全修复应记录为最小补丁，不能只修改快照文件。具体约定见 [批量维护上游语法](docs/upstreams.md)。
 
-生成流程使用官方预编译 CLI 和 ABI 15；`xtask` 负责输入准备、缓存、状态表转换与压缩。相同内容保留原修改时间，避免触发无效重编译。源码、补丁和生成参数变化后的产物需要一并提交。缓存和运行时边界见 [生成与构建](docs/generation.md)。
+生成流程使用官方预编译 CLI 和 ABI 15；通过 `pnpm exec cargo run -p xtask -- generate` 使用锁定 CLI；`xtask` 负责输入准备、缓存、状态表转换与压缩。相同内容保留原修改时间，避免触发无效重编译。源码、补丁和生成参数变化后的产物需要一并提交。缓存和运行时边界见 [生成与构建](docs/generation.md)。
 
 ## CI 与更新机制
 
@@ -54,7 +54,7 @@ Ghostty 官方解析器对照由独立 macOS CI 执行。普通测试不下载�
 | 更新对象 | 维护入口 |
 | --- | --- |
 | 本仓库的 Cargo 依赖和 GitHub Actions | [Dependabot](.github/dependabot.yml) |
-| 上游 grammar、scanner 和许可证 | [每周同步工作流](.github/workflows/sync-upstreams.yml)，来源与补丁由 `metadata/` 声明 |
+| 上游 grammar、scanner、许可证和生成 CLI | [每周同步工作流](.github/workflows/sync-upstreams.yml)，来源与补丁由 `metadata/` 声明 |
 | 消费者的直接、间接 Git 锁定 | [可复用工作流](.github/workflows/sync-git-dependencies.yml)，由消费者配置定时或手动调用 |
 
 语法同步与消费者 Git 依赖更新会推送更新分支并显式调度 CI。组织策略禁止 Actions 创建 PR，因此工作流在执行摘要中提供 Compare 入口，由维护者创建和审阅更新 PR。上游源码与生成产物合入后，消费者再更新自己的锁文件。

@@ -163,7 +163,7 @@ fn generate(
         .is_some_and(|version| version.starts_with("0.27."))
     {
         bail!(
-            "Tree-sitter CLI 0.27.x is required; install the version pinned in Generated Check (found {cli_version})"
+            "Tree-sitter CLI 0.27.x is required; use pnpm exec with the locked version (found {cli_version})"
         );
     }
     println!(
@@ -1077,7 +1077,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
+    #[ignore = "requires the locked Tree-sitter CLI and Node; run in Generated Check"]
     fn generation_tracks_imports_and_repairs_missing_or_modified_outputs() -> Result<()> {
         let dir = TempDir::new()?;
         let spec = fixture(dir.path(), "fixture")?;
@@ -1200,7 +1200,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
+    #[ignore = "requires the locked Tree-sitter CLI and Node; run in Generated Check"]
     fn parallel_generation_preserves_artifacts_and_propagates_errors() -> Result<()> {
         fn snapshot(
             root: &Path,
@@ -1278,7 +1278,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires Tree-sitter CLI 0.27.1 and Node; run in Generated Check"]
+    #[ignore = "requires the locked Tree-sitter CLI and Node; run in Generated Check"]
     fn expanded_json_is_a_self_contained_generation_input() -> Result<()> {
         let dir = TempDir::new()?;
         let mut spec = fixture(dir.path(), "fixture")?;
