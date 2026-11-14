@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-      - run: npm install -g tree-sitter-cli@0.27.1
+      - uses: pnpm/action-setup@v6
       - name: 同步所有上游并生成产物
         env:
           GH_TOKEN: ${{ github.token }}
@@ -43,11 +43,13 @@ jobs:
             git switch -c "${branch}"
             previous=$(git rev-parse HEAD)
           fi
-          cargo run --locked -p xtask -- sync
-          cargo run --locked -p xtask -- generate
-          changed=$(git status --porcelain -- metadata upstreams crates)
+          pnpm install --frozen-lockfile
+          pnpm update --latest tree-sitter-cli
+          pnpm exec cargo run --locked -p xtask -- sync
+          pnpm exec cargo run --locked -p xtask -- generate
+          changed=$(git status --porcelain -- package.json pnpm-lock.yaml pnpm-workspace.yaml metadata upstreams crates)
           if [[ -z "${changed}" && "$(git rev-parse HEAD)" == "${previous}" ]]; then
-            echo "上游快照与生成产物均未变化" >> "${GITHUB_STEP_SUMMARY}"
+            echo "上游快照、生成 CLI 与产物均未变化" >> "${GITHUB_STEP_SUMMARY}"
             if [[ "${existing}" == false ]]; then
               exit 0
             fi
@@ -58,13 +60,13 @@ jobs:
             git config user.name github-actions[bot]
             git config user.email 41898282+github-actions[bot]@users.noreply.github.com
             if [[ -n "${changed}" ]]; then
-              git add metadata upstreams crates
-              git commit -m "chore(parsers): synchronize upstream grammars"
+              git add package.json pnpm-lock.yaml pnpm-workspace.yaml metadata upstreams crates
+              git commit -m "chore(parsers): synchronize upstream grammars and generator"
             fi
             git push origin "${branch}"
           fi
           # 组织禁止 GITHUB_TOKEN 创建 PR；保留自动同步分支和可审阅的比较链接。
-          title=$(node -p 'encodeURIComponent("chore(parsers): 批量同步上游语法")')
+          title=$(node -p 'encodeURIComponent("chore(parsers): 同步上游语法与生成工具")')
           compare="${{ github.server_url }}/${{ github.repository }}/compare/${{ github.event.repository.default_branch }}...${branch}?expand=1&template=upstreams.md&title=${title}"
           echo "上游更新已推送到 [${branch}](${compare})；可从该链接创建中文更新 PR。" >> "${GITHUB_STEP_SUMMARY}"
           # GITHUB_TOKEN 的推送不会触发普通 CI，显式调度所需检查。

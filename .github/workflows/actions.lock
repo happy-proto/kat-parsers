@@ -8,6 +8,7 @@ workflows:
     '.github/workflows/generated-check.yml':
         - 'actions/checkout@v7'
         - 'actions/setup-node@v7'
+        - 'pnpm/action-setup@v6'
     '.github/workflows/ghostty-conformance.yml':
         - 'actions/checkout@v7'
     '.github/workflows/sync-git-dependencies.yml':
@@ -15,6 +16,7 @@ workflows:
     '.github/workflows/sync-upstreams.yml':
         - 'actions/checkout@v7'
         - 'actions/setup-node@v7'
+        - 'pnpm/action-setup@v6'
 dependencies:
     'actions/checkout@v7':
         ref: 'v7'
@@ -26,3 +28,8 @@ dependencies:
         commit: 'sha1-949feb2413d6458794dcd2491c4babbbce0c15c1'
         owner_id: 44036562
         repo_id: 189476904
+    'pnpm/action-setup@v6':
+        ref: 'v6'
+        commit: 'sha1-73e46992e05b19abd31f2f3c20e0e7370d762115'
+        owner_id: 21320719
+        repo_id: 262289747

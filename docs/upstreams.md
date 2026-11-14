@@ -8,7 +8,7 @@
 # 一次检查所有远程来源，发现更新时返回非零
 just check-upstreams
 
-# 一次同步全部来源、重新生成并运行仓库检查
+# 一次更新生成 CLI、同步全部来源、重新生成并运行仓库检查
 just sync
 
 # 按提交中锁定的来源重放，验证资产和本地补丁没有漂移
@@ -63,6 +63,6 @@ local = true
 
 ## 定时同步
 
-[Sync upstream grammars](../.github/workflows/sync-upstreams.yml) 每周运行，也可手动触发。它统一同步、生成并检查所有语言，将成功更新推送到 `chore/sync-upstreams`，并显式调度两项必需 CI。已有更新分支会合入默认分支，不强制推送或覆盖协作者提交。
+[Sync upstream grammars](../.github/workflows/sync-upstreams.yml) 每周运行，也可手动触发。它先更新锁定的 Tree-sitter CLI 到最新稳定版，再统一同步、生成并检查所有语言，CLI 声明、锁文件和生成产物一起提交，将成功更新推送到 `chore/sync-upstreams`，并显式调度两项必需 CI。已有更新分支会合入默认分支，不强制推送或覆盖协作者提交。
 
 当前组织策略禁止 GitHub Actions 创建 PR，因此 workflow summary 提供已填入中文标题和模板的比较链接。检查和源码同步不需要逐语言人工操作；只需通过链接提交一次更新 PR。流程不会自动合并，也不会修改组织策略。上游文件布局变化、补丁冲突和解析回归会使任务失败，需先适配后再重跑。

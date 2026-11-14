@@ -4,7 +4,7 @@ default:
     just check
 
 generate:
-    cargo run -p xtask -- generate
+    pnpm exec cargo run -p xtask -- generate
 
 check-upstreams:
     cargo run --locked -p xtask -- sync --check
@@ -13,12 +13,14 @@ check-upstream-sources:
     cargo run --locked -p xtask -- sync --locked --check
 
 sync:
+    pnpm install --frozen-lockfile
+    pnpm update --latest tree-sitter-cli
     cargo run --locked -p xtask -- sync
-    cargo run --locked -p xtask -- generate
+    pnpm exec cargo run --locked -p xtask -- generate
     just check
 
 check-generated:
-    cargo run -p xtask -- generate
+    pnpm exec cargo run -p xtask -- generate
     git diff --exit-code
 
 check:

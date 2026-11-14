@@ -268,6 +268,10 @@ pub use tree_sitter_kat_hcl::{
     GRAMMAR as HCL_GRAMMAR, LANGUAGE as HCL_LANGUAGE, NODE_TYPES as HCL_NODE_TYPES,
 };
 
+pub use tree_sitter_kat_hosts::{
+    GRAMMAR as HOSTS_GRAMMAR, LANGUAGE as HOSTS_LANGUAGE, NODE_TYPES as HOSTS_NODE_TYPES,
+};
+
 pub use tree_sitter_kat_html::{
     GRAMMAR as HTML_GRAMMAR, LANGUAGE as HTML_LANGUAGE, NODE_TYPES as HTML_NODE_TYPES,
 };
@@ -651,6 +655,7 @@ mod tests {
             ("graphql", super::GRAPHQL_LANGUAGE.into_raw()),
             ("groovy", super::GROOVY_LANGUAGE.into_raw()),
             ("hcl", super::HCL_LANGUAGE.into_raw()),
+            ("hosts", super::HOSTS_LANGUAGE.into_raw()),
             ("html", super::HTML_LANGUAGE.into_raw()),
             ("ignore", super::IGNORE_LANGUAGE.into_raw()),
             ("ini", super::INI_LANGUAGE.into_raw()),

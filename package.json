@@ -1,0 +1,14 @@
+{
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.18.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.18.0",
+  "devDependencies": {
+    "tree-sitter-cli": "0.27.2"
+  },
+  "private": true
+}
