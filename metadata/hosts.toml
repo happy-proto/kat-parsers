@@ -1,0 +1,16 @@
+language = "hosts"
+crate = "tree-sitter-kat-parsers"
+reason_category = "仓库内自维护 grammar"
+reason = "依据 hosts(5) 独立实现逐行地址、规范主机名、别名和注释，不复用 SSH known_hosts 语法。"
+reference_docs = "https://man7.org/linux/man-pages/man5/hosts.5.html"
+license = "MIT"
+
+[copied]
+files = ["grammar.js"]
+
+[generated]
+command = "cargo run -p xtask -- generate hosts"
+outputs = [".parser-inputs", "grammar.json", "node-types.json", "parser.c"]
+
+[sync]
+local = true

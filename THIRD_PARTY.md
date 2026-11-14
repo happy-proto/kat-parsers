@@ -1544,3 +1544,11 @@ PHP 只引入 kat 使用的 `php` 语法，不引入独立的 `php_only`。TypeS
 - License: MIT (project-authored); no PostgreSQL source or third-party grammar is copied or adapted.
 - Generated artifacts: `crates/tree-sitter-kat-pgpass/vendor/pgpass/`
 - Scope: five colon-separated fields, whole-field wildcards in the first four fields, backslash escapes, column-zero comments, CRLF and final lines without a newline. Spaces are field data. No connection matching, file permission checks or password decoding is performed.
+
+## hosts（自维护）
+
+- Source asset: `upstreams/hosts/grammar.js`
+- Specification: [hosts(5)](https://man7.org/linux/man-pages/man5/hosts.5.html)
+- License: MIT (project-authored); no third-party grammar or query is copied or adapted.
+- Generated artifacts: `crates/tree-sitter-kat-hosts/vendor/hosts/`
+- Scope: line-oriented IPv4/IPv6 address-shaped tokens, canonical hostnames, multiple aliases, horizontal whitespace, `#` comments, CRLF and final lines without a newline. This parser does not validate IP addresses or resolve names.

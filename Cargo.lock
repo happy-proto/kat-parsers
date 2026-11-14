@@ -1240,6 +1240,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-kat-hosts"
+version = "0.1.0"
+dependencies = [
+ "kat-parser-common",
+ "kat-parser-runtime",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-kat-html"
 version = "0.1.0"
 dependencies = [
@@ -1556,6 +1566,7 @@ dependencies = [
  "tree-sitter-kat-graphql",
  "tree-sitter-kat-groovy",
  "tree-sitter-kat-hcl",
+ "tree-sitter-kat-hosts",
  "tree-sitter-kat-html",
  "tree-sitter-kat-ignore",
  "tree-sitter-kat-ini",
